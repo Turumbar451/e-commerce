@@ -2,6 +2,8 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import type { IProduct } from '@/interfaces/product';
 import { Heart } from 'lucide-react'; // Icono de Favoritos
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 interface ProductCardProps {
   product: IProduct;
@@ -15,11 +17,17 @@ const formatCurrency = (value: number) => {
 };
 
 export const ProductCard = ({ product }: ProductCardProps) => {
+  const navigate = useNavigate();
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault(); // Evita que el link se active
-
-    alert('Por favor, inicia sesión para añadir a favoritos.');
-    // esto abrira el <LoginPrompt />
+    toast.warning('Inicia sesión para guardar favoritos', {
+      description: 'Necesitas una cuenta para crear tu lista de deseos.',
+      position: 'bottom-right',
+      action: {
+        label: 'Iniciar Sesión',
+        onClick: () => navigate('/login'), // 5. Redirigir al hacer clic
+      },
+    });
   };
 
   return (
@@ -39,7 +47,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           {/* favoritos boton */}
           <button
             onClick={handleFavoriteClick}
-            className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md text-gray-500 hover:text-red-500 hover:bg-gray-50 transition-colors"
+            className=" cursor-pointer absolute top-3 right-3 p-2 bg-background rounded-full shadow-md text-muted-foreground hover:text-red-500 hover:bg-secondary transition-colors"
             aria-label="Añadir a favoritos"
           >
             <Heart className="w-5 h-5" />

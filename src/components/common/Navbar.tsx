@@ -10,6 +10,7 @@ import {
 import { ShoppingCart, User, Menu } from 'lucide-react';
 import { Link } from 'react-router';
 import { MyLogoSvg } from '@/components/MyLogoSvg';
+import { ModeToggle } from '@/components/common/ModeToggle';
 
 const navLinks = [
   { href: '/hombres', label: 'Hombres' },
@@ -59,8 +60,9 @@ export const Navbar = () => {
         {/* derecha */}
         <div className="flex items-center gap-2 md:gap-4">
           {/* carrito e inicion de sesion pc */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2  ">
             <Button
+              className="cursor-pointer"
               variant="ghost"
               size="icon"
               onClick={handleGuestClick}
@@ -68,10 +70,12 @@ export const Navbar = () => {
             >
               <ShoppingCart className="h-5 w-5 text-foreground/70" />
             </Button>
-            <Button className="text-base">
-              <User className="h-4 w-4 mr-2" />
-              Iniciar sesión
-            </Button>
+            <Link to="/login">
+              <Button className="text-base cursor-pointer">
+                <User className="h-4 w-4 mr-2" />
+                Iniciar sesión
+              </Button>
+            </Link>
           </div>
 
           {/* menu telefono (HAMBURRGUESA)  */}
@@ -129,6 +133,7 @@ export const Navbar = () => {
               </SheetContent>
             </Sheet>
           </div>
+          <ModeToggle />
         </div>
       </div>
     </header>
