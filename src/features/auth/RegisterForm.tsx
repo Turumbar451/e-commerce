@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Chrome } from 'lucide-react';
 import { Link } from 'react-router';
+import { PasswordInput } from '@/components/common/PasswordInput';
 
 export function RegisterForm() {
   return (
@@ -43,13 +44,13 @@ export function RegisterForm() {
             {/* campo contraseña */}
             <div className="flex flex-col space-y-2">
               <Label htmlFor="password">Contraseña</Label>
-              <Input id="password" type="password" required />
+              <PasswordInput id="password" required />
             </div>
 
             {/* campo confirmacion */}
             <div className="flex flex-col space-y-2">
               <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
-              <Input id="confirmPassword" type="password" required />
+              <PasswordInput id="confirmPassword" required />
             </div>
 
             <Button type="submit" className="w-full font-semibold">

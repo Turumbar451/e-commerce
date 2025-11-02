@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Chrome } from 'lucide-react';
 import { Link } from 'react-router';
+import { PasswordInput } from '@/components/common/PasswordInput';
 
 export function LoginForm() {
   return (
@@ -47,9 +48,7 @@ export function LoginForm() {
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
-              {/*se necesitara cambiar este input porque necesitamos el icono del ojito
-               */}
-              <Input id="password" type="password" required />
+              <PasswordInput id="password" required />
             </div>
 
             <Button type="submit" className="w-full font-semibold">
