@@ -10,11 +10,26 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Chrome } from 'lucide-react';
+import { AlertCircle, Chrome } from 'lucide-react';
 import { Link } from 'react-router';
 import { PasswordInput } from '@/components/common/PasswordInput';
+import { useRegisterForm } from './hooks/useRegisterForm';
 
 export function RegisterForm() {
+  const {
+    name,
+    email,
+    password,
+    confirmPassword,
+    error,
+
+    setName,
+    setEmail,
+    setPassword,
+    setConfirmPassword,
+    handleSubmit,
+  } = useRegisterForm();
+
   return (
     <Card className="w-full">
       <CardHeader className="text-center">
@@ -22,15 +37,19 @@ export function RegisterForm() {
         <CardDescription>Completa tus datos para unirte.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="grid w-full items-center gap-6">
-            {/** campo nombre */}
             <div className="flex flex-col space-y-2">
               <Label htmlFor="name">Nombre</Label>
-              <Input id="name" placeholder="Tu nombre completo" required />
+              <Input
+                id="name"
+                placeholder="Tu nombre completo"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
 
-            {/* campo correo */}
             <div className="flex flex-col space-y-2">
               <Label htmlFor="email">Correo electrónico</Label>
               <Input
@@ -38,27 +57,47 @@ export function RegisterForm() {
                 type="email"
                 placeholder="tu@correo.com"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
-            {/* campo contraseña */}
             <div className="flex flex-col space-y-2">
               <Label htmlFor="password">Contraseña</Label>
-              <PasswordInput id="password" required />
+              <PasswordInput
+                id="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
 
-            {/* campo confirmacion */}
             <div className="flex flex-col space-y-2">
               <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
-              <PasswordInput id="confirmPassword" required />
+              <PasswordInput
+                id="confirmPassword"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+
+              {/* El manejo de errores sigue siendo simple */}
+              {error && (
+                <div className="flex items-center text-sm text-destructive">
+                  <AlertCircle className="h-4 w-4 mr-2" />
+                  <span>{error}</span>
+                </div>
+              )}
             </div>
 
-            <Button type="submit" className="w-full font-semibold">
+            <Button
+              type="submit"
+              className=" cursor-pointer w-full font-semibold"
+            >
               Crear cuenta
             </Button>
           </div>
         </form>
-
         {/* Divisor "o"  */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
@@ -69,7 +108,7 @@ export function RegisterForm() {
           </div>
         </div>
 
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full cursor-pointer ">
           <Chrome className="mr-2 h-4 w-4" />
           Continuar con Google
         </Button>
