@@ -1,9 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    // ESTA ES LA LÍNEA MÁS IMPORTANTE
+    // E LINEA IMPORTANTE
     darkMode: ["class"],
 
-    // Esto le dice a Tailwind dónde buscar clases
+    // Esto le dice a tailwind donde buscar clases
     content: [
         './pages/**/*.{ts,tsx}',
         './components/**/*.{ts,tsx}',
@@ -20,7 +20,7 @@ module.exports = {
             },
         },
         extend: {
-            // Aquí mapeamos los colores de tu CSS para que Tailwind los entienda
+            // Aquí mapeamos los colores dl CSS para que Tailwind los entienda
             colors: {
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
@@ -56,13 +56,13 @@ module.exports = {
                     foreground: "hsl(var(--card-foreground))",
                 },
             },
-            // Esto es para que los bordes redondeados de Shadcn funcionen
+            // esto es para que los bordes redondeados de shadcn funcionen
             borderRadius: {
                 lg: "var(--radius)",
                 md: "calc(var(--radius) - 2px)",
                 sm: "calc(var(--radius) - 4px)",
             },
-            // Animaciones de Shadcn
+            // animaciones de shadcn
             keyframes: {
                 "accordion-down": {
                     from: { height: "0" },
@@ -79,5 +79,5 @@ module.exports = {
             },
         },
     },
-    plugins: [require("tailwindcss-animate")], // Plugin de animación de Shadcn
+    plugins: [require("tailwindcss-animate")], // plugin de animación de shadcn
 }

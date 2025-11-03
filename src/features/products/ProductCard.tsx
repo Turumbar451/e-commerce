@@ -1,9 +1,7 @@
-// src/features/products/ProductCard.tsx
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { useLoginPrompt } from '@/hooks/useLoginPrompt';
 import type { IProduct } from '@/interfaces/product';
-import { Heart } from 'lucide-react'; // Icono de Favoritos
-import { useNavigate } from 'react-router';
-import { toast } from 'sonner';
+import { Heart } from 'lucide-react';
 
 interface ProductCardProps {
   product: IProduct;
@@ -17,21 +15,14 @@ const formatCurrency = (value: number) => {
 };
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const navigate = useNavigate();
+  const { showLoginPrompt } = useLoginPrompt();
   const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.preventDefault(); // Evita que el link se active
-    toast.warning('Inicia sesión para guardar favoritos', {
-      description: 'Necesitas una cuenta para crear tu lista de deseos.',
-      position: 'bottom-right',
-      action: {
-        label: 'Iniciar Sesión',
-        onClick: () => navigate('/login'), // 5. Redirigir al hacer clic
-      },
-    });
+    e.preventDefault(); // evita que el link se active
+    showLoginPrompt('Inicia sesión para guardar favoritos');
   };
 
   return (
-    // La tarjeta entera es un link a la página de detalle del producto
+    // La tarjeta entera es un link a la pagina de detalle del producto
     <a href={`/product/${product.id}`} className="group block">
       <Card className="border-none shadow-none rounded-lg overflow-hidden bg-transparent">
         <CardContent className="p-0 relative">

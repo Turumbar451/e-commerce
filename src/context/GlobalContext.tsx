@@ -1,14 +1,15 @@
 import { createContext, type PropsWithChildren } from 'react';
+type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 
 interface Props {
-  algo: string;
+  authStatus: AuthStatus;
 }
 
-const GlobalContextValue = createContext({} as Props);
+export const GlobalContextValue = createContext({} as Props);
 
 const GlobalContext = ({ children }: PropsWithChildren) => {
   return (
-    <GlobalContextValue value={{ algo: 'sdjafs' }}>
+    <GlobalContextValue value={{ authStatus: 'authenticated' }}>
       {children}
     </GlobalContextValue>
   );
