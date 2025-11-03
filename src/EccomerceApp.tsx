@@ -16,7 +16,7 @@ const EccomerceApp = () => {
         <ThemeProvider defaultTheme="system" storageKey="ecommerce-theme">
           <RouterProvider router={appRouter} />
           {/* sonner */}
-          <Toaster richColors position="top-right" />
+          <Toaster richColors position="bottom-right" />
         </ThemeProvider>
       </QueryClientProvider>
     </GlobalContext>

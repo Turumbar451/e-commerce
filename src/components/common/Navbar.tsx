@@ -8,10 +8,10 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet';
 import { ShoppingCart, User, Menu } from 'lucide-react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { MyLogoSvg } from '@/components/MyLogoSvg';
 import { ModeToggle } from '@/components/common/ModeToggle';
-import { useLoginPrompt } from '@/hooks/useLoginPrompt';
+import { useAuthenticatedAction } from '@/hooks/useAuthenticatedAction';
 
 const navLinks = [
   { href: '/hombres', label: 'Hombres' },
@@ -20,10 +20,14 @@ const navLinks = [
 ];
 
 export const Navbar = () => {
-  const { showLoginPrompt } = useLoginPrompt();
+  const navigate = useNavigate();
+  const { performAuthenticatedAction } = useAuthenticatedAction();
+
   const handleGuestClick = () => {
-    console.log('Debe iniciar sesión para ver el carrito');
-    showLoginPrompt('Inicia sesión para ver tu carrito');
+    performAuthenticatedAction(
+      () => navigate('/cart'),
+      'Inicia sesión para ver tu carrito'
+    );
   };
 
   return (

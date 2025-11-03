@@ -1,7 +1,8 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { useLoginPrompt } from '@/hooks/useLoginPrompt';
+import { useAuthenticatedAction } from '@/hooks/useAuthenticatedAction';
 import type { IProduct } from '@/interfaces/product';
 import { Heart } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ProductCardProps {
   product: IProduct;
@@ -15,10 +16,20 @@ const formatCurrency = (value: number) => {
 };
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const { showLoginPrompt } = useLoginPrompt();
+  const { performAuthenticatedAction } = useAuthenticatedAction(); // hook para hacer algo si es que esta autenticado
+
+  const handleAddFavorite = () => {
+    //! aqui ira tanstack query y posiblemente debamos crear un hoook para esto
+    console.log('Añadiendo a favoritos:', product.id);
+    toast.success('¡Añadido a favoritos!');
+  };
+
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault(); // evita que el link se active
-    showLoginPrompt('Inicia sesión para guardar favoritos');
+    performAuthenticatedAction(
+      handleAddFavorite, // es lo que se ejecutara si esta loggeado,la paso como referencia
+      'Inicia sesión para guardar favoritos' //este sera el mensaje del sonner si no
+    );
   };
 
   return (
