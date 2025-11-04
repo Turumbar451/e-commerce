@@ -4,9 +4,10 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 const api = axios.create({
     baseURL: API_URL,
+    withCredentials: true
 });
 
-//interceptar peticion, antes de cada get, post, put...
+/* //interceptar peticion, antes de cada get, post, put...
 api.interceptors.request.use(
     (config) => {
         //leer siempre el token en cada peticion
@@ -24,5 +25,5 @@ api.interceptors.request.use(
         return Promise.reject(error);
     }
 );
-
+ */
 export default api;

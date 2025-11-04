@@ -14,8 +14,9 @@ export const useLoginForm = () => {
     const { login } = use(GlobalContext);
 
     const mutation = useMutation({
+        //matationFn es quien realiza la llamada al servicio, es una funcion asíncrona
         mutationFn: (credentials: LoginPayload) => loginUser(credentials),
-        onSuccess: (user) => {
+        onSuccess: (user) => { //si todo sale bien
 
             login(user);
 
@@ -38,14 +39,14 @@ export const useLoginForm = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
-        mutation.mutate({ email, password });
+        mutation.mutate({ email, password }); //llama a la mutacion
     };
 
     return {
         email, setEmail,
         password, setPassword,
         error,
-        isLoading: mutation.isPending,
+        isLoading: mutation.isPending, //esto se activa en true cuando la mutacion esta en curso
         handleSubmit,
     };
 };

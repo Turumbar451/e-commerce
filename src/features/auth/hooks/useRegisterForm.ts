@@ -25,6 +25,8 @@ export const useRegisterForm = () => {
             // mostar error de api
             const errorMessage = err.response?.data?.error || "Error al registrarse.";
             setError(errorMessage);
+            console.log(errorMessage);
+
         }
     });
 
@@ -37,7 +39,6 @@ export const useRegisterForm = () => {
             setError('Las contraseñas no coinciden.');
             return;
         }
-
         mutation.mutate({
             nombre: name,
             apellido: apellido || undefined, // undefined por si esta vacio
