@@ -1,10 +1,10 @@
-import { useContext } from 'react';
+import { use } from 'react';
 import { useLoginPrompt } from './useLoginPrompt';
-import { GlobalContextValue } from '@/context/GlobalContext';
+import { GlobalContext } from '@/context/GlobalContext';
 
 //*custom hook para manejar acciones autenticadas
 export const useAuthenticatedAction = () => {
-    const { authStatus } = useContext(GlobalContextValue);
+    const { authStatus } = use(GlobalContext);
     const { showLoginPrompt } = useLoginPrompt();
 
 

@@ -2,14 +2,14 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from './components/common/ThemeProvider';
-import GlobalContext from './context/GlobalContext';
+import { GlobalContextProvider } from './context/GlobalContext';
 import { queryClient } from './lib/queryCliente';
 import { appRouter } from './routes/app.router';
 import { RouterProvider } from 'react-router';
 
 const EccomerceApp = () => {
   return (
-    <GlobalContext>
+    <GlobalContextProvider>
       {/*provider de tanstack para cache y fetch */}
       <QueryClientProvider client={queryClient}>
         {/* provider de temas (jeje modo oscuro) */}
@@ -19,7 +19,7 @@ const EccomerceApp = () => {
           <Toaster richColors position="bottom-right" />
         </ThemeProvider>
       </QueryClientProvider>
-    </GlobalContext>
+    </GlobalContextProvider>
   );
 };
 

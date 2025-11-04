@@ -1,4 +1,4 @@
-import { GlobalContextValue } from '@/context/GlobalContext';
+import { GlobalContext } from '@/context/GlobalContext';
 import { use, type JSX } from 'react';
 import { Navigate } from 'react-router';
 
@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const PrivateRouter = ({ element }: Props) => {
-  const { authStatus } = use(GlobalContextValue);
+  const { authStatus } = use(GlobalContext);
 
   // comprobando...
   if (authStatus === 'checking') {

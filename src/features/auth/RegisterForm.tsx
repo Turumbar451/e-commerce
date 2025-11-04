@@ -22,7 +22,10 @@ export function RegisterForm() {
     password,
     confirmPassword,
     error,
+    apellido,
 
+    isLoading,
+    setApellido,
     setName,
     setEmail,
     setPassword,
@@ -43,10 +46,20 @@ export function RegisterForm() {
               <Label htmlFor="name">Nombre</Label>
               <Input
                 id="name"
-                placeholder="Tu nombre completo"
+                placeholder="Nombre"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="apellido">Apellido</Label>
+              <Input
+                id="apellido"
+                placeholder="Apellido"
+                required
+                value={apellido}
+                onChange={(e) => setApellido(e.target.value)}
               />
             </div>
 
@@ -81,7 +94,7 @@ export function RegisterForm() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
 
-              {/* El manejo de errores sigue siendo simple */}
+              {/* manejo de error */}
               {error && (
                 <div className="flex items-center text-sm text-destructive">
                   <AlertCircle className="h-4 w-4 mr-2" />
@@ -92,9 +105,10 @@ export function RegisterForm() {
 
             <Button
               type="submit"
-              className=" cursor-pointer w-full font-semibold"
+              className="w-full font-semibold"
+              disabled={isLoading}
             >
-              Crear cuenta
+              {isLoading ? 'Creando cuenta...' : 'Crear cuenta'}
             </Button>
           </div>
         </form>

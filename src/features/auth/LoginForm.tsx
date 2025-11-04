@@ -10,11 +10,21 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Chrome } from 'lucide-react';
+import { AlertCircle, Chrome } from 'lucide-react';
 import { Link } from 'react-router';
 import { PasswordInput } from '@/components/common/PasswordInput';
+import { useLoginForm } from './hooks/useLoginForm';
 
 export function LoginForm() {
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    error,
+    isLoading,
+    handleSubmit,
+  } = useLoginForm();
   return (
     <Card className="w-full">
       <CardHeader className="text-center">
@@ -24,9 +34,8 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="grid w-full items-center gap-6">
-            {/* Campo de Correo */}
             <div className="flex flex-col space-y-2">
               <Label htmlFor="email">Correo electrónico</Label>
               <Input
@@ -34,6 +43,8 @@ export function LoginForm() {
                 type="email"
                 placeholder="tu@correo.com"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
@@ -42,17 +53,33 @@ export function LoginForm() {
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Contraseña</Label>
                 <Link
-                  to="/forgot-password" // Ruta para olvidar contraseña
+                  to="/forgot-password" // ruta para olvidar contraseña
                   className="text-sm font-medium text-muted-foreground hover:text-primary"
                 >
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
-              <PasswordInput id="password" required />
+              <PasswordInput
+                id="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
+            {error && (
+              <div className="flex items-center text-sm text-destructive">
+                <AlertCircle className="h-4 w-4 mr-2" />
+                <span>{error}</span>
+              </div>
+            )}
 
-            <Button type="submit" className="w-full font-semibold">
-              Iniciar sesión
+            <Button
+              type="submit"
+              className="w-full font-semibold"
+              disabled={isLoading}
+            >
+              {/* Muestra un spinner o texto diferente si está cargando */}
+              {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </Button>
           </div>
         </form>
