@@ -3,6 +3,9 @@ import { useAuthenticatedAction } from '@/hooks/useAuthenticatedAction';
 import type { IProduct } from '@/interfaces/product';
 import { Heart } from 'lucide-react';
 import { toast } from 'sonner';
+import { useCart } from '@/features/cart/hooks/useCart'; // 1. Importar
+import { Button } from '@/components/ui/button'; // (Asumo que ya está)
+import { ShoppingCart } from 'lucide-react'; // (Para el icono)
 
 interface ProductCardProps {
   product: IProduct;
@@ -17,6 +20,7 @@ const formatCurrency = (value: number) => {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const { performAuthenticatedAction } = useAuthenticatedAction(); // hook para hacer algo si es que esta autenticado
+  const { addItem, isAddingItem } = useCart(); // 2. Usar el hook
 
   const handleAddFavorite = () => {
     //! aqui ira tanstack query y posiblemente debamos crear un hoook para esto
@@ -24,6 +28,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     toast.success('¡Añadido a favoritos!');
   };
 
+  
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault(); // evita que el link se active
     performAuthenticatedAction(
@@ -32,7 +37,24 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     );
   };
 
-  return (
+  const handleAddToCart = () => {
+    // NOTA: El backend espera un SKU. Tu 'IProduct' debe tener
+    // acceso al SKU. Usaré 'product.id' como placeholder, 
+    // ¡asegúrate de usar el SKU real de la variante seleccionada!
+    const skuSeleccionado = product.id; // <-- CAMBIA ESTO por el SKU real
+    
+    addItem({ sku: skuSeleccionado, cantidad: 1 });
+  };
+
+  const handleCartClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Evita navegar
+    performAuthenticatedAction(
+      handleAddToCart,
+      'Inicia sesión para añadir al carrito'
+    );
+  };
+
+ return (
     // La tarjeta entera es un link a la pagina de detalle del producto
     <a href={`/product/${product.id}`} className="group block">
       <Card className="border-none shadow-none rounded-lg overflow-hidden bg-transparent">
@@ -71,6 +93,18 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <p className="font-bold text-lg text-gray-900 mt-1">
             {formatCurrency(product.price)}
           </p>
+
+          <Button 
+            variant="outline" 
+            className="w-full mt-2" 
+            onClick={handleCartClick}
+            disabled={isAddingItem}
+          >
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            {isAddingItem ? 'Añadiendo...' : 'Añadir al carrito'}
+          </Button>
+          {/* ------------------------------------------- */}
+          
         </CardFooter>
       </Card>
     </a>
