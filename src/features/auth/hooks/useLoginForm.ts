@@ -1,33 +1,22 @@
-import { useState, use } from 'react';
+import { useState, useContext } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { GlobalContext } from '@/context/GlobalContext';
-import { useNavigate } from 'react-router';
-import type { LoginPayload } from '@/interfaces/auth';
+import type { LoginPayload, User } from '@/interfaces/auth';
 import { loginUser } from '@/services/authServices';
 
 export const useLoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
-    const navigate = useNavigate();
-    const { login } = use(GlobalContext);
+    const { login } = useContext(GlobalContext);
 
     const mutation = useMutation({
         //matationFn es quien realiza la llamada al servicio, es una funcion asíncrona
         mutationFn: (credentials: LoginPayload) => loginUser(credentials),
-        onSuccess: (user) => { //si todo sale bien
-
+        onSuccess: (user: User) => { //si todo sale bien
             login(user);
-
             toast.success(`¡Bienvenido, ${user.nombre}!`);
-
-            //redireccionar por rol
-            switch (user.role) {
-                // implementar logica de roles (casos)
-                default:
-                    navigate('/');
-            }
         },
         onError: (err: any) => {
             const errorMessage = err.response?.data?.error || "Credenciales inválidas.";
