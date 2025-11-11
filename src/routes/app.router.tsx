@@ -7,26 +7,37 @@ import { PrivateRouter } from './PrivateRouter';
 import CartPage from '@/pages/CartPage';
 import FavoritesPage from '@/pages/FavoritesPage';
 import ProfilePage from '@/pages/ProfilePage';
-import { AdminDashboardPage } from '@/pages/AdminDashboardPage';
+import { AdminLayout } from '@/layout/AdminLayout';
+import { lazy } from 'react';
+
+const PosPage = lazy(() => import('@/pages/PosPage'));
+const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
+const AdminInventoryPage = lazy(() => import('@/pages/AdminInventoryPage'));
 
 export const appRouter = createBrowserRouter([
   {
-    path: '/admin/users',
-    element: <PrivateRouter element={<AdminDashboardPage />} />, //<AdminUsersPage />
+    path: '/',
+    element: <HomePage />,
   },
   {
-    path: '/admin/inventory',
-    element: <PrivateRouter element={<AdminDashboardPage />} />, //<AdminInventoryPage />
+    path: '/admin',
+    element: <PrivateRouter element={<AdminLayout />} />,
+    children: [
+      {
+        path: 'users',
+        element: <AdminUsersPage />,
+      },
+      {
+        path: 'inventory',
+        element: <AdminInventoryPage />,
+      },
+    ],
   },
 
   //cajero
   {
     path: '/pos',
-    element: <PrivateRouter element={<AdminDashboardPage />} />, //<PosPage />
-  },
-  {
-    path: '/',
-    element: <HomePage />,
+    element: <PrivateRouter element={<PosPage />} />,
   },
   {
     path: '/login',
