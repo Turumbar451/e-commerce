@@ -1,101 +1,109 @@
-import { useState } from 'react';
-import type { IProductDetail, IProductVariant } from '@/interfaces/product';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router'; // <-- 1. Importar useParams
+import { useQuery } from '@tanstack/react-query'; // <-- 2. Importar useQuery
+import { getProductById } from '@/services/productService'; // <-- 3. Importar servicio
+import type { IProductVariant } from '@/interfaces/product';
 import { ProductImageGallery } from '@/features/products/components/ProductImageGallery';
 import { ProductInfoActions } from '@/features/products/components/ProductInfoActions';
 import { ProductDetailsAccordion } from '@/features/products/components/ProductDetailsAccordion';
+// (Aquí también irían los imports de tus componentes de Shadcn)
 
-// MOCK DATA
-const mockProduct: IProductDetail = {
-  _id: '12345',
-  name: 'Botas de Montaña Impermeables',
-  brand: 'AventuraPro',
-  price: 2899.0,
-  salePrice: 2499.0,
-  category: 'Calzado',
-  description:
-    'Conquista cualquier sendero con las botas AventuraPro. Diseñadas para la máxima durabilidad y confort, cuentan con tecnología impermeable y una suela de agarre superior para terrenos difíciles.',
-  reviews: {
-    averageRating: 4.8,
-    reviewCount: 132,
-  },
-  variants: [
-    {
-      colorName: 'Marrón Coyote',
-      colorHex: '#8D6E63',
-      sku: 'AP-BOTA-COY-01',
-      images: [
-        'https://via.placeholder.com/600x600/8D6E63/FFFFFF.png?text=Bota+Marrón+1',
-        'https://via.placeholder.com/600x600/8D6E63/FFFFFF.png?text=Bota+Marrón+2',
-        'https://via.placeholder.com/600x600/8D6E63/FFFFFF.png?text=Bota+Marrón+3',
-        'https://via.placeholder.com/600x600/8D6E63/FFFFFF.png?text=Bota+Marrón+4',
-      ],
-      sizes: [
-        { size: '26 MX', stock: 5 },
-        { size: '27 MX', stock: 2 },
-        { size: '28 MX', stock: 0 },
-        { size: '29 MX', stock: 8 },
-      ],
-    },
-    {
-      colorName: 'Negro Táctico',
-      colorHex: '#212121',
-      sku: 'AP-BOTA-BLK-01',
-      images: [
-        'https://via.placeholder.com/600x600/212121/FFFFFF.png?text=Bota+Negra+1',
-        'https://via.placeholder.com/600x600/212121/FFFFFF.png?text=Bota+Negra+2',
-        'https://via.placeholder.com/600x600/212121/FFFFFF.png?text=Bota+Negra+3',
-      ],
-      sizes: [
-        { size: '26 MX', stock: 3 },
-        { size: '27 MX', stock: 10 },
-        { size: '28 MX', stock: 12 },
-        { size: '29 MX', stock: 1 },
-      ],
-    },
-  ],
-  details: [
-    { title: 'Material Superior', content: 'Piel sintética y malla' },
-    { title: 'Suela', content: 'Goma de alta tracción' },
-    { title: 'Tecnología', content: 'Impermeable (Waterproof)' },
-    { title: 'Tipo de cierre', content: 'Agujetas' },
-  ],
-};
+// (Asumimos que los sub-componentes y las interfaces
+// ya están en sus propios archivos)
 
-//COMPONENTE PRINCIPAL
+// --- Componente Principal de la Página ---
 
 const ProductDetailPage = () => {
-  // const { data: product, isLoading, isError } = useQuery({ ... });
-  const product = mockProduct; // USAR DATOS SIMULADOS
+  // 1. OBTENER EL ID DE LA URL
+  // Si tu ruta es /product/:productId, esto obtiene el valor
+  const { productId } = useParams<{ productId: string }>();
 
-  // estado para la VARIANTE (color) seleccionada
-  const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
+  // 2. LLAMAR A LA API CON TANSTACK QUERY
+  const {
+    data: product, // 'data' se renombra a 'product'
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    // queryKey: Clave única. React Query la usa para caché.
+    // Si productId cambia, la consulta se vuelve a ejecutar.
+    queryKey: ['product', productId],
 
-  // Estado para la TALLA seleccionada
+    // queryFn: La función que trae los datos. ¡Debe retornar una promesa!
+    queryFn: () => getProductById(productId!), // '!' le dice a TS que confiamos que productId existe
+
+    // enabled: No intentes ejecutar la consulta si no tenemos un productId
+    enabled: !!productId,
+  });
+
+  // 3. ESTADO LOCAL PARA SELECCIONES
+  // Inician en 'null' porque no hay producto cargado al inicio
+  const [selectedVariant, setSelectedVariant] =
+    useState<IProductVariant | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
+  useEffect(() => {
+    // 1. ¿Existe el producto?
+    // 2. ¿Tiene una propiedad 'variants'?
+    // 3. ¿Ese arreglo 'variants' no está vacío?
+    if (product && product.variants && product.variants.length > 0) {
+      // Si todo se cumple, SÍ es seguro acceder a [0]
+      setSelectedVariant(product.variants[0]);
+      setSelectedSize(null);
+    }
+    // Si no se cumple, no hace nada y selectedVariant sigue 'null'.
+    // Tu renderizado de más abajo (el 'if (!product || !selectedVariant)')
+    // se encargará de mostrar "Producto no encontrado".
+  }, [product]);
   // Handler para cambiar de variante (color)
   const handleVariantChange = (variant: IProductVariant) => {
     setSelectedVariant(variant);
-    setSelectedSize(null); // yesetea la talla al cambiar de color
+    setSelectedSize(null); // Resetea la talla al cambiar de color
   };
 
-  // if (isLoading) return <div>Cargando...</div>;
-  // if (isError) return <div>Error al cargar el producto</div>;
-  // if (!product) return <div>Producto no encontrado</div>;
+  // 5. MANEJO DE ESTADOS DE CARGA Y ERROR
+  if (isLoading) {
+    return (
+      <div className="container mx-auto text-center p-10">
+        <p>Cargando producto...</p>
+        {/* Aquí puedes poner un <Spinner /> */}
+      </div>
+    );
+  }
 
+  if (isError) {
+    return (
+      <div className="container mx-auto text-center p-10 text-red-600">
+        <p>
+          Error al cargar el producto: {error?.message || 'Error desconocido'}
+        </p>
+      </div>
+    );
+  }
+
+  // Si 'product' es undefined O 'selectedVariant' es null (aún no se setea el efecto)
+  if (!product || !selectedVariant) {
+    return (
+      <div className="container mx-auto text-center p-10">
+        <p>Producto no encontrado.</p>
+      </div>
+    );
+  }
+
+  // 6. RENDERIZADO FINAL (cuando todo está OK)
   return (
     <div className="container mx-auto max-w-6xl p-4 mt-8">
-      {/* layout prinicpal */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-        {/* columna1: imagenes */}
+        {/* Columna 1: Imágenes */}
         <div className="lg:col-span-7">
+          {/* Le pasamos las imágenes de la variante SELECCIONADA */}
           <ProductImageGallery images={selectedVariant.images} />
         </div>
 
-        {/* columna2: info y acciones */}
+        {/* Columna 2: Info y Acciones */}
         <div className="lg:col-span-5">
           <ProductInfoActions
-            product={product}
+            product={product} // El producto completo
             selectedVariant={selectedVariant}
             onVariantChange={handleVariantChange}
             selectedSize={selectedSize}
@@ -104,7 +112,6 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-      {/* seccion secundaria: detalles */}
       <div className="mt-16">
         <h2 className="text-2xl font-bold mb-4">Detalles del Producto</h2>
         <ProductDetailsAccordion product={product} />
