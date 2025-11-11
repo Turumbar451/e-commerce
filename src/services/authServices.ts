@@ -26,3 +26,9 @@ export const checkAuthStatus = async (): Promise<User> => {
 export const logoutUser = async () => {
     await api.delete('/auth/logout');
 };
+
+// Google Sign-In: enviar idToken (Firebase) al backend y recibir el usuario
+export const loginWithGoogle = async (idToken: string): Promise<User> => {
+    const { data } = await api.post<User>('/auth/google', { idToken });
+    return data;
+};
