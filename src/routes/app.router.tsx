@@ -1,18 +1,24 @@
 import { HomePage } from '@/pages/HomePage';
 import { LoginPage } from '@/pages/LoginPage';
-import { RegisterPage } from '@/pages/RegisterPage';
-//en este archivo definiremos las rutas que tendranuestra aplicacion
 import { createBrowserRouter, Navigate } from 'react-router';
-import { PrivateRouter } from './PrivateRouter';
 import CartPage from '@/pages/CartPage';
 import FavoritesPage from '@/pages/FavoritesPage';
 import ProfilePage from '@/pages/ProfilePage';
 import { AdminLayout } from '@/layout/AdminLayout';
 import { lazy } from 'react';
+import { RegisterPage } from '@/pages/RegisterPage';
+import { ProtectedRoleRoute } from './ProtectedRoleRouter';
 
 const PosPage = lazy(() => import('@/pages/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
 const AdminInventoryPage = lazy(() => import('@/pages/AdminInventoryPage'));
+
+const ROLES = {
+  ROLE_ADMIN: 'admon_roles',
+  INV_ADMIN: 'admon_inventario',
+  CASHIER: 'cajero',
+  USER: 'cliente', //era cliente o user?
+};
 
 export const appRouter = createBrowserRouter([
   {
@@ -21,39 +27,84 @@ export const appRouter = createBrowserRouter([
   },
   {
     path: '/admin',
-    element: <PrivateRouter element={<AdminLayout />} />,
+    // layout para ambos admins
+    element: (
+      <ProtectedRoleRoute
+        element={<AdminLayout />}
+        allowedRoles={[ROLES.ROLE_ADMIN, ROLES.INV_ADMIN]}
+      />
+    ),
     children: [
       {
         path: 'users',
-        element: <AdminUsersPage />,
+        // admin de roles
+        element: (
+          <ProtectedRoleRoute
+            element={<AdminUsersPage />}
+            allowedRoles={[ROLES.ROLE_ADMIN]}
+          />
+        ),
       },
       {
         path: 'inventory',
-        element: <AdminInventoryPage />,
+        // solo para admin de inventario
+        element: (
+          <ProtectedRoleRoute
+            element={<AdminInventoryPage />}
+            allowedRoles={[ROLES.INV_ADMIN]}
+          />
+        ),
       },
     ],
   },
 
-  //cajero
+  // rutas del cajero
   {
     path: '/pos',
-    element: <PrivateRouter element={<PosPage />} />,
+    element: (
+      <ProtectedRoleRoute
+        element={<PosPage />}
+        allowedRoles={[ROLES.CASHIER]}
+      />
+    ),
   },
-  {
-    path: '/login',
-    element: <LoginPage />,
-  },
+
+  // rutas del cliente
   {
     path: '/cart',
-    element: <PrivateRouter element={<CartPage />} />,
+    element: (
+      <ProtectedRoleRoute element={<CartPage />} allowedRoles={[ROLES.USER]} />
+    ),
   },
   {
     path: '/favorites',
-    element: <PrivateRouter element={<FavoritesPage />} />,
+    element: (
+      <ProtectedRoleRoute
+        element={<FavoritesPage />}
+        allowedRoles={[ROLES.USER]}
+      />
+    ),
   },
   {
     path: '/profile',
-    element: <PrivateRouter element={<ProfilePage />} />,
+    //todos los usuarios loggeados ven su perfil
+    element: (
+      <ProtectedRoleRoute
+        element={<ProfilePage />}
+        allowedRoles={[
+          ROLES.USER,
+          ROLES.CASHIER,
+          ROLES.INV_ADMIN,
+          ROLES.ROLE_ADMIN,
+        ]}
+      />
+    ),
+  },
+
+  // rutas publicas
+  {
+    path: '/login',
+    element: <LoginPage />,
   },
   {
     path: '/register',
