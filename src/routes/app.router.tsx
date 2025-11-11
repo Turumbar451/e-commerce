@@ -8,6 +8,7 @@ import { AdminLayout } from '@/layout/AdminLayout';
 import { lazy } from 'react';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { ProtectedRoleRoute } from './ProtectedRoleRouter';
+import ProductDetailPage from '@/pages/ProductDetailPage';
 
 const PosPage = lazy(() => import('@/pages/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
@@ -24,6 +25,11 @@ export const appRouter = createBrowserRouter([
   {
     path: '/',
     element: <HomePage />,
+  },
+  {
+    // : indica que es parametro dinamico
+    path: '/product/:productId',
+    element: <ProductDetailPage />,
   },
   {
     path: '/admin',

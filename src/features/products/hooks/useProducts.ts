@@ -29,6 +29,7 @@ export const useProducts = () => {
         queryFn: getProducts,   // funcion que llama a la api en caso de no encontrar products
         select: transformDataForCard // funcion que transforma los datos de getProducts a algo que a mi me sirve
     });
+    console.log(data);
 
     return {
         products: data, // renombramiento

@@ -1,9 +1,10 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Heart, Link, ShoppingCart } from 'lucide-react';
+import { Heart, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { IProductForCard } from '@/interfaces/product';
 import { useProductCard } from './hooks/useProductCard';
 import { formatCurrency } from '@/lib/formatters';
+import { Link } from 'react-router';
 
 interface ProductCardProps {
   product: IProductForCard;
@@ -50,13 +51,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
           {/* Precio */}
           <p className="font-bold text-lg text-gray-900 mt-1">
-            {formatCurrency(product.price)} {/* <-- Función importada */}
+            {formatCurrency(product.price)}
           </p>
 
           <Button
             variant="outline"
             className="w-full mt-2"
-            onClick={handleCartClick} // <-- Handler limpio
+            onClick={handleCartClick}
             disabled={isAddingItem}
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
