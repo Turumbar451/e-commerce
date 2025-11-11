@@ -14,8 +14,10 @@ import { AlertCircle, Chrome } from 'lucide-react';
 import { Link } from 'react-router';
 import { PasswordInput } from '@/components/common/PasswordInput';
 import { useLoginForm } from './hooks/useLoginForm';
+import { useGoogleAuth } from './hooks/useGoogleAuth';
 
 export function LoginForm() {
+  const { signInWithGoogle, isLoading: isGoogleLoading } = useGoogleAuth();
   const {
     email,
     setEmail,
@@ -95,10 +97,16 @@ export function LoginForm() {
         </div>
 
         {/* boton de google */}
-        <Button variant="outline" className="w-full">
-          <Chrome className="mr-2 h-4 w-4" />
-          Continuar con Google
+        <Button 
+          variant="outline" 
+          className="w-full"  
+          onClick= {() => signInWithGoogle()}
+          disabled= {isGoogleLoading} 
+          >
+          <Chrome className="mr-2 h-4 w-4"/>
+          {isGoogleLoading ? 'Cargando...': 'Continuar con Google'}
         </Button>
+
       </CardContent>
       <CardFooter className="flex justify-center text-sm">
         <span className="text-muted-foreground">¿No tienes cuenta?</span>
