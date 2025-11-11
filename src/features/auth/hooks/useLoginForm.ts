@@ -12,7 +12,7 @@ export const useLoginForm = () => {
     const { login } = useContext(GlobalContext);
 
     const mutation = useMutation({
-        //matationFn es quien realiza la llamada al servicio, es una funcion asíncrona
+        //matationFn es quien realiza la llamada al servicio, es una funcion asincrona
         mutationFn: (credentials: LoginPayload) => loginUser(credentials),
         onSuccess: (user: User) => { //si todo sale bien
             login(user);
