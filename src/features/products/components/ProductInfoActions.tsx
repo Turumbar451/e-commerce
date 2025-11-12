@@ -35,17 +35,21 @@ export const ProductInfoActions = ({
       toast.error('Por favor, selecciona una talla.');
       return;
     }
-    // hook useCart y tanstack
-    // const { addItem } = useCart();
-    // addItem({ sku: selectedVariant.sku, size: selectedSize, quantity: 1 }); o algo asi nose
+
+    // Llamar a la mutación de useCart
+    // addItem({
+    //   sku: selectedVariant.sku,
+    //   size: selectedSize,
+    //   cantidad: 1
+    // });
+
     console.log('Añadiendo al carrito:', {
       sku: selectedVariant.sku,
-      color: selectedVariant.colorName,
       size: selectedSize,
+      cantidad: 1,
     });
     toast.success('¡Añadido al carrito!');
   };
-
   // añadir a favoritos
   const handleAddFavorite = () => {
     // mutacion de favoritos, añadir

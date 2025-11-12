@@ -1,13 +1,6 @@
 
 
-// 2. Interfaz para lo que VIENE DE LA API
-export interface IProductFromApi {
-    product_id: string;
-    nombre: string;
-    precio_base: number;
-    skus: IProductVariant[];
-    // Nota: El backend aún no envía 'brand' o 'imageUrl'.
-}
+
 
 // 3. Interfaz para lo que NUESTRO COMPONENTE (ProductCard) espera
 export interface IProductForCard {

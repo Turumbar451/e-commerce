@@ -1,7 +1,7 @@
-import type { IProductFromApi, IProductDetail } from '@/interfaces/product';
+import type { IProductDetail, IProductForCard } from '@/interfaces/product';
 import api from '@/lib/axios';
 
-export const getProducts = async (): Promise<IProductFromApi[]> => {
+export const getProducts = async (): Promise<IProductForCard[]> => {
     const { data } = await api.get('/products');
     return data;
 };
