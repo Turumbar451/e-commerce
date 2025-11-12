@@ -41,6 +41,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
         setAuth({ authStatus: 'authenticated', user: user });
       } catch (error) {
         setAuth({ authStatus: 'not-authenticated', user: null });
+        console.log(error);
       }
     };
     checkSession();
@@ -59,6 +60,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
       setAuth({ authStatus: 'not-authenticated', user: null });
     } catch (error) {
       toast.error('Error al cerrar sesión');
+      console.log(error);
     }
   };
 
