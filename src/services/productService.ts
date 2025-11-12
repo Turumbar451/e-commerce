@@ -8,8 +8,9 @@ export const getProducts = async (): Promise<IProductFromApi[]> => {
 
 
 //para paginas detalladas
-export const getProductById = async (productId: string): Promise<IProductDetail> => {
-    // ruta del endpoint  /products/12345abcdef
-    const { data } = await api.get(`/products/${productId}`);
+export const getProductById = async (
+    productId: string
+): Promise<IProductDetail> => {
+    const { data } = await api.get<IProductDetail>(`/products/${productId}`);
     return data;
 };

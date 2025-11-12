@@ -53,6 +53,8 @@ export const ProductInfoActions = ({
     toast.info('Añadido a favoritos (simulado)');
   };
 
+  console.log(selectedVariant.sizes);
+
   return (
     <div className="flex flex-col space-y-4">
       {/* informacion basica */}
@@ -126,7 +128,7 @@ export const ProductInfoActions = ({
               <DialogHeader>
                 <DialogTitle>Guía de Tallas</DialogTitle>
               </DialogHeader>
-              <p>Aquí iría tu contenido de guía de tallas...</p>
+              <p>no se si añadir esto.</p>
             </DialogContent>
           </Dialog>
         </div>
@@ -141,7 +143,7 @@ export const ProductInfoActions = ({
             <ToggleGroupItem
               key={sizeInfo.size}
               value={sizeInfo.size}
-              disabled={sizeInfo.stock === 0}
+              disabled={sizeInfo.stock === 0} //deshabilitar si no hay stock, mejorar
               className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
             >
               {sizeInfo.size}

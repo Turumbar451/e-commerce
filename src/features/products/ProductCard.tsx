@@ -16,6 +16,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     useProductCard(product);
 
   return (
+    //este es el momento en el que le pasamos el parametro (productId) y nuestro approuter lo detecta
     <Link to={`/product/${product.id}`} className="group block">
       <Card className="border-none shadow-none rounded-lg overflow-hidden bg-transparent">
         <CardContent className="p-0 relative">
