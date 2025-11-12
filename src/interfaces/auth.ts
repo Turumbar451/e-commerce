@@ -15,9 +15,10 @@ export interface LoginPayload {
 
 //Respuesta del endpoint GET /api/auth/me
 export interface User {
-    id: string;
+    _id: string;
     email: string;
     nombre: string;
-    role: 'cliente' | 'cajero' | 'admin_inventario' | 'admin_roles';
+    apellido: string;
+    role: 'cliente' | 'cajero' | 'admon_inventario' | 'admon_roles';
     historial_compras: any[]; // esto en el futuro sera un tipo, hay que ver
 }

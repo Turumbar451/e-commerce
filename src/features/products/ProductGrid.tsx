@@ -1,9 +1,9 @@
-import type { IProduct } from '@/interfaces/product';
+import type { IProductForCard } from '@/interfaces/product';
 import { ProductCard } from './ProductCard';
 
 interface ProductGridProps {
   title: string;
-  products: IProduct[];
+  products: IProductForCard[];
 }
 
 export const ProductGrid = ({ title, products }: ProductGridProps) => {
