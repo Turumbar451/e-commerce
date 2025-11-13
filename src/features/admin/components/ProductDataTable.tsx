@@ -60,13 +60,13 @@ export const ProductDataTable = () => {
           Busca, edita y gestiona todos los productos de tu tienda.
         </CardDescription>
 
-        {/* Barra de Filtros y Búsqueda */}
+        {/* barra de busqueda  */}
         <div className="flex items-center gap-4 pt-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Buscar por nombre o SKU..." className="pl-10" />
           </div>
-          {/* TODO: Añadir Dropdowns de filtrado aquí */}
+          {/* añadir filtrado aqui*/}
         </div>
       </CardHeader>
       <CardContent>
@@ -87,6 +87,7 @@ export const ProductDataTable = () => {
                 <TableCell>
                   <div className="w-16 h-16 bg-muted rounded-md overflow-hidden">
                     {/* <img src={...} /> */}
+                    {/* obviamente aqui va la imagen */}
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
@@ -104,7 +105,7 @@ export const ProductDataTable = () => {
                 <TableCell>${product.price.toFixed(2)}</TableCell>
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>
-                  {/* Acciones CRUD */}
+                  {/* acciones CRUD*/}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">

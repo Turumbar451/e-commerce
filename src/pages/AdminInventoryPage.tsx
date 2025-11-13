@@ -2,23 +2,25 @@ import { Button } from '@/components/ui/button';
 import { StatCard } from '@/features/admin/components/StatCard';
 import { ProductDataTable } from '@/features/admin/components/ProductDataTable';
 import { Package, PackageX, PlusCircle, Tag } from 'lucide-react';
+import { Link } from 'react-router';
 
-// Esta es tu página principal del panel de inventario
 const AdminInventoryPage = () => {
   return (
     <div className="container mx-auto p-4">
-      {/* 1. Encabezado y Acción Principal */}
+      {/* encabezado */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold tracking-tight">
           Gestión de Inventario
         </h1>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Agregar Nuevo Producto
+        <Button asChild>
+          <Link to="/admin/inventory/new">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Agregar Nuevo Producto
+          </Link>
         </Button>
       </div>
 
-      {/* 2. Tarjetas de Resumen (KPIs) - Inspirado en tus ejemplos */}
+      {/* tarjetas de resumenes*/}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <StatCard
           title="Productos Totales"
@@ -44,7 +46,6 @@ const AdminInventoryPage = () => {
         />
       </div>
 
-      {/* 3. Tabla de Productos (Componente principal) */}
       <ProductDataTable />
     </div>
   );

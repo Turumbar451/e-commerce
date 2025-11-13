@@ -1,78 +1,216 @@
+// src/features/admin/hooks/useProductForm.ts
 import { useState } from 'react';
-import axios from 'axios';
-import { useMutation } from '@tanstack/react-query';
-import api from '@/lib/axios'; // Tu instancia de axios
-import { createProductV2 } from '@/services/inventoryService';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router';
+import type {
+  IProductDetail,
+  IProductVariant,
+  IProductSize,
+} from '@/interfaces/product';
+import {
+  getCloudinarySignature,
+  uploadToCloudinary,
+  createProduct,
+} from '@/services/inventoryService';
 
-// servicio para obtener la firma
-const getUploadSignature = async () => {
-  const { data } = await api.post('/admini/upload-signature');
-  return data;
+// Estructura de una variante nueva
+const newSizeTemplate: IProductSize = { size: '', stock: 0 };
+const newVariantTemplate: IProductVariant = {
+  colorName: '',
+  sku: '',
+  images: [],
+  sizes: [newSizeTemplate],
 };
 
-// servicio para subir a Cloudinary
-const uploadToCloudinary = async (file: File, signatureData: any) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('api_key', signatureData.api_key);
-  formData.append('timestamp', signatureData.timestamp);
-  formData.append('signature', signatureData.signature);
-
-  const { data } = await axios.post(
-    `https://api.cloudinary.com/v1_1/${signatureData.cloud_name}/image/upload`,
-    formData
-  );
-
-  return data.secure_url; // ¡La URL segura!
+// Estado inicial del formulario
+const initialProductState: Partial<IProductDetail> = {
+  name: '',
+  brand: '',
+  category: '',
+  description: '',
+  price: 0,
+  salePrice: undefined,
+  details: [{ title: 'Material', content: '' }],
+  variants: [newVariantTemplate],
 };
 
 export const useProductForm = () => {
-  const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
+  const [product, setProduct] =
+    useState<Partial<IProductDetail>>(initialProductState);
+  const [isUploading, setIsUploading] = useState(false);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-  // mutacion para subir archivos
-  const uploadMutation = useMutation({
-    mutationFn: async (files: FileList) => {
-      // obtener firma del backend
-      const signature = await getUploadSignature();
+  // --- MANEJO DE ESTADO DEL FORMULARIO ---
 
-      // subir cada archivo a cloudinary
+  // Campos base
+  const handleBaseChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setProduct((prev) => ({
+      ...prev,
+      [name]:
+        name === 'price' || name === 'salePrice' ? parseFloat(value) : value,
+    }));
+  };
+
+  // --- Variantes ---
+  const addVariant = () => {
+    setProduct((prev) => ({
+      ...prev,
+      variants: [...(prev.variants || []), newVariantTemplate],
+    }));
+  };
+
+  const removeVariant = (variantIndex: number) => {
+    setProduct((prev) => ({
+      ...prev,
+      variants: prev.variants?.filter((_, i) => i !== variantIndex),
+    }));
+  };
+
+  const handleVariantChange = (
+    variantIndex: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target; // ej: name="colorName", value="Rojo"
+    setProduct((prev) => ({
+      ...prev,
+      variants: prev.variants?.map((variant, i) =>
+        i === variantIndex ? { ...variant, [name]: value } : variant
+      ),
+    }));
+  };
+
+  // --- Tallas (Dentro de Variantes) ---
+  const addSize = (variantIndex: number) => {
+    setProduct((prev) => ({
+      ...prev,
+      variants: prev.variants?.map((variant, i) =>
+        i === variantIndex
+          ? { ...variant, sizes: [...variant.sizes, newSizeTemplate] }
+          : variant
+      ),
+    }));
+  };
+
+  const removeSize = (variantIndex: number, sizeIndex: number) => {
+    setProduct((prev) => ({
+      ...prev,
+      variants: prev.variants?.map((variant, i) =>
+        i === variantIndex
+          ? {
+              ...variant,
+              sizes: variant.sizes.filter((_, j) => j !== sizeIndex),
+            }
+          : variant
+      ),
+    }));
+  };
+
+  const handleSizeChange = (
+    variantIndex: number,
+    sizeIndex: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target; // ej: name="size", value="28 MX"
+    setProduct((prev) => ({
+      ...prev,
+      variants: prev.variants?.map((variant, i) =>
+        i === variantIndex
+          ? {
+              ...variant,
+              sizes: variant.sizes.map((size, j) =>
+                j === sizeIndex
+                  ? {
+                      ...size,
+                      [name]: name === 'stock' ? parseInt(value) : value,
+                    }
+                  : size
+              ),
+            }
+          : variant
+      ),
+    }));
+  };
+
+  // --- Subida de Imágenes ---
+  const handleImageUpload = async (
+    variantIndex: number,
+    files: FileList | null
+  ) => {
+    if (!files || files.length === 0) return;
+    setIsUploading(true);
+    toast.loading('Subiendo imágenes...');
+
+    try {
+      const signature = await getCloudinarySignature();
       const uploadPromises = Array.from(files).map((file) =>
         uploadToCloudinary(file, signature)
       );
+      const urls = await Promise.all(uploadPromises);
 
-      return Promise.all(uploadPromises);
-    },
-    onSuccess: (urls) => {
-      // guardar urls en el estado
-      setUploadedImageUrls((prev) => [...prev, ...urls]);
-      console.log('Imágenes subidas:', urls);
-    },
-    onError: (err) => {
-      console.error('Error al subir:', err);
-    },
-  });
+      // Añadir URLs a la variante correcta
+      setProduct((prev) => ({
+        ...prev,
+        variants: prev.variants?.map((variant, i) =>
+          i === variantIndex
+            ? { ...variant, images: [...variant.images, ...urls] }
+            : variant
+        ),
+      }));
+      toast.success('Imágenes subidas correctamente');
+    } catch (err) {
+      toast.error('Error al subir imágenes');
+      console.error(err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
-  //? mutacion para guardar el producto final al backend
+  // --- Envío del Formulario ---
   const createProductMutation = useMutation({
-    mutationFn: createProductV2, // funcion de servicio (promesa que pide datos)
+    mutationFn: createProduct,
     onSuccess: (data) => {
-      // data = { message, product_id }
-      console.log('¡Producto creado!', data.product_id);
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ['products'] }); // Invalida la lista de productos
+      navigate('/admin/inventory'); // Regresa a la tabla
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Error al crear el producto');
     },
   });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // --- VALIDACIONES ---
+    if (!product.name) {
+      toast.error('El nombre del producto es obligatorio');
+      return;
+    }
+    if (!product.variants || product.variants.length === 0) {
+      toast.error('Debe haber al menos una variante');
+      return;
+    }
+    // (Puedes añadir más validaciones de SKU, tallas, etc.)
+
+    createProductMutation.mutate(product);
+  };
 
   return {
-    handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files) {
-        uploadMutation.mutate(e.target.files);
-      }
-    },
-    handleSubmit: (formData: any) => {
-      // logica para combinar formData y uploadedImageUrls
-      // y llamar a createProductMutation.mutate
-    },
-    isUploading: uploadMutation.isPending,
-    isCreatingProduct: createProductMutation.isPending,
-    uploadedImageUrls,
+    product,
+    isUploading,
+    isSaving: createProductMutation.isPending,
+    handleBaseChange,
+    addVariant,
+    removeVariant,
+    handleVariantChange,
+    addSize,
+    removeSize,
+    handleSizeChange,
+    handleImageUpload,
+    handleSubmit,
   };
 };
