@@ -9,6 +9,7 @@ import { lazy } from 'react';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { ProtectedRoleRoute } from './ProtectedRoleRouter';
 import ProductDetailPage from '@/pages/ProductDetailPage';
+import { StoreRouteGuard } from './StoreRouteGuard';
 
 const PosPage = lazy(() => import('@/pages/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
@@ -24,12 +25,12 @@ const ROLES = {
 export const appRouter = createBrowserRouter([
   {
     path: '/',
-    element: <HomePage />,
+    element: <StoreRouteGuard element={<HomePage />} />,
   },
   {
     // : indica que es parametro dinamico
     path: '/product/:productId',
-    element: <ProductDetailPage />,
+    element: <StoreRouteGuard element={<ProductDetailPage />} />,
   },
   {
     path: '/admin',

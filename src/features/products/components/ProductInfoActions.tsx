@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { DialogHeader } from '@/components/ui/dialog';
+import { useCart } from '@/features/cart/hooks/useCart';
+import { useAuthenticatedAction } from '@/hooks/useAuthenticatedAction';
 import type { IProductDetail, IProductVariant } from '@/interfaces/product';
 import { formatCurrency } from '@/lib/formatters';
 import {
@@ -29,26 +31,36 @@ export const ProductInfoActions = ({
   selectedSize,
   onSizeChange,
 }: ProductInfoProps) => {
+  const { addItem, isAddingItem } = useCart();
+  const { performAuthenticatedAction } = useAuthenticatedAction();
+
   // logica para añadir al carrito
   const handleAddToCart = () => {
+    //si no hemos seleccionado una talla (creo que ya se puede borrar)
     if (!selectedSize) {
       toast.error('Por favor, selecciona una talla.');
       return;
     }
 
-    // Llamar a la mutación de useCart
-    // addItem({
-    //   sku: selectedVariant.sku,
-    //   size: selectedSize,
-    //   cantidad: 1
-    // });
+    const addToCartLogic = () => {
+      addItem({
+        sku: selectedVariant.sku,
+        size: selectedSize,
+        cantidad: 1, //cambiar
+      });
+    };
+
+    // hook de autenticacion (o sea de si esta loggeado)
+    performAuthenticatedAction(
+      addToCartLogic,
+      'Inicia sesión para añadir al carrito'
+    );
 
     console.log('Añadiendo al carrito:', {
       sku: selectedVariant.sku,
       size: selectedSize,
       cantidad: 1,
     });
-    toast.success('¡Añadido al carrito!');
   };
   // añadir a favoritos
   const handleAddFavorite = () => {
@@ -157,9 +169,17 @@ export const ProductInfoActions = ({
       </div>
 
       {/* acciones */}
-      <Button size="lg" onClick={handleAddToCart} disabled={!selectedSize}>
-        {/* añadir item del useCArt tal vez */}
-        {selectedSize ? 'Añadir al carrito' : 'Selecciona una talla'}
+      <Button
+        size="lg"
+        onClick={handleAddToCart}
+        disabled={!selectedSize || isAddingItem}
+      >
+        {isAddingItem
+          ? 'Añadiendo...'
+          : selectedSize
+          ? 'Añadir al carrito'
+          : 'Selecciona una talla'}
+        {/* esto es un ifelse anidado */}
       </Button>
       <Button size="lg" variant="outline" onClick={handleAddFavorite}>
         <Heart className="mr-2 h-4 w-4" />

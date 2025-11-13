@@ -1,7 +1,7 @@
-import { useProductDetail } from '../hooks/useProductDetail';
-import { ProductImageGallery } from './ProductImageGallery';
-import { ProductInfoActions } from './ProductInfoActions';
-import { ProductDetailsAccordion } from './ProductDetailsAccordion';
+import { useProductDetail } from './hooks/useProductDetail';
+import { ProductImageGallery } from './components/ProductImageGallery';
+import { ProductInfoActions } from './components/ProductInfoActions';
+import { ProductDetailsAccordion } from './components/ProductDetailsAccordion';
 import { Spinner } from '@/components/ui/spinner';
 
 //este es el componente que verdaderamente se encarga de mostrar la pagina de PRODUCTO
