@@ -11,6 +11,7 @@ import { ProtectedRoleRoute } from './ProtectedRoleRouter';
 import ProductDetailPage from '@/pages/ProductDetailPage';
 import { StoreRouteGuard } from './StoreRouteGuard';
 import AdminProductFormPage from '@/pages/AdminProductFormPage';
+import AdminProductsPage from '@/pages/AdminProductPage';
 
 const PosPage = lazy(() => import('@/pages/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
@@ -44,6 +45,24 @@ export const appRouter = createBrowserRouter([
     ),
     children: [
       {
+        path: 'products',
+        element: (
+          <ProtectedRoleRoute
+            element={<AdminProductsPage />}
+            allowedRoles={[ROLES.INV_ADMIN]} // O ambos admins
+          />
+        ),
+      },
+      {
+        path: 'products/new',
+        element: (
+          <ProtectedRoleRoute
+            element={<AdminProductFormPage />}
+            allowedRoles={[ROLES.INV_ADMIN]}
+          />
+        ),
+      },
+      {
         path: 'users',
         // admin de roles
         element: (
@@ -59,15 +78,6 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoleRoute
             element={<AdminInventoryPage />}
-            allowedRoles={[ROLES.INV_ADMIN]}
-          />
-        ),
-      },
-      {
-        path: 'inventory/new',
-        element: (
-          <ProtectedRoleRoute
-            element={<AdminProductFormPage />}
             allowedRoles={[ROLES.INV_ADMIN]}
           />
         ),

@@ -112,7 +112,7 @@ export const useProductForm = () => {
     sizeIndex: number,
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const { name, value } = e.target; // ej: name="size", value="28 MX"
+    const { name, value } = e.target; // name="size", value="28 MX"
     setProduct((prev) => ({
       ...prev,
       variants: prev.variants?.map((variant, i) =>
@@ -173,7 +173,7 @@ export const useProductForm = () => {
     onSuccess: (data) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ['products'] }); // para que tanstack haga fetch la proxima vez
-      navigate('/admin/inventory'); // regresar a la tabla
+      navigate('/admin/products'); // regresar a la tabla
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Error al crear el producto');
