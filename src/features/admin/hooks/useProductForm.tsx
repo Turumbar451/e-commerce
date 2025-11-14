@@ -1,4 +1,3 @@
-// src/features/admin/hooks/useProductForm.ts
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -14,7 +13,7 @@ import {
   createProduct,
 } from '@/services/inventoryService';
 
-// Estructura de una variante nueva
+// estructura de una variante
 const newSizeTemplate: IProductSize = { size: '', stock: 0 };
 const newVariantTemplate: IProductVariant = {
   colorName: '',
@@ -23,7 +22,7 @@ const newVariantTemplate: IProductVariant = {
   sizes: [newSizeTemplate],
 };
 
-// Estado inicial del formulario
+// estado del formulario
 const initialProductState: Partial<IProductDetail> = {
   name: '',
   brand: '',
@@ -38,13 +37,11 @@ const initialProductState: Partial<IProductDetail> = {
 export const useProductForm = () => {
   const [product, setProduct] =
     useState<Partial<IProductDetail>>(initialProductState);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState<false | true>(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  // --- MANEJO DE ESTADO DEL FORMULARIO ---
-
-  // Campos base
+  // campos base
   const handleBaseChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -56,7 +53,7 @@ export const useProductForm = () => {
     }));
   };
 
-  // --- Variantes ---
+  //variantes
   const addVariant = () => {
     setProduct((prev) => ({
       ...prev,
@@ -75,7 +72,7 @@ export const useProductForm = () => {
     variantIndex: number,
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const { name, value } = e.target; // ej: name="colorName", value="Rojo"
+    const { name, value } = e.target; //  name="colorName", value="Rojo"
     setProduct((prev) => ({
       ...prev,
       variants: prev.variants?.map((variant, i) =>
@@ -84,7 +81,7 @@ export const useProductForm = () => {
     }));
   };
 
-  // --- Tallas (Dentro de Variantes) ---
+  // tallas dentro de variantes
   const addSize = (variantIndex: number) => {
     setProduct((prev) => ({
       ...prev,
@@ -136,7 +133,7 @@ export const useProductForm = () => {
     }));
   };
 
-  // --- Subida de Imágenes ---
+  // subida de imagenes
   const handleImageUpload = async (
     variantIndex: number,
     files: FileList | null
@@ -152,7 +149,7 @@ export const useProductForm = () => {
       );
       const urls = await Promise.all(uploadPromises);
 
-      // Añadir URLs a la variante correcta
+      // añadir urls a la variante correcta
       setProduct((prev) => ({
         ...prev,
         variants: prev.variants?.map((variant, i) =>
@@ -170,13 +167,13 @@ export const useProductForm = () => {
     }
   };
 
-  // --- Envío del Formulario ---
+  // envio del formulario
   const createProductMutation = useMutation({
     mutationFn: createProduct,
     onSuccess: (data) => {
       toast.success(data.message);
-      queryClient.invalidateQueries({ queryKey: ['products'] }); // Invalida la lista de productos
-      navigate('/admin/inventory'); // Regresa a la tabla
+      queryClient.invalidateQueries({ queryKey: ['products'] }); // para que tanstack haga fetch la proxima vez
+      navigate('/admin/inventory'); // regresar a la tabla
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Error al crear el producto');
@@ -185,7 +182,7 @@ export const useProductForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // --- VALIDACIONES ---
+    //validaciones-
     if (!product.name) {
       toast.error('El nombre del producto es obligatorio');
       return;
@@ -194,7 +191,7 @@ export const useProductForm = () => {
       toast.error('Debe haber al menos una variante');
       return;
     }
-    // (Puedes añadir más validaciones de SKU, tallas, etc.)
+    //! posiblemente añadir mas validaciones
 
     createProductMutation.mutate(product);
   };
@@ -203,6 +200,7 @@ export const useProductForm = () => {
     product,
     isUploading,
     isSaving: createProductMutation.isPending,
+
     handleBaseChange,
     addVariant,
     removeVariant,
