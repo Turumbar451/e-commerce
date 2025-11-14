@@ -2,9 +2,10 @@ import { useState, useEffect, type FormEvent } from 'react';
 
 // Tipo para los datos del usuario que esperamos del backend
 interface UserData {
-  nombre: string;
+  id: number; // o string, dependiendo de tu BD
   email: string;
-  
+  role: string;
+  nombre: string;
 }
 
 export const UserProfile = () => {
@@ -24,7 +25,8 @@ export const UserProfile = () => {
         setError(null);
 
         //Usamos la URL del backend
-        const response = await fetch('http://localhost:5173', {
+        //Usamos la URL del backend (¡Aquí va el puerto 3000!)
+      const response = await fetch('http://localhost:5173', {
           
           // ¡Esto es clave para que el 'VerifyToken' funcione!
           // Envía las cookies (incluyendo el token) al backend.
