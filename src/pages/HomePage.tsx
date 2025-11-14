@@ -24,7 +24,7 @@ export const HomePage = () => {
           </div>
         )}
 
-        {/*Si todo sale bien, renderizar la cuadricula */}
+        {/* renderizar cuadricula si no hay error*/}
         {products && <ProductGrid title="Novedades" products={products} />}
       </main>
 
