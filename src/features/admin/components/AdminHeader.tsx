@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ModeToggle } from '@/components/common/ModeToggle'; // Reutilizamos el modo oscuro
+import { ModeToggle } from '@/components/common/ModeToggle';
 import { Button } from '@/components/ui/button';
 
 const UserNav = () => {

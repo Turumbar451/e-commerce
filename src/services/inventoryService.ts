@@ -49,15 +49,20 @@ export const uploadToCloudinary = async (
     return data.secure_url; // Devuelve la URL segura
 };
 
-/**
- * 3. Envía el JSON completo del nuevo producto a nuestro backend
- */
+
+//enviar el JSON completo del nuevo producto al backend
 export const createProduct = async (
-    productData: Partial<IProductDetail> // Usamos Partial porque _id, etc. no irán
+    productData: Partial<IProductDetail> // usamos Partial porque _id, etc. no iran
 ): Promise<CreateProductResponse> => {
     const { data } = await api.post<CreateProductResponse>(
-        '/admini/products-v2', // Usamos el nuevo endpoint
+        '/admini/products-v2',
         productData
     );
+    return data;
+};
+
+//traer toda la data para el panel de admin de inventario
+export const getAdminProducts = async (): Promise<IProductDetail[]> => {
+    const { data } = await api.get<IProductDetail[]>('/admini/products');
     return data;
 };
