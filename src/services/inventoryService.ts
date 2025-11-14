@@ -12,6 +12,14 @@ interface SignatureResponse {
     cloud_name: string;
 }
 
+//pra la respuesta del kpi /api/admini/stats
+export interface InventoryStats {
+    totalItems: number;
+    onSaleCount: number;
+    lowStockCount: number;
+    noStockCount: number;
+}
+
 // Interfaz para la respuesta de creación
 interface CreateProductResponse {
     message: string;
@@ -64,5 +72,11 @@ export const createProduct = async (
 //traer toda la data para el panel de admin de inventario
 export const getAdminProducts = async (): Promise<IProductDetail[]> => {
     const { data } = await api.get<IProductDetail[]>('/admini/products');
+    return data;
+};
+
+//llama al endpoint del api que hace los calculos
+export const getInventoryStats = async (): Promise<InventoryStats> => {
+    const { data } = await api.get<InventoryStats>('/admini/stats');
     return data;
 };

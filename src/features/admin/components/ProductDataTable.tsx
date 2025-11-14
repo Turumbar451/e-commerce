@@ -14,53 +14,49 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Search } from 'lucide-react';
+import { Search, Plus, Minus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useAdminProducts } from '../hooks/useAdminProducts';
 import { Spinner } from '@/components/ui/spinner';
 import { formatCurrency } from '@/lib/formatters';
 
-export const ProductDataTable = () => {
-  const { products, isLoading, isError } = useAdminProducts();
-  //aplanar la data
-  //por cada talla se crea un producto
-  //se crea arreglo de productos
-  //por cada variante se crea un arreglo de arreglos de "tallas"
-  //por eso se aplana
-  //y asi hasta producto
-  const inventoryItems = products.flatMap((product) =>
-    product.variants.flatMap((variant) =>
-      variant.sizes.map((size) => ({
-        id: `${product._id}-${variant.sku}-${size.size}`, //id para la fila
-        name: product.name,
-        variantName: variant.colorName,
-        sku: variant.sku,
-        size: size.size,
-        stock: size.stock,
-        price: product.salePrice || product.price, // precio del producto padre
-        imageUrl: variant.images[0] || '/placeholder-shoe.jpg',
-        // logica de bajo stock
-        status:
-          size.stock === 0 ? 'Agotado' : size.stock < 10 ? 'Bajo' : 'Óptimo',
-      }))
-    )
-  );
+//!mover esto a un archivo de interfaces
+export interface InventoryItem {
+  id: string;
+  name: string;
+  variantName: string;
+  sku: string;
+  size: string;
+  stock: number;
+  price: number;
+  imageUrl: string;
+  status: 'Agotado' | 'Bajo' | 'Óptimo';
+}
+
+interface ProductDataTableProps {
+  items: InventoryItem[];
+  isLoading: boolean;
+  isError: boolean;
+}
+
+export const ProductDataTable = ({
+  items,
+  isLoading,
+  isError,
+}: ProductDataTableProps) => {
+  //!logica para abrir un modal que ajuste el stock
+  const handleAdjustStock = (item: InventoryItem, adjustment: number) => {
+    console.log(`Ajustar stock para ${item.sku} / ${item.size}:`, adjustment);
+    //!hacer una mutacion que llame a endpooint
+    //!PUT /api/admini/products/:sku/:size/stock o algo que aun no esta
+  };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Productos</CardTitle>
+        <CardTitle>Inventario por Talla</CardTitle>
         <CardDescription>
-          Busca, edita y gestiona todos los productos de tu tienda.
+          Filtra y ajusta el stock de cada SKU y talla
         </CardDescription>
         <div className="flex items-center gap-4 pt-4">
           <div className="relative flex-1">
@@ -79,11 +75,11 @@ export const ProductDataTable = () => {
               <TableHead>Stock</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead>Precio</TableHead>
-              <TableHead>Acciones</TableHead>
+              {/*ACCIONES*/}
+              <TableHead className="w-[100px]">Ajustar Stock</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {/* carga */}
             {isLoading && (
               <TableRow>
                 <TableCell colSpan={7} className="text-center h-24">
@@ -99,9 +95,8 @@ export const ProductDataTable = () => {
               </TableRow>
             )}
 
-            {/* data real*/}
             {!isLoading &&
-              inventoryItems.map((item) => (
+              items.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium flex items-center gap-3">
                     <img
@@ -129,22 +124,24 @@ export const ProductDataTable = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>{formatCurrency(item.price)}</TableCell>
+
                   <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                        <DropdownMenuItem>Editar</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">
-                          Eliminar
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleAdjustStock(item, 1)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleAdjustStock(item, -1)}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

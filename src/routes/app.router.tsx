@@ -11,7 +11,7 @@ import { ProtectedRoleRoute } from './ProtectedRoleRouter';
 import ProductDetailPage from '@/pages/ProductDetailPage';
 import { StoreRouteGuard } from './StoreRouteGuard';
 import AdminProductFormPage from '@/pages/AdminProductFormPage';
-import AdminProductsPage from '@/pages/AdminProductPage';
+import AdminProductsPage from '@/pages/AdminProductsPage';
 
 const PosPage = lazy(() => import('@/pages/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));

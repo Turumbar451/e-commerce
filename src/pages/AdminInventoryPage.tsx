@@ -5,14 +5,22 @@ import {
   type InventoryItem,
 } from '@/features/admin/components/ProductDataTable';
 import { useAdminProducts } from '@/features/admin/hooks/useAdminProducts';
+import { useAdminInventoryStats } from '@/features/admin/hooks/useAdminInventoryStats';
 import { Spinner } from '@/components/ui/spinner';
 import { Boxes, PackageX, Tag } from 'lucide-react';
 
 const AdminInventoryPage = () => {
-  const { products, isLoading } = useAdminProducts();
+  //tabla
+  const {
+    products,
+    isLoading: isLoadingTable,
+    isError: isErrorTable,
+  } = useAdminProducts();
+
+  // tarjetas
+  const { stats, isLoadingStats } = useAdminInventoryStats();
 
   const inventoryItems: InventoryItem[] = useMemo(() => {
-    // aplanar data
     return products.flatMap((product) =>
       product.variants.flatMap((variant) =>
         variant.sizes.map((size) => ({
@@ -31,21 +39,6 @@ const AdminInventoryPage = () => {
     );
   }, [products]);
 
-  const kpis = useMemo(() => {
-    const totalItems = inventoryItems.length;
-    const onSaleCount = products.filter(
-      (p) => p.salePrice && p.salePrice > 0
-    ).length;
-    const lowStockCount = inventoryItems.filter(
-      (item) => item.status === 'Bajo'
-    ).length;
-    const noStockCount = inventoryItems.filter(
-      (item) => item.status === 'Agotado'
-    ).length;
-
-    return { totalItems, onSaleCount, lowStockCount, noStockCount };
-  }, [products, inventoryItems]);
-
   const loadingValue = <Spinner className="h-5 w-5" />;
 
   return (
@@ -59,23 +52,23 @@ const AdminInventoryPage = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <StatCard
           title="Items de Inventario (SKU/Talla)"
-          value={isLoading ? loadingValue : kpis.totalItems.toString()}
+          value={isLoadingStats ? loadingValue : stats.totalItems.toString()}
           icon={<Boxes className="h-4 w-4 text-muted-foreground" />}
         />
         <StatCard
           title="Productos en Oferta (Modelos)"
-          value={isLoading ? loadingValue : kpis.onSaleCount.toString()}
+          value={isLoadingStats ? loadingValue : stats.onSaleCount.toString()}
           icon={<Tag className="h-4 w-4 text-muted-foreground" />}
         />
         <StatCard
           title="Bajo Stock (< 10)"
-          value={isLoading ? loadingValue : kpis.lowStockCount.toString()}
+          value={isLoadingStats ? loadingValue : stats.lowStockCount.toString()}
           icon={<PackageX className="h-4 w-4 text-destructive" />}
           variant="destructive"
         />
         <StatCard
           title="Sin Stock"
-          value={isLoading ? loadingValue : kpis.noStockCount.toString()}
+          value={isLoadingStats ? loadingValue : stats.noStockCount.toString()}
           icon={<PackageX className="h-4 w-4 text-destructive" />}
           variant="destructive"
         />
@@ -83,8 +76,8 @@ const AdminInventoryPage = () => {
 
       <ProductDataTable
         items={inventoryItems}
-        isLoading={isLoading}
-        isError={false}
+        isLoading={isLoadingTable}
+        isError={isErrorTable}
       />
     </div>
   );
