@@ -3,10 +3,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useProductFormContext } from '../../context/ProductFormContext';
+import { Button } from '@/components/ui/button';
+import { PlusCircle, Trash2 } from 'lucide-react';
+import { Separator } from '@radix-ui/react-dropdown-menu';
 
 export const ProductDetailsCard = () => {
-  const { product, handleBaseChange } = useProductFormContext();
-
+  const {
+    product,
+    handleBaseChange,
+    addDetail,
+    removeDetail,
+    handleDetailChange,
+  } = useProductFormContext();
   return (
     <Card>
       <CardHeader>
@@ -58,6 +66,57 @@ export const ProductDetailsCard = () => {
             />
           </div>
         </div>
+        <Separator className="my-6" />
+
+        <div className="space-y-3">
+          <Label className="text-base font-medium">
+            Detalles Adicionales (material superior, suela, tecnologia, tipo de
+            ciere)
+          </Label>
+          {product.details?.map((detail, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <Input
+                name="title"
+                value={detail.title}
+                onChange={(e) => handleDetailChange(index, e)}
+                placeholder="Título (Ej: Suela)"
+                className="w-1/3" // El título es más corto
+              />
+              <Input
+                name="content"
+                value={detail.content}
+                onChange={(e) => handleDetailChange(index, e)}
+                placeholder="Contenido (Ej: Goma de alta tracción)"
+                className="w-2/3" // El contenido es más largo
+              />
+
+              {/* Solo mostrar el botón de borrar si hay más de 1 */}
+              {(product.details?.length || 0) > 1 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="text-destructive shrink-0"
+                  onClick={() => removeDetail(index)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+          {/* Botón para añadir una nueva fila de "detalle" */}
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="w-full"
+            onClick={addDetail}
+          >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Agregar Detalle
+          </Button>
+        </div>
+        {/* --- FIN DE SECCIÓN NUEVA --- */}
       </CardContent>
     </Card>
   );

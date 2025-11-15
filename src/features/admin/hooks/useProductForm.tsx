@@ -35,12 +35,42 @@ const initialProductState: Partial<IProductDetail> = {
   variants: [newVariantTemplate],
 };
 
+const newDetailTemplate = { title: '', content: '' };
+
 export const useProductForm = () => {
   const [product, setProduct] =
     useState<Partial<IProductDetail>>(initialProductState);
   const [isUploading, setIsUploading] = useState<false | true>(false);
   const queryClient = useQueryClient();
+
   const navigate = useNavigate();
+
+  const addDetail = () => {
+    setProduct((prev) => ({
+      ...prev,
+      details: [...(prev.details || []), newDetailTemplate],
+    }));
+  };
+
+  const removeDetail = (detailIndex: number) => {
+    setProduct((prev) => ({
+      ...prev,
+      details: prev.details?.filter((_, i) => i !== detailIndex),
+    }));
+  };
+
+  const handleDetailChange = (
+    detailIndex: number,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target; // name será "title" o "content"
+    setProduct((prev) => ({
+      ...prev,
+      details: prev.details?.map((detail, i) =>
+        i === detailIndex ? { ...detail, [name]: value } : detail
+      ),
+    }));
+  };
 
   // campos base
   const handleBaseChange = (
@@ -229,5 +259,8 @@ export const useProductForm = () => {
     removeSize,
     handleSizeChange,
     handleImageUpload,
+    addDetail,
+    removeDetail,
+    handleDetailChange,
   };
 };
