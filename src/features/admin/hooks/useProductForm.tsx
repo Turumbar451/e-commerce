@@ -18,6 +18,7 @@ const newSizeTemplate: IProductSize = { size: '', stock: 0 };
 const newVariantTemplate: IProductVariant = {
   colorName: '',
   sku: '',
+  colorHex: '',
   images: [],
   sizes: [newSizeTemplate],
 };
@@ -46,13 +47,21 @@ export const useProductForm = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setProduct((prev) => ({
-      ...prev,
-      [name]:
-        name === 'price' || name === 'salePrice' ? parseFloat(value) : value,
-    }));
-  };
 
+    if (name === 'price' || name === 'salePrice') {
+      const numericValue = parseFloat(value);
+      setProduct((prev) => ({
+        ...prev,
+        [name]: isNaN(numericValue) ? '' : numericValue,
+      }));
+    } else {
+      setProduct((prev) => ({
+        ...prev,
+        [name]:
+          name === 'price' || name === 'salePrice' ? parseFloat(value) : value,
+      }));
+    }
+  };
   //variantes
   const addVariant = () => {
     setProduct((prev) => ({
@@ -113,6 +122,15 @@ export const useProductForm = () => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = e.target; // name="size", value="28 MX"
+
+    const getFinalValue = () => {
+      if (name === 'stock') {
+        const numericValue = parseInt(value, 10); // Siempre usa 'radix 10'
+        return isNaN(numericValue) ? '' : numericValue; // Si es NaN, guarda '', si no, el número
+      }
+      return value; // Si es 'size', solo guarda el string
+    };
+
     setProduct((prev) => ({
       ...prev,
       variants: prev.variants?.map((variant, i) =>
@@ -123,7 +141,7 @@ export const useProductForm = () => {
                 j === sizeIndex
                   ? {
                       ...size,
-                      [name]: name === 'stock' ? parseInt(value) : value,
+                      [name]: getFinalValue(), // Usar la nueva función
                     }
                   : size
               ),
@@ -133,19 +151,18 @@ export const useProductForm = () => {
     }));
   };
 
-  // subida de imagenes
+  //subida d eimagenes
   const handleImageUpload = async (
     variantIndex: number,
     files: FileList | null
   ) => {
     if (!files || files.length === 0) return;
     setIsUploading(true);
-    toast.loading('Subiendo imágenes...');
-
+    const toastId = toast.loading('Subiendo imágenes...');
     try {
-      const signature = await getCloudinarySignature();
-      const uploadPromises = Array.from(files).map((file) =>
-        uploadToCloudinary(file, signature)
+      const signature = await getCloudinarySignature(); //un permiso que pide al backend
+      const uploadPromises = Array.from(files).map(
+        (file) => uploadToCloudinary(file, signature) //enviar a cloudinary el archivo y el permiso
       );
       const urls = await Promise.all(uploadPromises);
 
@@ -158,9 +175,9 @@ export const useProductForm = () => {
             : variant
         ),
       }));
-      toast.success('Imágenes subidas correctamente');
+      toast.success('Imágenes subidas correctamente', { id: toastId });
     } catch (err) {
-      toast.error('Error al subir imágenes');
+      toast.error('Error al subir imágenes', { id: toastId });
       console.error(err);
     } finally {
       setIsUploading(false);
@@ -173,6 +190,7 @@ export const useProductForm = () => {
     onSuccess: (data) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ['products'] }); // para que tanstack haga fetch la proxima vez
+      queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
       navigate('/admin/products'); // regresar a la tabla
     },
     onError: (err: any) => {
@@ -193,14 +211,16 @@ export const useProductForm = () => {
     }
     //! posiblemente añadir mas validaciones
 
-    createProductMutation.mutate(product);
+    createProductMutation.mutate(product); // createProduct(product)
   };
 
   return {
-    product,
+    //*padre productForm
     isUploading,
     isSaving: createProductMutation.isPending,
+    handleSubmit,
 
+    product,
     handleBaseChange,
     addVariant,
     removeVariant,
@@ -209,6 +229,5 @@ export const useProductForm = () => {
     removeSize,
     handleSizeChange,
     handleImageUpload,
-    handleSubmit,
   };
 };

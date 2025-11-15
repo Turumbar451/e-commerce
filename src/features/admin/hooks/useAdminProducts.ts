@@ -1,8 +1,8 @@
-import { useQuery, keepPreviousData } from '@tanstack/react-query'; // 1. Importar 'keepPreviousData'
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import {
     getAdminProducts,
     type PaginatedAdminProducts,
-} from '@/services/inventoryService'; // 2. Importar el tipo de la respuesta
+} from '@/services/inventoryService';
 import { useState } from 'react';
 
 const ITEMS_PER_PAGE = 20;
@@ -17,8 +17,7 @@ export const useAdminProducts = () => {
         queryKey: ['adminProducts', page, ITEMS_PER_PAGE],
         queryFn: () => getAdminProducts(page, ITEMS_PER_PAGE),
 
-        // --- 3. ESTA ES LA CORRECCIÓN ---
-        // 'keepPreviousData' se usa así en v5
+
         placeholderData: keepPreviousData,
     });
 
@@ -29,6 +28,6 @@ export const useAdminProducts = () => {
         isError,
         error,
         page,
-        setPage, // Esto se retorna correctamente
+        setPage,
     };
 };

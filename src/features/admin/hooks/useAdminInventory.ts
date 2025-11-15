@@ -43,6 +43,7 @@ export const useAdminInventory = () => {
     }, [products]);
 
     const handlePrevPage = () => {
+        //math.max devuelve el numero mas grande (4,1) devuelve 4
         setPage((prev: number) => Math.max(prev - 1, 1));
     };
 
@@ -53,14 +54,15 @@ export const useAdminInventory = () => {
     };
 
     return {
-
-        inventoryItems,
         pagination,
         page,
         setPage,
-        isLoadingTable,
-        isErrorTable,
+
         handlePrevPage,
         handleNextPage,
+
+        inventoryItems,
+        isLoadingTable,
+        isErrorTable,
     };
 };

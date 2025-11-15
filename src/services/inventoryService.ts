@@ -42,9 +42,7 @@ export const getCloudinarySignature = async (): Promise<SignatureResponse> => {
     return data;
 };
 
-/**
- * 2. Sube un archivo directamente a Cloudinary
- */
+
 export const uploadToCloudinary = async (
     file: File,
     signatureData: SignatureResponse
@@ -54,7 +52,6 @@ export const uploadToCloudinary = async (
     formData.append('api_key', signatureData.api_key);
     formData.append('timestamp', signatureData.timestamp.toString());
     formData.append('signature', signatureData.signature);
-    // Opcional: define una carpeta en Cloudinary
     // formData.append('folder', 'ecommerce-products');
 
     const { data } = await axios.post(
@@ -62,7 +59,7 @@ export const uploadToCloudinary = async (
         formData
     );
 
-    return data.secure_url; // Devuelve la URL segura
+    return data.secure_url; // devuelve url
 };
 
 

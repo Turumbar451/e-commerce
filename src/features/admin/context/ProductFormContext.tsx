@@ -23,3 +23,22 @@ export const useProductFormContext = () => {
   }
   return context;
 };
+
+/* 
+  return {
+    //! productForm padre
+    isSaving: createProductMutation.isPending,
+    isUploading,
+    handleSubmit,
+    
+    product,
+    handleBaseChange,
+    addVariant,
+    removeVariant,
+    handleVariantChange,
+    addSize,
+    removeSize,
+    handleSizeChange,
+    handleImageUpload,
+  };
+*/
