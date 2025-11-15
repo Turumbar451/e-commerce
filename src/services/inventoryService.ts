@@ -25,7 +25,15 @@ interface CreateProductResponse {
     message: string;
     product_id: string;
 }
-
+export interface PaginatedAdminProducts {
+    data: IProductDetail[];
+    pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalProducts: number;
+        limit: number;
+    };
+}
 /**
  * 1. Pide una firma segura a nuestro backend
  */
@@ -70,8 +78,13 @@ export const createProduct = async (
 };
 
 //traer toda la data para el panel de admin de inventario
-export const getAdminProducts = async (): Promise<IProductDetail[]> => {
-    const { data } = await api.get<IProductDetail[]>('/admini/products');
+export const getAdminProducts = async (
+    page = 1,
+    limit = 20
+): Promise<PaginatedAdminProducts> => {
+    const { data } = await api.get<PaginatedAdminProducts>('/admini/products', {
+        params: { page, limit } //* ?page=1&limit=20
+    });
     return data;
 };
 
@@ -80,3 +93,5 @@ export const getInventoryStats = async (): Promise<InventoryStats> => {
     const { data } = await api.get<InventoryStats>('/admini/stats');
     return data;
 };
+
+

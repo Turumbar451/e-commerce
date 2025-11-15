@@ -12,6 +12,7 @@ const initialStats: InventoryStats = {
 
 //?este hook obtiene los kpis (estadisticas de las cards)
 export const useAdminInventoryStats = () => {
+
     const { data, isLoading, isError, error } = useQuery<InventoryStats, Error>({
         queryKey: ['adminInventoryStats'],
         queryFn: getInventoryStats,
