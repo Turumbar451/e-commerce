@@ -1,5 +1,7 @@
+// src/pages/ProfilePage.tsx
 import { Navbar } from "@/components/common/Navbar";
 import { UserProfile } from "@/features/user/UserProfile";
+import { UserAddresses } from "@/features/user/UserAddresses"; // <-- TU NOMBRE DE ARCHIVO
 
 const ProfilePage = () => {
   return (
@@ -12,6 +14,8 @@ const ProfilePage = () => {
         <div className="w-full max-w-md">
           
           <UserProfile />
+
+          <UserAddresses />
 
         </div>
       </main>

@@ -27,7 +27,7 @@ export const UserProfile = () => {
         //Usamos la URL del backend
         //Usamos la URL del backend (¡Aquí va el puerto 3000!)
       const response = await fetch('http://localhost:5173', {
-          
+          method: 'GET',
           // ¡Esto es clave para que el 'VerifyToken' funcione!
           // Envía las cookies (incluyendo el token) al backend.
           credentials: 'include' 
@@ -63,12 +63,36 @@ export const UserProfile = () => {
 
 
   // Esta es tu función original para ACTUALIZAR (futuro 'PUT' o 'PATCH')
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault(); 
-        
-    // Aquí iría la lógica para 'fetch' pero con método 'PUT'
-    console.log("Datos del perfil guardados:", { nombre, email });
-    alert("¡Perfil actualizado!"); // Un aviso simple
+
+    try {
+      // Usamos la misma URL (o la que tu backend designe para ACTUALIZAR)
+      const response = await fetch('http://localhost:5173/api/auth/profile', { // <-- 2. Revisa esta URL
+        method: 'PUT', // <-- 3. Especificamos el método
+        credentials: 'include', // <-- 4. Mantenemos las credenciales
+        headers: {
+          'Content-Type': 'application/json' // <-- 5. MUY importante: avisamos que enviamos JSON
+        },
+        body: JSON.stringify({ nombre, email }) // <-- 6. Enviamos los datos del estado
+      });
+
+      if (!response.ok) {
+        // Si el backend da un error (ej. validación falló)
+        throw new Error('No se pudo actualizar el perfil. Intenta de nuevo.');
+      }
+
+      // Si todo sale bien
+      alert("¡Perfil actualizado con éxito!");
+
+    } catch (err: any) {
+      // Si el 'fetch' falla (ej. sin conexión) o el backend dio error
+      console.error("Error al guardar:", err);
+      alert(`Error al guardar: ${err.message}`);
+    } finally {
+      // Quitar el estado de "guardando..."
+      // setSaving(false);
+    }
   };
 
   // --- CAMBIOS AÑADIDOS ---
