@@ -1,3 +1,4 @@
+'use client';
 import type { User } from '@/interfaces/auth';
 import { checkAuthStatus, logoutUser } from '@/services/authServices';
 import {
