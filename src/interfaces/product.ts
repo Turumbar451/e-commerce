@@ -23,4 +23,5 @@ export interface IProductForCard {
     price: number; // (Mapeado de precio_base)
     brand: string; // (Usaremos un placeholder)
     imageUrl: string; // (Usaremos un placeholder)
+    sku: string;
 }
