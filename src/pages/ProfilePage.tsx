@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 // src/pages/ProfilePage.tsx
 import { Navbar } from "@/components/common/Navbar";
 import { UserProfile } from "@/features/user/UserProfile";
 import { UserAddresses } from "@/features/user/UserAddresses"; // <-- TU NOMBRE DE ARCHIVO
+=======
+import { Navbar } from "@/components/common/Navbar";
+import { UserProfile } from "@/features/user/UserProfile";
+>>>>>>> main
 
 const ProfilePage = () => {
   return (
@@ -15,8 +20,11 @@ const ProfilePage = () => {
           
           <UserProfile />
 
+<<<<<<< HEAD
           <UserAddresses />
 
+=======
+>>>>>>> main
         </div>
       </main>
 
