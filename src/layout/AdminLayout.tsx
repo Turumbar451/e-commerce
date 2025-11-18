@@ -1,13 +1,17 @@
-import { Navbar } from '@/components/common/Navbar';
+import { AdminSidebar } from '@/features/admin/components/AdminSidebar';
 import { Outlet } from 'react-router';
+import { AdminHeader } from '@/features/admin/components/AdminHeader';
 
 export const AdminLayout = () => {
   return (
-    <div className="flex h-screen">
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar />
+    <div className="flex h-screen overflow-hidden bg-background">
+      <AdminSidebar />
 
-        <main className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden">
+        <AdminHeader />
+
+        {/*contendiodo de la pagina */}
+        <main className="flex-1 p-4 md:p-8">
           <Outlet />
         </main>
       </div>

@@ -1,9 +1,16 @@
-//este servicio se encargara de llamar al endpoint de productos
-
-import type { IProductFromApi } from '@/interfaces/product';
+import type { IProductDetail, IProductForCard } from '@/interfaces/product';
 import api from '@/lib/axios';
 
-export const getProducts = async (): Promise<IProductFromApi[]> => {
+export const getProducts = async (): Promise<IProductForCard[]> => {
     const { data } = await api.get('/products');
+    return data;
+};
+
+
+//para paginas detalladas
+export const getProductById = async (
+    productId: string
+): Promise<IProductDetail> => {
+    const { data } = await api.get<IProductDetail>(`/products/${productId}`);
     return data;
 };

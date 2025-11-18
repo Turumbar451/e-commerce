@@ -1,7 +1,5 @@
-// src/services/cartServices.ts
-import api from '@/lib/axios'; // Nuestra instancia de Axios configurada
+import api from '@/lib/axios';
 
-// Definimos la forma de un item del carrito (basado en la respuesta del backend)
 export interface ICartItem {
   sku: string;
   cantidad: number;
@@ -10,7 +8,18 @@ export interface ICartItem {
   precio: number;
 }
 
-// Definimos la respuesta de la API para GET /api/cart
+export interface AddToCartPayload {
+  sku: string;
+  //size: string; // <-- AÑADIR ESTO
+  cantidad: number;
+}
+
+export interface UpdateCartPayload {
+  sku: string;
+  size: string; // <-- AÑADIR ESTO
+  cantidad: number;
+}
+
 interface CartApiResponse {
   items: ICartItem[];
 }
@@ -23,18 +32,22 @@ export const getCart = async (): Promise<CartApiResponse> => {
 
 // POST /api/cart
 export const addToCart = async (payload: { sku: string; cantidad: number }) => {
+  // NOTA: Borra 'size' si lo tenías definido en la interfaz del payload aquí.
   const { data } = await api.post('/cart', payload);
   return data;
 };
 
-// PUT /api/cart/:sku
-export const updateCartItem = async (payload: { sku: string; cantidad: number }) => {
-  const { data } = await api.put(`/cart/${payload.sku}`, { cantidad: payload.cantidad });
+// PUT /api/cart/:sku/:size 
+export const updateCartItem = async (payload: UpdateCartPayload) => {
+  //creo que deberia incluir tamnien la talla...
+  const { sku, size, cantidad } = payload;
+  const { data } = await api.put(`/cart/${sku}/${encodeURIComponent(size)}`, { cantidad });
   return data;
 };
 
-// DELETE /api/cart/:sku
-export const removeFromCart = async (sku: string) => {
-  const { data } = await api.delete(`/cart/${sku}`);
+// DELETE /api/cart/:sku/:size
+export const removeFromCart = async (payload: { sku: string, size: string }) => {
+  const { sku, size } = payload;
+  const { data } = await api.delete(`/cart/${sku}/${encodeURIComponent(size)}`);
   return data;
 };

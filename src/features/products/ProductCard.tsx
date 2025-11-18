@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 // Hooks de nuestras features
 import { useCart } from '@/features/cart/hooks/useCart';
 import { useFavorites } from '@/features/favorites/hooks/useFavorites';
+import { Link } from 'react-router';
 
 // Formateador de moneda
 const formatCurrency = (value: number) => {
@@ -26,7 +27,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const { addItem, isAddingItem } = useCart();
   const { favoriteSKUs, addFavorite, removeFavorite } = useFavorites();
 
-  const sku = product.id; // <-- ESTO DEBE SER UN SKU REAL A FUTURO
+  const sku = product.sku; // <-- ESTO DEBE SER UN SKU REAL A FUTURO
   
   const isFavorite = favoriteSKUs.includes(sku);
 
@@ -63,8 +64,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   // --- Renderizado ---
   return (
-    // La tarjeta entera es un link a la pagina de detalle del producto
-    <a href={`/product/${product.id}`} className="group block">
+    //este es el momento en el que le pasamos el parametro (productId) y nuestro approuter lo detecta
+    <Link to={`/product/${product.id}`} className="group block">
       <Card className="border-none shadow-none rounded-lg overflow-hidden bg-transparent">
         <CardContent className="p-0 relative">
           {/* imagen del Producto */}
@@ -117,6 +118,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </Button>
         </CardFooter>
       </Card>
-    </a>
+    </Link>
   );
 };
