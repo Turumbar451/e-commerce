@@ -22,11 +22,10 @@ interface QuestionItem {
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [msg, setMsg] = useState('');
-  const [ok, setOk] = useState(false);
   const [resetToken, setResetToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -46,7 +45,6 @@ export default function ForgotPassword() {
     if (!email) return;
     setMsg('');
     setMessageVariant('neutral');
-    setOk(false);
     setResetToken('');
     setNewPassword('');
     setConfirmPassword('');
@@ -77,10 +75,10 @@ export default function ForgotPassword() {
       }));
       const res = await verifySecurityAnswers(email.trim(), payload);
       if (res.ok) {
-        setOk(true);
         setResetToken(res.resetToken ?? res.token ?? '');
         setMessageVariant('success');
         setMsg('Respuestas correctas. Ahora puedes continuar con el reseteo de contraseña.');
+        setStep(3);
       } else {
         setMessageVariant('error');
         setMsg('Respuestas incorrectas.');
@@ -132,7 +130,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-4">
-      <Card className="w-full max-w-lg">
+      <Card className="w-full max-w-2xl">
         <CardHeader>
           <CardTitle>Recuperar contraseña</CardTitle>
           <CardDescription>
@@ -142,7 +140,7 @@ export default function ForgotPassword() {
         <CardContent className="space-y-6">
           {step === 1 && (
             <form
-              className="space-y-4"
+              className="space-y-4 w-full"
               onSubmit={(e) => {
                 e.preventDefault();
                 loadQuestions();
@@ -152,10 +150,11 @@ export default function ForgotPassword() {
                 <Label htmlFor="forgot-email">Correo electrónico</Label>
                 <Input
                   id="forgot-email"
+                  type="email"
+                  className="w-full text-lg h-12"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="tu@correo.com"
-                  type="email"
                   required
                 />
               </div>
@@ -167,7 +166,7 @@ export default function ForgotPassword() {
 
           {step === 2 && (
             <form
-              className="space-y-4"
+              className="space-y-4 w-full"
               onSubmit={(e) => {
                 e.preventDefault();
                 submitAnswers();
@@ -177,6 +176,7 @@ export default function ForgotPassword() {
                 <div key={q.questionId} className="space-y-2">
                   <Label>{CATALOG[q.questionId] || q.questionId}</Label>
                   <Input
+                    className="w-full"
                     value={answers[q.questionId] || ''}
                     onChange={(e) => setAnswers((a) => ({ ...a, [q.questionId]: e.target.value }))}
                     placeholder="Respuesta"
@@ -190,9 +190,9 @@ export default function ForgotPassword() {
             </form>
           )}
 
-          {ok && (
+          {step === 3 && (
             <form
-              className="space-y-4 border-t pt-4"
+              className="space-y-4 border-t pt-4 w-full"
               onSubmit={(e) => {
                 e.preventDefault();
                 handleResetPassword();
@@ -202,6 +202,7 @@ export default function ForgotPassword() {
                 <Label htmlFor="new-password">Nueva contraseña</Label>
                 <PasswordInput
                   id="new-password"
+                  className="w-full"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
@@ -211,6 +212,7 @@ export default function ForgotPassword() {
                 <Label htmlFor="confirm-password">Confirmar contraseña</Label>
                 <PasswordInput
                   id="confirm-password"
+                  className="w-full"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
