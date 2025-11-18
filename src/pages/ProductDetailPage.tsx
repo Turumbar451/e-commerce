@@ -1,6 +1,6 @@
 import { Navbar } from '@/components/common/Navbar';
 import { BrandsFooter } from '@/components/common/BrandsFooter';
-import { ProductDetailView } from '@/features/products/components/ProductDetailView';
+import { ProductDetailView } from '@/features/products/ProductDetailView';
 
 const ProductDetailPage = () => {
   return (
