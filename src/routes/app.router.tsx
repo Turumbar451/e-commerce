@@ -7,11 +7,14 @@ import ProfilePage from '@/pages/ProfilePage';
 import { AdminLayout } from '@/layout/AdminLayout';
 import { lazy } from 'react';
 import { RegisterPage } from '@/pages/RegisterPage';
+import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { ProtectedRoleRoute } from './ProtectedRoleRouter';
 import ProductDetailPage from '@/pages/ProductDetailPage';
 import { StoreRouteGuard } from './StoreRouteGuard';
 import AdminProductFormPage from '@/pages/AdminProductFormPage';
 import AdminProductsPage from '@/pages/AdminProductsPage';
+import SecuritySetup from '@/features/security/SecuritySetup';
+import { Navbar } from '@/components/common/Navbar';
 
 const PosPage = lazy(() => import('@/pages/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
@@ -136,6 +139,21 @@ export const appRouter = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/security-setup',
+    element: (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="grow flex items-center justify-center p-4">
+          <SecuritySetup />
+        </main>
+      </div>
+    ),
   },
   {
     path: '*',
