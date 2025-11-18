@@ -71,3 +71,8 @@ export const getSecurityCatalog = async (): Promise<Array<{ id: string; label: s
 export const resetPasswordWithToken = async (payload: ResetPasswordPayload) => {
     await api.post('/auth/security/reset-password', payload);
 };
+
+export const verifyEmailApi = async (email: string, token: string) => {
+    const { data } = await api.post('/auth/verify', { email, token });
+    return data;
+};

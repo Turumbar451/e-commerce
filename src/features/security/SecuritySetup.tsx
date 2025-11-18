@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { setupSecurityQuestions, getSecurityCatalog } from '@/services/authServices';
 import { GlobalContext } from '@/context/GlobalContext';
+import type { ApiError } from '@/interfaces/auth';
+
 
 interface SelectedItem {
   id: string;
@@ -40,7 +42,7 @@ export default function SecuritySetup() {
         const arr = JSON.parse(raw) as Array<{ questionId: string; answer: string }>;
         if (Array.isArray(arr) && arr.length >= 2) {
           const mapped = arr.slice(0, 3).map((q) => ({ id: q.questionId, answer: q.answer }));
-          setSelected(mapped as any);
+          setSelected(mapped as SelectedItem[]);
         }
       }
     } catch {
@@ -113,9 +115,10 @@ export default function SecuritySetup() {
       });
 
       navigate('/', { replace: true });
-    } catch (error: any) {
-      console.error(error);
-      setMsg(error?.response?.data?.error || 'No se pudieron configurar las preguntas.');
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      console.error(apiError);
+      setMsg(apiError?.response?.data?.error || 'No se pudieron configurar las preguntas.');
     } finally {
       setLoading(false);
     }

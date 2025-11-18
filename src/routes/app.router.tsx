@@ -15,6 +15,7 @@ import AdminProductFormPage from '@/pages/AdminProductFormPage';
 import AdminProductsPage from '@/pages/AdminProductsPage';
 import SecuritySetup from '@/features/security/SecuritySetup';
 import { Navbar } from '@/components/common/Navbar';
+import VerifyPage from '@/pages/VerifyPage';
 
 const PosPage = lazy(() => import('@/pages/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
@@ -154,6 +155,10 @@ export const appRouter = createBrowserRouter([
         </main>
       </div>
     ),
+  },
+  {
+    path: '/verify',
+    element: <VerifyPage />,
   },
   {
     path: '*',

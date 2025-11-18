@@ -24,13 +24,24 @@ export interface UserSecurity {
     questions?: Array<{ questionId: string }>;
 }
 
+export interface ApiError {
+    response?: {
+        data?: {
+            error?: string;
+            message?: string;
+        };
+    };
+    message?: string;
+    status?: number;
+}
+
 export interface User {
     _id: string;
     email: string;
     nombre: string;
     apellido: string;
     role: 'cliente' | 'cajero' | 'admon_inventario' | 'admon_roles';
-    historial_compras: any[]; // esto en el futuro sera un tipo, hay que ver
+    historial_compras: []; // esto en el futuro sera un tipo, hay que ver
     emailVerified?: boolean;
     security?: UserSecurity;
     authProvider?: 'local' | 'google';
