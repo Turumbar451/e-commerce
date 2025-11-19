@@ -6,7 +6,7 @@ import {
 import { useState } from 'react';
 
 const ITEMS_PER_PAGE = 20;
-
+//hook para la paginaccion del admin
 export const useAdminProducts = () => {
     const [page, setPage] = useState(1);
 
@@ -18,7 +18,7 @@ export const useAdminProducts = () => {
         queryFn: () => getAdminProducts(page, ITEMS_PER_PAGE),
 
 
-        placeholderData: keepPreviousData,
+        placeholderData: keepPreviousData, // mantiene la data anterior mientras carga la nueva
     });
 
     return {

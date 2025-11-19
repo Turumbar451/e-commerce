@@ -31,9 +31,21 @@ export const useProductFormContext = () => {
     isUploading,
     handleSubmit,
     
+    //?productVariantsCard 
     product,
-    handleBaseChange,
     addVariant,
+    
+    //? productDetailCard
+    handleBaseChange,
+    addDetail,
+    removeDetail,
+    handleDetailChange,
+    product
+    
+    
+    //? productVariantItem
+     product,
+    isUploading,
     removeVariant,
     handleVariantChange,
     addSize,

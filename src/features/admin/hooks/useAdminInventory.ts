@@ -62,11 +62,11 @@ export const useAdminInventory = () => {
                 };
             });
 
-            return { previousData };
+            return { previousData }; //este objeto sera pasado como 3er argumento a onError, que se llamo context
         },
 
         // si hay error en el backend
-        onError: (err, newVariables, context) => {
+        onError: (err, newVariables, context) => { //context es {previousData}
             toast.error('Error al sincronizar stock. Deshaciendo cambios...');
             console.log(newVariables, err);
 
