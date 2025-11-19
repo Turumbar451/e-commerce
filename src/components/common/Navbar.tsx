@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+import { GlobalContext } from '@/context/GlobalContext';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -37,8 +39,9 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   const { performAuthenticatedAction } = useAuthenticatedAction();
-
-
+  
+  const { authStatus, user, logout } = useContext(GlobalContext);
+  const isAuthenticated = authStatus === 'authenticated' && !!user;   
 
   const handleGuestClick = () => {
 
@@ -148,17 +151,36 @@ export const Navbar = () => {
 
             </Button>
 
-            <Link to="/login">
+            {!isAuthenticated ? (
+  <Link to="/login">
+    <Button className="text-base cursor-pointer">
+      <User className="h-4 w-4 mr-2" />
+      Iniciar sesión
+    </Button>
+  </Link>
+) : (
+  <>
+    <Button
+      className="text-base cursor-pointer"
+      variant="ghost"
+      onClick={() => navigate('/profile')}
+    >
+      <User className="h-4 w-4 mr-2" />
+      {user?.nombre || 'Mi cuenta'}
+    </Button>
 
-              <Button className="text-base cursor-pointer">
-
-                <User className="h-4 w-4 mr-2" />
-
-                Iniciar sesión
-
-              </Button>
-
-            </Link>
+    <Button
+      className="text-base cursor-pointer"
+      variant="outline"
+      onClick={() => {
+        logout();
+        navigate('/');
+      }}
+    >
+      Cerrar sesión
+    </Button>
+  </>
+        )}
 
           </div>
 
@@ -242,29 +264,47 @@ export const Navbar = () => {
 
                 <div className="mt-8 flex flex-col gap-4">
 
+                 {/* En la sección móvil, reemplaza el botón de Carrito problemático por este */}
                   <Button
-
                     variant="outline"
-
                     className="text-base"
-
                     onClick={handleGuestClick}
-
                   >
-
                     <ShoppingCart className="h-4 w-4 mr-2" />
-
-                    Ver Carrito
-
+                    Ver Carrito {/* Ahora el ícono y el texto están dentro del botón */}
                   </Button>
 
-                  <Button className="text-base">
+                  {!isAuthenticated ? (
+                    <Link to="/login">
+                      <Button className="text-base w-full">
+                        <User className="h-4 w-4 mr-2" />
+                        Iniciar sesión
+                      </Button>
+                    </Link>
+                  ) : (
+                  <>
+                    <SheetClose asChild>
+                      <Button
+                        className="text-base w-full"
+                        onClick={() => navigate('/profile')}
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        Mi cuenta
+                      </Button>
+                    </SheetClose>
 
-                    <User className="h-4 w-4 mr-2" />
-
-                    Iniciar sesión
-
-                  </Button>
+                    <Button
+                      variant="outline"
+                      className="text-base w-full"
+                      onClick={() => {
+                        logout();
+                        navigate('/');
+                      }}
+                    >
+                      Cerrar sesión
+                    </Button>
+                  </>
+                )}
 
                 </div>
 
