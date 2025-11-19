@@ -7,15 +7,20 @@ import ProfilePage from '@/pages/ProfilePage';
 import { AdminLayout } from '@/layout/AdminLayout';
 import { lazy } from 'react';
 import { RegisterPage } from '@/pages/RegisterPage';
+import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { ProtectedRoleRoute } from './ProtectedRoleRouter';
 import ProductDetailPage from '@/pages/ProductDetailPage';
 import { StoreRouteGuard } from './StoreRouteGuard';
-import AdminProductFormPage from '@/pages/AdminProductFormPage';
-import AdminProductsPage from '@/pages/AdminProductsPage';
+import SecuritySetup from '@/features/security/SecuritySetup';
+import { Navbar } from '@/components/common/Navbar';
+import VerifyPage from '@/pages/VerifyPage';
 
-const PosPage = lazy(() => import('@/pages/PosPage'));
+const PosPage = lazy(() => import('@/pages/Cajero/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
 const AdminInventoryPage = lazy(() => import('@/pages/AdminInventoryPage'));
+const AdminDashboardPage = lazy(() => import('@/pages/AdminDashboardPage'));
+const AdminProductsPage = lazy(() => import('@/pages/AdminProductsPage'));
+const AdminProductFormPage = lazy(() => import('@/pages/AdminProductFormPage'));
 
 const ROLES = {
   ROLE_ADMIN: 'admon_roles',
@@ -54,6 +59,15 @@ export const appRouter = createBrowserRouter([
         ),
       },
       {
+        path: 'dashboard', // Nueva ruta
+        element: (
+          <ProtectedRoleRoute
+            element={<AdminDashboardPage />}
+            allowedRoles={[ROLES.INV_ADMIN]}
+          />
+        ),
+      },
+      {
         path: 'products/new',
         element: (
           <ProtectedRoleRoute
@@ -88,6 +102,33 @@ export const appRouter = createBrowserRouter([
   // rutas del cajero
   {
     path: '/pos',
+    element: (
+      <ProtectedRoleRoute
+        element={<PosPage />}
+        allowedRoles={[ROLES.CASHIER]}
+      />
+    ),
+  },
+  {
+    path: '/pos/search',
+    element: (
+      <ProtectedRoleRoute
+        element={<PosPage />}
+        allowedRoles={[ROLES.CASHIER]}
+      />
+    ),
+  },
+  {
+    path: '/pos/sale',
+    element: (
+      <ProtectedRoleRoute
+        element={<PosPage />}
+        allowedRoles={[ROLES.CASHIER]}
+      />
+    ),
+  },
+  {
+    path: '/pos/close',
     element: (
       <ProtectedRoleRoute
         element={<PosPage />}
@@ -136,6 +177,25 @@ export const appRouter = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/security-setup',
+    element: (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="grow flex items-center justify-center p-4">
+          <SecuritySetup />
+        </main>
+      </div>
+    ),
+  },
+  {
+    path: '/verify',
+    element: <VerifyPage />,
   },
   {
     path: '*',

@@ -3,7 +3,6 @@ import {
   LayoutDashboard,
   Package,
   ShoppingCart,
-  Users,
   Warehouse,
   LogOut,
   Settings,
@@ -66,11 +65,6 @@ export const AdminSidebar = () => {
           to="/admin/inventory"
           label="Inventario"
           icon={<Warehouse className="mr-2 h-4 w-4" />}
-        />
-        <SidebarLink
-          to="/admin/users"
-          label="Usuarios"
-          icon={<Users className="mr-2 h-4 w-4" />}
         />
       </nav>
 

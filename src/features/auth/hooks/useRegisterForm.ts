@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { registerUser } from '@/services/authServices';
-import type { RegisterPayload } from '@/interfaces/auth';
+import type { RegisterPayload, ApiError } from '@/interfaces/auth';
 
 export const useRegisterForm = () => {
     const [name, setName] = useState('');
@@ -21,16 +21,25 @@ export const useRegisterForm = () => {
             toast.success(data.message || "Usuario creado. Revisa tu correo.");
             // tal vez redirigir a /login o a una pagina de "verifica email"
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
             // mostar error de api
-            const errorMessage = err.response?.data?.error || "Error al registrarse.";
+            let errorMessage = "Error al registrarse.";
+            
+            if (err && typeof err === 'object' && 'response' in err) {
+                const errorResponse = err as ApiError;
+                errorMessage = errorResponse.response?.data?.error || errorMessage;
+            } else if (err && typeof err === 'object' && 'message' in err) {
+                const errorResponse = err as ApiError;
+                errorMessage = errorResponse.message || errorMessage;
+            }
+            
             setError(errorMessage);
             console.log(errorMessage);
 
         }
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent, securityQuestions?: Array<{ questionId: string; answer: string }>) => {
         e.preventDefault();
         setError(null); //limpiar error previo
 
@@ -43,7 +52,8 @@ export const useRegisterForm = () => {
             nombre: name,
             apellido: apellido || undefined, // undefined por si esta vacio
             email,
-            password
+            password,
+            securityQuestions
         });
     };
 

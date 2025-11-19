@@ -34,9 +34,8 @@ export interface PaginatedAdminProducts {
         limit: number;
     };
 }
-/**
- * 1. Pide una firma segura a nuestro backend
- */
+
+//pedir firma segura al backend
 export const getCloudinarySignature = async (): Promise<SignatureResponse> => {
     const { data } = await api.get<SignatureResponse>('/admini/upload-signature');
     return data;
@@ -92,3 +91,22 @@ export const getInventoryStats = async (): Promise<InventoryStats> => {
 };
 
 
+export const adjustProductStock = async (
+    sku: string,
+    size: string,
+    adjustment: number
+): Promise<{ message: string }> => {
+    const { data } = await api.patch('/admini/stock/adjust', {
+        sku,
+        size,
+        adjustment,
+    });
+    return data;
+};
+
+
+//eliminar producto completo por ID
+export const deleteProductService = async (productId: string): Promise<{ message: string }> => {
+    const { data } = await api.delete<{ message: string }>(`/admini/products/${productId}`);
+    return data;
+};
