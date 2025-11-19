@@ -1,4 +1,3 @@
-'use client';
 import type { User } from '@/interfaces/auth';
 import { checkAuthStatus, logoutUser } from '@/services/authServices';
 import {
@@ -6,7 +5,8 @@ import {
   useEffect,
   useState,
   type PropsWithChildren,
-} from 'react';
+} 
+from 'react';
 import { toast } from 'sonner';
 
 type statusOption = 'checking' | 'authenticated' | 'not-authenticated';
@@ -66,7 +66,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
   };
 
   return (
-    <GlobalContext
+    <GlobalContext.Provider
       value={{
         authStatus: auth.authStatus,
         user: auth.user,
@@ -75,6 +75,6 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
       }}
     >
       {children}
-    </GlobalContext>
+    </GlobalContext.Provider>
   );
 };
