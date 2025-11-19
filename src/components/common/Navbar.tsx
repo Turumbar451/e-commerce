@@ -7,11 +7,13 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@/components/ui/sheet';
-import { ShoppingCart, User, Menu } from 'lucide-react';
+import { ShoppingCart, User, LogOut, Menu } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import { MyLogoSvg } from '@/components/MyLogoSvg';
 import { ModeToggle } from '@/components/common/ModeToggle';
 import { useAuthenticatedAction } from '@/hooks/useAuthenticatedAction';
+import { useContext } from 'react';
+import { GlobalContext } from '@/context/GlobalContext';
 
 const navLinks = [
   { href: '/hombres', label: 'Hombres' },
@@ -22,12 +24,18 @@ const navLinks = [
 export const Navbar = () => {
   const navigate = useNavigate();
   const { performAuthenticatedAction } = useAuthenticatedAction();
+  const { authStatus, user, logout } = useContext(GlobalContext);
 
   const handleGuestClick = () => {
     performAuthenticatedAction(
       () => navigate('/cart'),
       'Inicia sesión para ver tu carrito'
     );
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
   };
 
   return (
@@ -66,7 +74,7 @@ export const Navbar = () => {
 
         {/* derecha */}
         <div className="flex items-center gap-2 md:gap-4">
-          {/* carrito e inicion de sesion pc */}
+          {/* carrito e inicio/cierre de sesión pc */}
           <div className="hidden md:flex items-center gap-2  ">
             <Button
               className="cursor-pointer"
@@ -77,12 +85,29 @@ export const Navbar = () => {
             >
               <ShoppingCart className="h-5 w-5 text-foreground/70" />
             </Button>
-            <Link to="/login">
-              <Button className="text-base cursor-pointer">
-                <User className="h-4 w-4 mr-2" />
-                Iniciar sesión
-              </Button>
-            </Link>
+
+            {authStatus === 'authenticated' ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-foreground/70 hidden lg:inline-block">
+                  {user?.nombre ?? 'Usuario'}
+                </span>
+                <Button
+                  className="text-base cursor-pointer"
+                  variant="outline"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Cerrar sesión
+                </Button>
+              </div>
+            ) : (
+              <Link to="/login">
+                <Button className="text-base cursor-pointer">
+                  <User className="h-4 w-4 mr-2" />
+                  Iniciar sesión
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* menu telefono (HAMBURRGUESA)  */}
