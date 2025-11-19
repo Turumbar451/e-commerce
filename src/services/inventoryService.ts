@@ -92,3 +92,15 @@ export const getInventoryStats = async (): Promise<InventoryStats> => {
 };
 
 
+export const adjustProductStock = async (
+    sku: string,
+    size: string,
+    adjustment: number
+): Promise<{ message: string }> => {
+    const { data } = await api.patch('/admini/stock/adjust', {
+        sku,
+        size,
+        adjustment,
+    });
+    return data;
+};

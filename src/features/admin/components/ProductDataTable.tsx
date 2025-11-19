@@ -37,20 +37,17 @@ interface ProductDataTableProps {
   items: InventoryItem[];
   isLoading: boolean;
   isError: boolean;
+  onAdjustStock: (sku: string, size: string, adjustment: number) => void;
+  isAdjusting: boolean;
 }
 
 export const ProductDataTable = ({
   items,
   isLoading,
   isError,
+  onAdjustStock,
+  isAdjusting,
 }: ProductDataTableProps) => {
-  //!logica para abrir un modal que ajuste el stock
-  const handleAdjustStock = (item: InventoryItem, adjustment: number) => {
-    console.log(`Ajustar stock para ${item.sku} / ${item.size}:`, adjustment);
-    //!hacer una mutacion que llame a endpooint
-    //!PUT /api/admini/products/:sku/:size/stock o algo que aun no esta
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -130,14 +127,16 @@ export const ProductDataTable = ({
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => handleAdjustStock(item, 1)}
+                        onClick={() => onAdjustStock(item.sku, item.size, 1)}
+                        disabled={isAdjusting}
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => handleAdjustStock(item, -1)}
+                        onClick={() => onAdjustStock(item.sku, item.size, -1)}
+                        disabled={isAdjusting || item.stock <= 0} //bloquear mientras se manda o si es 0
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
