@@ -17,7 +17,6 @@ const AdminInventoryPage = () => {
     handleNextPage,
 
     handleAdjustStock,
-    isAdjusting,
   } = useAdminInventory(); //tabla general
 
   const isLoading = isLoadingStats || isLoadingTable;
@@ -36,7 +35,6 @@ const AdminInventoryPage = () => {
         isLoading={isLoading}
         isError={isError}
         onAdjustStock={handleAdjustStock}
-        isAdjusting={isAdjusting}
       />
 
       <div className="flex items-center justify-end space-x-2 py-4">

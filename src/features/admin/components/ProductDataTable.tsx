@@ -38,7 +38,6 @@ interface ProductDataTableProps {
   isLoading: boolean;
   isError: boolean;
   onAdjustStock: (sku: string, size: string, adjustment: number) => void;
-  isAdjusting: boolean;
 }
 
 export const ProductDataTable = ({
@@ -46,7 +45,6 @@ export const ProductDataTable = ({
   isLoading,
   isError,
   onAdjustStock,
-  isAdjusting,
 }: ProductDataTableProps) => {
   return (
     <Card>
@@ -128,7 +126,6 @@ export const ProductDataTable = ({
                         variant="outline"
                         size="icon"
                         onClick={() => onAdjustStock(item.sku, item.size, 1)}
-                        disabled={isAdjusting}
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
@@ -136,7 +133,7 @@ export const ProductDataTable = ({
                         variant="outline"
                         size="icon"
                         onClick={() => onAdjustStock(item.sku, item.size, -1)}
-                        disabled={isAdjusting || item.stock <= 0} //bloquear mientras se manda o si es 0
+                        disabled={item.stock <= 0} //bloquear mientras se manda o si es 0
                       >
                         <Minus className="h-4 w-4" />
                       </Button>

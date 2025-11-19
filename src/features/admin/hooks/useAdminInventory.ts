@@ -7,7 +7,7 @@ import type {
 } from '@/interfaces/product';
 import type { InventoryItem } from '../components/ProductDataTable';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { adjustProductStock } from '@/services/inventoryService';
+import { adjustProductStock, type PaginatedAdminProducts } from '@/services/inventoryService';
 import { toast } from 'sonner';
 
 
@@ -26,14 +26,62 @@ export const useAdminInventory = () => {
     const stockMutation = useMutation({
         mutationFn: ({ sku, size, adjustment }: { sku: string; size: string; adjustment: number }) =>
             adjustProductStock(sku, size, adjustment),
-        onSuccess: () => {
-            toast.success('Stock actualizado');
-            // invalidar para recargar tabla y estadisticas
+
+        // antes de que la mutacion se ejecute, o sea antes de que el backend responda
+        onMutate: async ({ sku, size, adjustment }) => {
+            // cancelar cualquier consulta en curso sobre productos admin
+            await queryClient.cancelQueries({ queryKey: ['adminProducts', page, 20] });
+
+            //guardar datos previos a la mutacion por si har que revertir
+            const previousData = queryClient.getQueryData(['adminProducts', page, 20]);
+
+            // actualizar la UI de forma optimista
+            queryClient.setQueryData(['adminProducts', page, 20], (old: PaginatedAdminProducts | undefined) => {
+                if (!old) return old;
+
+                // en base a old, 
+                return {
+                    ...old,
+
+                    data: old.data.map((product) => ({
+                        ...product,
+                        variants: product.variants.map((variant) => {
+                            // buscar la variante correcta
+                            if (variant.sku !== sku) return variant;
+
+                            return {
+                                ...variant,
+                                sizes: variant.sizes.map((s) => {
+                                    // buscar la talla correcta y ajustar stock
+                                    if (s.size !== size) return s;
+                                    return { ...s, stock: s.stock + adjustment };
+                                }),
+                            };
+                        }),
+                    })),
+                };
+            });
+
+            return { previousData };
+        },
+
+        // si hay error en el backend
+        onError: (err, newVariables, context) => {
+            toast.error('Error al sincronizar stock. Deshaciendo cambios...');
+            console.log(newVariables, err);
+
+            //revertir cambios guardados
+            if (context?.previousData) {
+                queryClient.setQueryData(['adminProducts', page, 20], context.previousData);
+
+            }
+        },
+
+        //cuanto termine (bien o mal)
+        onSettled: () => {
+            // refrescar datos
             queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
             queryClient.invalidateQueries({ queryKey: ['adminInventoryStats'] });
-        },
-        onError: () => {
-            toast.error('No se pudo ajustar el stock (¿Insuficiente?)');
         },
     });
 
@@ -87,7 +135,6 @@ export const useAdminInventory = () => {
         handleNextPage,
 
         handleAdjustStock,
-        isAdjusting: stockMutation.isPending,
 
         inventoryItems,
         isLoadingTable,
