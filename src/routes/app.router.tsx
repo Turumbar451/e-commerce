@@ -11,8 +11,6 @@ import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { ProtectedRoleRoute } from './ProtectedRoleRouter';
 import ProductDetailPage from '@/pages/ProductDetailPage';
 import { StoreRouteGuard } from './StoreRouteGuard';
-import AdminProductFormPage from '@/pages/AdminProductFormPage';
-import AdminProductsPage from '@/pages/AdminProductsPage';
 import SecuritySetup from '@/features/security/SecuritySetup';
 import { Navbar } from '@/components/common/Navbar';
 import VerifyPage from '@/pages/VerifyPage';
@@ -20,6 +18,9 @@ import VerifyPage from '@/pages/VerifyPage';
 const PosPage = lazy(() => import('@/pages/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
 const AdminInventoryPage = lazy(() => import('@/pages/AdminInventoryPage'));
+const AdminDashboardPage = lazy(() => import('@/pages/AdminDashboardPage'));
+const AdminProductsPage = lazy(() => import('@/pages/AdminProductsPage'));
+const AdminProductFormPage = lazy(() => import('@/pages/AdminProductFormPage'));
 
 const ROLES = {
   ROLE_ADMIN: 'admon_roles',
@@ -54,6 +55,15 @@ export const appRouter = createBrowserRouter([
           <ProtectedRoleRoute
             element={<AdminProductsPage />}
             allowedRoles={[ROLES.INV_ADMIN]} // O ambos admins
+          />
+        ),
+      },
+      {
+        path: 'dashboard', // Nueva ruta
+        element: (
+          <ProtectedRoleRoute
+            element={<AdminDashboardPage />}
+            allowedRoles={[ROLES.INV_ADMIN]}
           />
         ),
       },
