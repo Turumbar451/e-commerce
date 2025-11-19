@@ -17,7 +17,7 @@ import SecuritySetup from '@/features/security/SecuritySetup';
 import { Navbar } from '@/components/common/Navbar';
 import VerifyPage from '@/pages/VerifyPage';
 
-const PosPage = lazy(() => import('@/pages/PosPage'));
+const PosPage = lazy(() => import('@/pages/Cajero/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
 const AdminInventoryPage = lazy(() => import('@/pages/AdminInventoryPage'));
 
