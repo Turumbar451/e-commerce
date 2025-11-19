@@ -99,6 +99,33 @@ export const appRouter = createBrowserRouter([
       />
     ),
   },
+  {
+    path: '/pos/search',
+    element: (
+      <ProtectedRoleRoute
+        element={<PosPage />}
+        allowedRoles={[ROLES.CASHIER]}
+      />
+    ),
+  },
+  {
+    path: '/pos/sale',
+    element: (
+      <ProtectedRoleRoute
+        element={<PosPage />}
+        allowedRoles={[ROLES.CASHIER]}
+      />
+    ),
+  },
+  {
+    path: '/pos/close',
+    element: (
+      <ProtectedRoleRoute
+        element={<PosPage />}
+        allowedRoles={[ROLES.CASHIER]}
+      />
+    ),
+  },
 
   // rutas del cliente
   {

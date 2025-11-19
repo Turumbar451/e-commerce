@@ -1,71 +1,24 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useProducts } from '@/features/products/hooks/useProducts';
 import type { IProductForCard } from '@/interfaces/product';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { GlobalContext } from '@/context/GlobalContext';
-import { useNavigate } from 'react-router';
+import { NavbarCashier } from './NavbarCashier';
+import { useLocation } from 'react-router';
 
 type CashierView = 'search' | 'sale' | 'close';
 
-interface CashierNavbarProps {
-  activeView: CashierView;
-  onChangeView: (view: CashierView) => void;
-}
-
-const CashierNavbar = ({ activeView, onChangeView }: CashierNavbarProps) => {
-  const { logout } = useContext(GlobalContext);
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
-
-  return (
-    <div className="flex items-center justify-between gap-3 border-b pb-3 flex-wrap">
-      <div className="flex flex-wrap gap-2">
-        <Button
-          type="button"
-          variant={activeView === 'search' ? 'default' : 'outline'}
-          onClick={() => onChangeView('search')}
-        >
-          Búsqueda de productos
-        </Button>
-        <Button
-          type="button"
-          variant={activeView === 'sale' ? 'default' : 'outline'}
-          onClick={() => onChangeView('sale')}
-        >
-          Venta de productos
-        </Button>
-        <Button
-          type="button"
-          variant={activeView === 'close' ? 'default' : 'outline'}
-          onClick={() => onChangeView('close')}
-        >
-          Cierre de caja
-        </Button>
-      </div>
-
-      <Button
-        type="button"
-        variant="outline"
-        className="whitespace-nowrap"
-        onClick={handleLogout}
-      >
-        Cerrar sesión
-      </Button>
-    </div>
-  );
-};
-
 const PosPage = () => {
-  const [activeView, setActiveView] = useState<CashierView>('search');
   const [search, setSearch] = useState('');
 
   const { products, isLoading, isError } = useProducts();
+
+   const location = useLocation();
+   const path = location.pathname;
+   let activeView: CashierView = 'sale';
+   if (path.endsWith('/search')) activeView = 'search';
+   else if (path.endsWith('/close')) activeView = 'close';
 
   const filteredProducts: IProductForCard[] | undefined = products?.filter((p) => {
     const q = search.trim().toLowerCase();
@@ -77,8 +30,10 @@ const PosPage = () => {
   });
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center bg-background text-foreground px-4 py-6">
-      <Card className="w-full max-w-5xl">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <NavbarCashier />
+      <main className="flex-1 flex items-start justify-center px-4 py-6">
+        <Card className="w-full max-w-5xl">
         <CardHeader>
           <CardTitle className="text-2xl">Panel de cajero</CardTitle>
           <CardDescription>
@@ -86,8 +41,6 @@ const PosPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Navbar del cajero */}
-          <CashierNavbar activeView={activeView} onChangeView={setActiveView} />
 
           {/* Vista: Búsqueda de productos */}
           {activeView === 'search' && (
@@ -167,64 +120,65 @@ const PosPage = () => {
           )}
 
           {/* Vista: Cierre de caja */}
-          {activeView === 'close' && (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Registra el cierre de caja al final del turno. Por ahora es solo un formulario de ejemplo.
-              </p>
-              <form
-                className="space-y-4 max-w-md"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  // Placeholder: aquí podrías enviar los datos al backend
-                  console.log('Cierre de caja enviado (pendiente de implementación)');
-                }}
-              >
-                <div className="space-y-1">
-                  <label className="text-sm font-medium" htmlFor="initial-cash">
-                    Efectivo inicial de caja
-                  </label>
-                  <Input
-                    id="initial-cash"
-                    type="number"
-                    min={0}
-                    step={0.01}
-                    placeholder="Ej. 1000"
-                  />
-                </div>
+            {activeView === 'close' && (
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Registra el cierre de caja al final del turno. Por ahora es solo un formulario de ejemplo.
+                </p>
+                <form
+                  className="space-y-4 max-w-md"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    // Placeholder: aquí podrías enviar los datos al backend
+                    console.log('Cierre de caja enviado (pendiente de implementación)');
+                  }}
+                >
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium" htmlFor="initial-cash">
+                      Efectivo inicial de caja
+                    </label>
+                    <Input
+                      id="initial-cash"
+                      type="number"
+                      min={0}
+                      step={0.01}
+                      placeholder="Ej. 1000"
+                    />
+                  </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-medium" htmlFor="final-cash">
-                    Efectivo final en caja
-                  </label>
-                  <Input
-                    id="final-cash"
-                    type="number"
-                    min={0}
-                    step={0.01}
-                    placeholder="Ej. 3250"
-                  />
-                </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium" htmlFor="final-cash">
+                      Efectivo final en caja
+                    </label>
+                    <Input
+                      id="final-cash"
+                      type="number"
+                      min={0}
+                      step={0.01}
+                      placeholder="Ej. 3250"
+                    />
+                  </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-medium" htmlFor="notes">
-                    Notas del turno
-                  </label>
-                  <textarea
-                    id="notes"
-                    className="w-full min-h-[80px] rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    placeholder="Diferencias, incidencias, etc."
-                  />
-                </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium" htmlFor="notes">
+                      Notas del turno
+                    </label>
+                    <textarea
+                      id="notes"
+                      className="w-full min-h-[80px] rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      placeholder="Diferencias, incidencias, etc."
+                    />
+                  </div>
 
-                <Button type="submit" className="w-full md:w-auto">
-                  Registrar cierre de caja (demo)
-                </Button>
-              </form>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                  <Button type="submit" className="w-full md:w-auto">
+                    Registrar cierre de caja (demo)
+                  </Button>
+                </form>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </main>
     </div>
   );
 };
