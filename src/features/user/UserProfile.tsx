@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8c34dcea0a629afaea65840db0d17034cb192f14
 import { useContext, useState, type FormEvent } from "react";
 import { GlobalContext } from "@/context/GlobalContext";
 
@@ -16,6 +19,7 @@ export const UserProfile = () => {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     alert("Aquí iría la actualización (aún no implementada en tu backend)");
+<<<<<<< HEAD
 =======
 import { useState, type FormEvent } from 'react';
 
@@ -32,11 +36,16 @@ export const UserProfile = () => {
     console.log("Datos del perfil guardados:", { name, email });
     alert("¡Perfil actualizado!"); // Un aviso simple
 >>>>>>> main
+=======
+>>>>>>> 8c34dcea0a629afaea65840db0d17034cb192f14
   };
 
   return (
     <div className="w-full">
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8c34dcea0a629afaea65840db0d17034cb192f14
       <h2 className="text-2xl font-bold text-center mb-6">Mi Perfil</h2>
 
       <form onSubmit={handleSubmit}>
@@ -46,6 +55,7 @@ export const UserProfile = () => {
             className="w-full p-2 border rounded"
             value={name}
             onChange={(e) => setName(e.target.value)}
+<<<<<<< HEAD
 =======
       <h2 className="text-2xl font-bold text-center mb-6">
         Mi Perfil
@@ -66,11 +76,16 @@ export const UserProfile = () => {
             onChange={(e) => setName(e.target.value)} 
             required
 >>>>>>> main
+=======
+>>>>>>> 8c34dcea0a629afaea65840db0d17034cb192f14
           />
         </div>
 
         <div className="mb-6">
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8c34dcea0a629afaea65840db0d17034cb192f14
           <label className="block mb-2">Email</label>
           <input
             className="w-full p-2 border rounded"
@@ -82,6 +97,7 @@ export const UserProfile = () => {
 
         <button className="w-full bg-blue-600 text-white p-2 rounded">
           Guardar cambios
+<<<<<<< HEAD
 =======
           <label htmlFor="email" className="block text-sm font-medium mb-2">
             Email
@@ -103,12 +119,18 @@ export const UserProfile = () => {
         >
           Guardar Cambios
 >>>>>>> main
+=======
+>>>>>>> 8c34dcea0a629afaea65840db0d17034cb192f14
         </button>
       </form>
     </div>
   );
 <<<<<<< HEAD
+<<<<<<< HEAD
 };
 =======
 };
 >>>>>>> main
+=======
+};
+>>>>>>> 8c34dcea0a629afaea65840db0d17034cb192f14
