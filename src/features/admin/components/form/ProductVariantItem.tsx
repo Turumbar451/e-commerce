@@ -50,13 +50,7 @@ export const ProductVariantItem = ({ variantIndex }: Props) => {
           placeholder="Nombre (Ej: Marrón Coyote)"
           required
         />
-        <Input
-          name="sku"
-          value={variant.sku}
-          onChange={(e) => handleVariantChange(variantIndex, e)}
-          placeholder="SKU (Ej: AP-BOTA-COY-01)"
-          required
-        />
+
         <Input
           name="colorHex"
           value={variant.colorHex}

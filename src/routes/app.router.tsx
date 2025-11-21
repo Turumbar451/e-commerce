@@ -14,13 +14,22 @@ import { StoreRouteGuard } from './StoreRouteGuard';
 import SecuritySetup from '@/features/security/SecuritySetup';
 import { Navbar } from '@/components/common/Navbar';
 import VerifyPage from '@/pages/VerifyPage';
+import AdminProductEditPage from '@/pages/AdminInventory/AdminProductEditPage';
 
 const PosPage = lazy(() => import('@/pages/Cajero/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
-const AdminInventoryPage = lazy(() => import('@/pages/AdminInventoryPage'));
-const AdminDashboardPage = lazy(() => import('@/pages/AdminDashboardPage'));
-const AdminProductsPage = lazy(() => import('@/pages/AdminProductsPage'));
-const AdminProductFormPage = lazy(() => import('@/pages/AdminProductFormPage'));
+const AdminInventoryPage = lazy(
+  () => import('@/pages/AdminInventory/AdminInventoryPage')
+);
+const AdminDashboardPage = lazy(
+  () => import('@/pages/AdminInventory/AdminDashboardPage')
+);
+const AdminProductsPage = lazy(
+  () => import('@/pages/AdminInventory/AdminProductsPage')
+);
+const AdminProductFormPage = lazy(
+  () => import('@/pages/AdminInventory/AdminProductFormPage')
+);
 
 const ROLES = {
   ROLE_ADMIN: 'admon_roles',
@@ -92,6 +101,15 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoleRoute
             element={<AdminInventoryPage />}
+            allowedRoles={[ROLES.INV_ADMIN]}
+          />
+        ),
+      },
+      {
+        path: 'products/:id/edit', // Ruta dinámica
+        element: (
+          <ProtectedRoleRoute
+            element={<AdminProductEditPage />}
             allowedRoles={[ROLES.INV_ADMIN]}
           />
         ),

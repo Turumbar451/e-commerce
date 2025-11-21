@@ -15,10 +15,22 @@ import {
   TableCell,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Search, Plus, Minus } from 'lucide-react';
+import { Search, Plus, Minus, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
 import { formatCurrency } from '@/lib/formatters';
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 //!mover esto a un archivo de interfaces
 export interface InventoryItem {
@@ -38,6 +50,8 @@ interface ProductDataTableProps {
   isLoading: boolean;
   isError: boolean;
   onAdjustStock: (sku: string, size: string, adjustment: number) => void;
+  onDeleteSize: (sku: string, size: string) => void; // <-- Nueva prop
+  isDeletingSize?: boolean;
 }
 
 export const ProductDataTable = ({
@@ -45,6 +59,7 @@ export const ProductDataTable = ({
   isLoading,
   isError,
   onAdjustStock,
+  onDeleteSize,
 }: ProductDataTableProps) => {
   return (
     <Card>
@@ -71,7 +86,8 @@ export const ProductDataTable = ({
               <TableHead>Estado</TableHead>
               <TableHead>Precio</TableHead>
               {/*ACCIONES*/}
-              <TableHead className="w-[100px]">Ajustar Stock</TableHead>
+
+              <TableHead className="w-[140px]">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -121,22 +137,62 @@ export const ProductDataTable = ({
                   <TableCell>{formatCurrency(item.price)}</TableCell>
 
                   <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => onAdjustStock(item.sku, item.size, 1)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => onAdjustStock(item.sku, item.size, -1)}
-                        disabled={item.stock <= 0} //bloquear mientras se manda o si es 0
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
+                    <div className="flex items-center gap-2">
+                      {/* + y - */}
+                      <div className="flex gap-1 mr-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => onAdjustStock(item.sku, item.size, 1)}
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => onAdjustStock(item.sku, item.size, -1)}
+                          disabled={item.stock <= 0}
+                        >
+                          <Minus className="h-3 w-3" />
+                        </Button>
+                      </div>
+
+                      {/* boton de eliminar con confirmacion */}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              ¿Eliminar Talla?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Estás a punto de eliminar la talla{' '}
+                              <strong>{item.size}</strong> del SKU{' '}
+                              <strong>{item.sku}</strong>. Esta acción no se
+                              puede deshacer.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction
+                              className="bg-destructive text-white hover:bg-destructive/90"
+                              onClick={() => onDeleteSize(item.sku, item.size)}
+                            >
+                              Eliminar
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </TableCell>
                 </TableRow>
