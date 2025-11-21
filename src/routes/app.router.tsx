@@ -14,6 +14,7 @@ import { StoreRouteGuard } from './StoreRouteGuard';
 import SecuritySetup from '@/features/security/SecuritySetup';
 import { Navbar } from '@/components/common/Navbar';
 import VerifyPage from '@/pages/VerifyPage';
+import AdminProductEditPage from '@/pages/AdminInventory/AdminProductEditPage';
 
 const PosPage = lazy(() => import('@/pages/Cajero/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
@@ -23,7 +24,9 @@ const AdminInventoryPage = lazy(
 const AdminDashboardPage = lazy(
   () => import('@/pages/AdminInventory/AdminDashboardPage')
 );
-const AdminProductsPage = lazy(() => import('@/pages/AdminProductsPage'));
+const AdminProductsPage = lazy(
+  () => import('@/pages/AdminInventory/AdminProductsPage')
+);
 const AdminProductFormPage = lazy(
   () => import('@/pages/AdminInventory/AdminProductFormPage')
 );
@@ -98,6 +101,15 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoleRoute
             element={<AdminInventoryPage />}
+            allowedRoles={[ROLES.INV_ADMIN]}
+          />
+        ),
+      },
+      {
+        path: 'products/:id/edit', // Ruta dinámica
+        element: (
+          <ProtectedRoleRoute
+            element={<AdminProductEditPage />}
             allowedRoles={[ROLES.INV_ADMIN]}
           />
         ),

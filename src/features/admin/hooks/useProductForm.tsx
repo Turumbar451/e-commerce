@@ -11,6 +11,7 @@ import {
   getCloudinarySignature,
   uploadToCloudinary,
   createProduct,
+  updateProduct,
 } from '@/services/inventoryService';
 
 // estructura de una variante
@@ -37,13 +38,21 @@ const initialProductState: Partial<IProductDetail> = {
 
 const newDetailTemplate = { title: '', content: '' };
 
-export const useProductForm = () => {
-  const [product, setProduct] =
-    useState<Partial<IProductDetail>>(initialProductState);
+export const useProductForm = (productToEdit?: IProductDetail) => {
   const [isUploading, setIsUploading] = useState<false | true>(false);
   const queryClient = useQueryClient();
 
   const navigate = useNavigate();
+
+  const isEditMode = !!productToEdit;
+
+  const [product, setProduct] = useState<Partial<IProductDetail>>(() => {
+    if (productToEdit) {
+      // Si estamos editando, usamos los datos que llegaron
+      return productToEdit;
+    }
+    return initialProductState;
+  });
 
   const addDetail = () => {
     setProduct((prev) => ({
@@ -214,43 +223,57 @@ export const useProductForm = () => {
     }
   };
 
-  // envio del formulario
-  const createProductMutation = useMutation({
+  const createMutation = useMutation({
     mutationFn: createProduct,
-    onSuccess: (data) => {
-      toast.success(data.message);
-      queryClient.invalidateQueries({ queryKey: ['products'] }); // para que tanstack haga fetch la proxima vez
+    onSuccess: () => {
+      toast.success('Producto creado con éxito');
       queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
-      navigate('/admin/products'); // regresar a la tabla
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      navigate('/admin/products');
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || 'Error al crear el producto');
+      toast.error(err.response?.data?.message || 'Error al crear');
+    },
+  });
+
+  // mutacion de actualizar
+  const updateMutation = useMutation({
+    mutationFn: (data: Partial<IProductDetail>) =>
+      updateProduct(product._id!, data),
+    onSuccess: () => {
+      toast.success('Producto actualizado correctamente');
+      queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['product', product._id] }); // Refrescar detalle
+      navigate('/admin/products');
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Error al actualizar');
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    //validaciones-
-    if (!product.name) {
-      toast.error('El nombre del producto es obligatorio');
-      return;
-    }
-    if (!product.variants || product.variants.length === 0) {
-      toast.error('Debe haber al menos una variante');
-      return;
-    }
-    //! posiblemente añadir mas validaciones
 
-    createProductMutation.mutate(product); // createProduct(product)
+    // Validaciones básicas...
+    if (!product.name) return toast.error('Nombre obligatorio');
+    if (!product.variants?.length) return toast.error('Faltan variantes');
+
+    if (isEditMode) {
+      updateMutation.mutate(product);
+    } else {
+      createMutation.mutate(product);
+    }
   };
 
   return {
-    //*padre productForm
-    isUploading,
-    isSaving: createProductMutation.isPending,
-    handleSubmit,
-
     product,
+    // estado de carga
+    isSaving: createMutation.isPending || updateMutation.isPending,
+    isUploading,
+    isEditMode, // para el boton
+
+    handleSubmit,
     handleBaseChange,
     addVariant,
     removeVariant,

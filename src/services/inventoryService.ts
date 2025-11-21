@@ -120,3 +120,14 @@ export const deleteSizeService = async (sku: string, size: string): Promise<{ me
     //hay que usar la propiedad data para enviar el body
     return data;
 };
+
+export const updateProduct = async (
+    productId: string,
+    productData: Partial<IProductDetail>
+): Promise<{ message: string; product: IProductDetail }> => {
+    const { data } = await api.put<{ message: string; product: IProductDetail }>(
+        `/admini/products/${productId}`,
+        productData
+    );
+    return data;
+};

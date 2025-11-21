@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { useProductForm } from '../hooks/useProductForm';
+import type { IProductDetail } from '@/interfaces/product';
 
 // lo que retorne useProductForm sera un tipo que asignamos a ProductFormContextType
 type ProductFormContextType = ReturnType<typeof useProductForm>;
@@ -8,12 +9,18 @@ const ProductFormContext = createContext<ProductFormContextType | undefined>(
   undefined
 );
 
-export const ProductFormProvider = ({ children }: { children: ReactNode }) => {
-  const value = useProductForm();
+export const ProductFormProvider = ({
+  children,
+  productToEdit,
+}: {
+  children: ReactNode;
+  productToEdit?: IProductDetail;
+}) => {
+  const value = useProductForm(productToEdit);
+
   return <ProductFormContext value={value}>{children}</ProductFormContext>;
 };
 
-//hook para consumir contexto para no usar useContext
 export const useProductFormContext = () => {
   const context = useContext(ProductFormContext);
   if (context === undefined) {
