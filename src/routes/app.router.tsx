@@ -17,10 +17,16 @@ import VerifyPage from '@/pages/VerifyPage';
 
 const PosPage = lazy(() => import('@/pages/Cajero/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
-const AdminInventoryPage = lazy(() => import('@/pages/AdminInventoryPage'));
-const AdminDashboardPage = lazy(() => import('@/pages/AdminDashboardPage'));
+const AdminInventoryPage = lazy(
+  () => import('@/pages/AdminInventory/AdminInventoryPage')
+);
+const AdminDashboardPage = lazy(
+  () => import('@/pages/AdminInventory/AdminDashboardPage')
+);
 const AdminProductsPage = lazy(() => import('@/pages/AdminProductsPage'));
-const AdminProductFormPage = lazy(() => import('@/pages/AdminProductFormPage'));
+const AdminProductFormPage = lazy(
+  () => import('@/pages/AdminInventory/AdminProductFormPage')
+);
 
 const ROLES = {
   ROLE_ADMIN: 'admon_roles',

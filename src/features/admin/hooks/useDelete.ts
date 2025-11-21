@@ -26,7 +26,7 @@ export const useDelete = () => {
         mutationFn: ({ sku, size }: { sku: string; size: string }) => deleteSizeService(sku, size),
         onSuccess: () => {
             toast.success('Talla eliminada del inventario');
-            // Refrescar tablas y estadísticas
+            // refrestcar tablas y estadistcas
             queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
             queryClient.invalidateQueries({ queryKey: ['adminInventoryStats'] });
         },
