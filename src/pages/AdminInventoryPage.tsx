@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAdminInventory } from '@/features/admin/hooks/useAdminInventory';
 import { Button } from '@/components/ui/button';
 import { useAdminInventoryStats } from '@/features/admin/hooks/useAdminInventoryStats';
+import { useDelete } from '@/features/admin/hooks/useDelete';
 
 const AdminInventoryPage = () => {
   const { isLoadingStats, isErrorStats } = useAdminInventoryStats(); //kpis
@@ -18,6 +19,8 @@ const AdminInventoryPage = () => {
 
     handleAdjustStock,
   } = useAdminInventory(); //tabla general
+
+  const { deleteSize, isDeletingSize } = useDelete(); //eliminar talla
 
   const isLoading = isLoadingStats || isLoadingTable;
   const isError = isErrorStats || isErrorTable;
@@ -35,6 +38,8 @@ const AdminInventoryPage = () => {
         isLoading={isLoading}
         isError={isError}
         onAdjustStock={handleAdjustStock}
+        onDeleteSize={deleteSize}
+        isDeletingSize={isDeletingSize}
       />
 
       <div className="flex items-center justify-end space-x-2 py-4">
