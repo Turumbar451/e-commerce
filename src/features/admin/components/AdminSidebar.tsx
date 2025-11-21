@@ -67,23 +67,6 @@ export const AdminSidebar = () => {
           icon={<Warehouse className="mr-2 h-4 w-4" />}
         />
       </nav>
-
-      {/*configurar y salir */}
-      <div className="flex flex-col gap-2">
-        <SidebarLink
-          to="/profile"
-          label="Configuración"
-          icon={<Settings className="mr-2 h-4 w-4" />}
-        />
-        <Button
-          variant="ghost"
-          className="w-full justify-start"
-          onClick={handleLogout}
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          Cerrar Sesión
-        </Button>
-      </div>
     </aside>
   );
 };
