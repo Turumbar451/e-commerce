@@ -39,6 +39,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
       try {
         // llama a /api/auth/me (que usa la cookie)
         const user = await checkAuthStatus();
+        console.log('USER DESDE /auth/me EN GlobalContext:', user);
         setAuth({ authStatus: 'authenticated', user: user });
       } catch (error) {
         setAuth({ authStatus: 'not-authenticated', user: null });
@@ -49,6 +50,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   const login = (user: User) => {
+    console.log('LOGIN() RECIBE:', user);
     setAuth({
       authStatus: 'authenticated',
       user: user,

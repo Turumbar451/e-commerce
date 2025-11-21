@@ -8,11 +8,9 @@ import {
 import { ProductVariantsCard } from './form/ProductVariantsCard';
 import { ProductDetailsCard } from './form/ProductDetailCard';
 import { ProductPricingCard } from './form/ProductPricingCart';
-import type { IProductDetail } from '@/interfaces/product';
 
 const ProductFormContent = () => {
-  const { handleSubmit, isUploading, isSaving, isEditMode } =
-    useProductFormContext();
+  const { handleSubmit, isUploading, isSaving } = useProductFormContext();
 
   return (
     <form
@@ -37,26 +35,19 @@ const ProductFormContent = () => {
           className="w-full"
           disabled={isUploading || isSaving}
         >
-          {isSaving && <Spinner className="mr-2" />}
-          {isSaving
-            ? 'Guardando...'
-            : isEditMode
-            ? 'Guardar Cambios'
-            : 'Crear Producto'}
+          {isSaving ? <Spinner className="mr-2" /> : null}
+          {isSaving ? 'Guardando...' : 'Guardar Producto'}
         </Button>
       </div>
     </form>
   );
 };
 
-export const ProductForm = ({
-  productToEdit,
-}: {
-  productToEdit?: IProductDetail;
-}) => {
+export const ProductForm = () => {
   return (
-    <ProductFormProvider productToEdit={productToEdit}>
-      <ProductFormContent />
+    <ProductFormProvider>
+      {/* este es el contexto */}
+      <ProductFormContent /> {/* este es el child dentro del contexto */}
     </ProductFormProvider>
   );
 };

@@ -41,7 +41,9 @@ export const Navbar = () => {
   const { performAuthenticatedAction } = useAuthenticatedAction();
   
   const { authStatus, user, logout } = useContext(GlobalContext);
-  const isAuthenticated = authStatus === 'authenticated' && !!user;   
+  const isAuthenticated = authStatus === 'authenticated' && !!user;
+  console.log('USER EN CONTEXTO:', user);
+  console.log('ROLE EN CONTEXTO:', user?.role);   
 
   const handleGuestClick = () => {
 
