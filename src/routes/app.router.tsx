@@ -14,28 +14,19 @@ import { StoreRouteGuard } from './StoreRouteGuard';
 import SecuritySetup from '@/features/security/SecuritySetup';
 import { Navbar } from '@/components/common/Navbar';
 import VerifyPage from '@/pages/VerifyPage';
-import AdminProductEditPage from '@/pages/AdminInventory/AdminProductEditPage';
 
 const PosPage = lazy(() => import('@/pages/Cajero/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
-const AdminInventoryPage = lazy(
-  () => import('@/pages/AdminInventory/AdminInventoryPage')
-);
-const AdminDashboardPage = lazy(
-  () => import('@/pages/AdminInventory/AdminDashboardPage')
-);
-const AdminProductsPage = lazy(
-  () => import('@/pages/AdminInventory/AdminProductsPage')
-);
-const AdminProductFormPage = lazy(
-  () => import('@/pages/AdminInventory/AdminProductFormPage')
-);
+const AdminInventoryPage = lazy(() => import('@/pages/AdminInventoryPage'));
+const AdminDashboardPage = lazy(() => import('@/pages/AdminDashboardPage'));
+const AdminProductsPage = lazy(() => import('@/pages/AdminProductsPage'));
+const AdminProductFormPage = lazy(() => import('@/pages/AdminProductFormPage'));
 
 const ROLES = {
   ROLE_ADMIN: 'admon_roles',
   INV_ADMIN: 'admon_inventario',
   CASHIER: 'cajero',
-  USER: 'cliente', //?era cliente o user?
+  USER: 'user', //?era cliente o user?
 };
 
 export const appRouter = createBrowserRouter([
@@ -105,15 +96,6 @@ export const appRouter = createBrowserRouter([
           />
         ),
       },
-      {
-        path: 'products/:id/edit', // Ruta dinámica
-        element: (
-          <ProtectedRoleRoute
-            element={<AdminProductEditPage />}
-            allowedRoles={[ROLES.INV_ADMIN]}
-          />
-        ),
-      },
     ],
   },
 
@@ -173,18 +155,17 @@ export const appRouter = createBrowserRouter([
   },
   {
     path: '/profile',
-    //todos los usuarios loggeados ven su perfil
     element: (
-      <ProtectedRoleRoute
-        element={<ProfilePage />}
-        allowedRoles={[
-          ROLES.USER,
-          ROLES.CASHIER,
-          ROLES.INV_ADMIN,
-          ROLES.ROLE_ADMIN,
-        ]}
-      />
-    ),
+    <ProtectedRoleRoute
+      element={<ProfilePage />}
+      allowedRoles={[
+        ROLES.USER,
+        ROLES.CASHIER,
+        ROLES.INV_ADMIN,
+        ROLES.ROLE_ADMIN,
+      ]}
+    />
+  ),
   },
 
   // rutas publicas

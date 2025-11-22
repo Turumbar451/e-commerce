@@ -68,7 +68,7 @@ export const createProduct = async (
 ): Promise<CreateProductResponse> => {
     const { data } = await api.post<CreateProductResponse>(
         '/admini/products-v2',
-        productData //el segundo argumento de post es el body
+        productData
     );
     return data;
 };
@@ -108,26 +108,5 @@ export const adjustProductStock = async (
 //eliminar producto completo por ID
 export const deleteProductService = async (productId: string): Promise<{ message: string }> => {
     const { data } = await api.delete<{ message: string }>(`/admini/products/${productId}`);
-    return data;
-};
-
-//eliminar talla 
-export const deleteSizeService = async (sku: string, size: string): Promise<{ message: string }> => {
-    const { data } = await api.delete<{ message: string }>('/admini/stock/size', {
-        data: { sku, size }
-    });
-    //en delete el segundo argumento es un objeto de configuracion
-    //hay que usar la propiedad data para enviar el body
-    return data;
-};
-
-export const updateProduct = async (
-    productId: string,
-    productData: Partial<IProductDetail>
-): Promise<{ message: string; product: IProductDetail }> => {
-    const { data } = await api.put<{ message: string; product: IProductDetail }>(
-        `/admini/products/${productId}`,
-        productData
-    );
     return data;
 };

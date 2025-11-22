@@ -13,6 +13,13 @@ export const ProtectedRoleRoute = ({ element, allowedRoles }: Props) => {
   const { authStatus, user } = useContext(GlobalContext);
   const userRole = user?.role;
 
+  console.log('PROTECTED ROUTE HIT:', {
+    authStatus,
+    user,
+    userRole,
+    allowedRoles,
+  });
+
   // estado inicial
   if (authStatus === 'checking') {
     return <div>Cargando...</div>; // hay que mejorar esto

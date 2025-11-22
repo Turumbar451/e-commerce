@@ -19,9 +19,15 @@ export const registerUser = async (userData: RegisterPayload) => {
 };
 
 // el backend pone la cookie
-export const loginUser = async (credentials: LoginPayload): Promise<User> => {
-    const { data } = await api.post<User>('/auth/login', credentials);
-    return data;
+interface LoginResponse {
+  token: string;
+}
+
+export const loginUser = async (
+  credentials: LoginPayload
+): Promise<LoginResponse> => {
+  const { data } = await api.post<LoginResponse>('/auth/login', credentials);
+  return data;
 };
 
 
