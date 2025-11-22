@@ -91,6 +91,15 @@ export const Navbar = () => {
                 <span className="text-sm text-foreground/70 hidden lg:inline-block">
                   {user?.nombre ?? 'Usuario'}
                 </span>
+
+                <Button
+                  className="text-base cursor-pointer"
+                  variant="outline"
+                  onClick={() => navigate('/profile')}
+                >
+                  Ver mi cuenta
+                </Button>
+
                 <Button
                   className="text-base cursor-pointer"
                   variant="outline"

@@ -1,64 +1,65 @@
-import { useState, type FormEvent } from 'react';
+import { useContext } from 'react';
+import { GlobalContext } from '@/context/GlobalContext';
 
 export const UserProfile = () => {
+  const { user, authStatus } = useContext(GlobalContext);
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  if (authStatus === 'checking') {
+    return (
+      <div className="w-full">
+        <h2 className="text-2xl font-bold text-center mb-6">Mi Perfil</h2>
+        <p className="text-center text-gray-600">
+          Cargando información de tu cuenta...
+        </p>
+      </div>
+    );
+  }
 
+  if (!user) {
+    return (
+      <div className="w-full">
+        <h2 className="text-2xl font-bold text-center mb-6">Mi Perfil</h2>
+        <p className="text-center text-red-600">
+          No se pudo cargar la información de tu cuenta.
+        </p>
+      </div>
+    );
+  }
 
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault(); 
-    
-    
-    console.log("Datos del perfil guardados:", { name, email });
-    alert("¡Perfil actualizado!"); // Un aviso simple
-  };
+  const nombreCompleto = `${user.nombre} ${user.apellido}`;
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold text-center mb-6">
-        Mi Perfil
-      </h2>
-    
-      <form onSubmit={handleSubmit}>
-        
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium mb-2">
-            Nombre
-          </label>
-          <input
-            type="text"
-            id="name"
-            className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
-            placeholder="Tu nombre completo"
-            value={name} 
-            onChange={(e) => setName(e.target.value)} 
-            required
-          />
+      <h2 className="text-2xl font-bold text-center mb-6">Mi Perfil</h2>
+
+      <div className="space-y-4">
+        <div>
+          <p className="text-sm font-medium text-gray-500">Nombre completo</p>
+          <p className="mt-1 text-base font-semibold">{nombreCompleto}</p>
         </div>
 
-        <div className="mb-6">
-          <label htmlFor="email" className="block text-sm font-medium mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
-            placeholder="tu@email.com"
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required
-          />
+        <div>
+          <p className="text-sm font-medium text-gray-500">Correo electrónico</p>
+          <p className="mt-1 text-base font-semibold">{user.email}</p>
         </div>
 
-        <button 
-          type="submit" 
-          className="w-full bg-blue-600 text-white p-2.5 rounded-md hover:bg-blue-700 transition-colors"
-        >
-          Guardar Cambios
-        </button>
-      </form>
+        <div>
+          <p className="text-sm font-medium text-gray-500">Rol</p>
+          <p className="mt-1 inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+            {user.role}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm font-medium text-gray-500">Historial de compras</p>
+          <p className="mt-1 text-base">
+            {Array.isArray(user.historial_compras) &&
+            user.historial_compras.length > 0
+              ? `Tienes ${user.historial_compras.length} compras registradas.`
+              : 'Aún no tienes compras registradas.'}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
