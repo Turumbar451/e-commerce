@@ -1,26 +1,74 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { useAuthenticatedAction } from '@/hooks/useAuthenticatedAction';
+import { type IProductForCard } from '@/interfaces/product';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { IProductForCard } from '@/interfaces/product';
-import { useProductCard } from './hooks/useProductCard';
-import { formatCurrency } from '@/lib/formatters';
+
+// Hooks de nuestras features
+import { useCart } from '@/features/cart/hooks/useCart';
+import { useFavorites } from '@/features/favorites/hooks/useFavorites';
 import { Link } from 'react-router';
+
+// Formateador de moneda
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+  }).format(value);
+};
 
 interface ProductCardProps {
   product: IProductForCard;
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  // toda la logica
-  const { isAddingItem, handleFavoriteClick, handleCartClick } =
-    useProductCard(product);
+  // --- Hooks ---
+  const { performAuthenticatedAction } = useAuthenticatedAction();
+  const { addItem, isAddingItem } = useCart();
+  const { favoriteSKUs, addFavorite, removeFavorite } = useFavorites();
 
+  const sku = product.sku; // <-- ESTO DEBE SER UN SKU REAL A FUTURO
+  
+  const isFavorite = favoriteSKUs.includes(sku);
+
+  // --- Handlers de Favoritos ---
+  const handleAddOrRemoveFavorite = () => {
+    if (isFavorite) {
+      removeFavorite(sku);
+    } else {
+      addFavorite(sku);
+    }
+  };
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault(); 
+    performAuthenticatedAction(
+      handleAddOrRemoveFavorite,
+      'Inicia sesión para guardar favoritos'
+    );
+  };
+
+  // --- Handlers de Carrito ---
+  const handleAddToCart = () => {
+    // Usamos el hook 'useCart', que ya maneja los toasts de éxito/error
+    addItem({ sku: sku, cantidad: 1 }); 
+  };
+
+  const handleCartClick = (e: React.MouseEvent) => {
+    e.preventDefault(); 
+    performAuthenticatedAction(
+      handleAddToCart,
+      'Inicia sesión para añadir al carrito'
+    );
+  };
+
+  // --- Renderizado ---
   return (
     //este es el momento en el que le pasamos el parametro (productId) y nuestro approuter lo detecta
     <Link to={`/product/${product.id}`} className="group block">
       <Card className="border-none shadow-none rounded-lg overflow-hidden bg-transparent">
         <CardContent className="p-0 relative">
-          {/* imagen del producto */}
+          {/* imagen del Producto */}
           <div className="aspect-square w-full overflow-hidden bg-gray-100">
             <img
               src={product.imageUrl}
@@ -31,11 +79,14 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
           {/* favoritos boton */}
           <button
-            onClick={handleFavoriteClick} // <-- Handler limpio
-            className="cursor-pointer absolute top-3 right-3 p-2 bg-background rounded-full shadow-md text-muted-foreground hover:text-red-500 hover:bg-secondary transition-colors"
+            onClick={handleFavoriteClick}
+            className=" cursor-pointer absolute top-3 right-3 p-2 bg-background rounded-full shadow-md text-muted-foreground hover:text-red-500 hover:bg-secondary transition-colors"
             aria-label="Añadir a favoritos"
           >
-            <Heart className="w-5 h-5" />
+            <Heart 
+              className="w-5 h-5" 
+              fill={isFavorite ? 'currentColor' : 'none'}
+            />
           </button>
         </CardContent>
 
@@ -55,9 +106,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             {formatCurrency(product.price)}
           </p>
 
-          <Button
-            variant="outline"
-            className="w-full mt-2"
+          {/* Botón de Carrito */}
+          <Button 
+            variant="outline" 
+            className="w-full mt-2" 
             onClick={handleCartClick}
             disabled={isAddingItem}
           >
