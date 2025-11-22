@@ -1,38 +1,26 @@
-import { Link } from 'react-router';
-import { Heart, ShoppingCart } from 'lucide-react';
-
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Heart, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-import { type IProductForCard } from '@/interfaces/product';
-
-// nuevos hooks separados
-import { useProductCart } from './hooks/useProductCart';
-import { useProductFavorites } from './hooks/useProductFavorites';
-
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
-  }).format(value);
-};
+import type { IProductForCard } from '@/interfaces/product';
+import { useProductCard } from './hooks/useProductCard';
+import { formatCurrency } from '@/lib/formatters';
+import { Link } from 'react-router';
 
 interface ProductCardProps {
   product: IProductForCard;
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  // lógica del carrito
-  const { handleCartClick, isAddingItem } = useProductCart(product.sku);
-
-  // lógica de favoritos
-  const { isFavorite, handleFavoriteClick } = useProductFavorites(product.sku);
+  // toda la logica
+  const { isAddingItem, handleFavoriteClick, handleCartClick } =
+    useProductCard(product);
 
   return (
+    //este es el momento en el que le pasamos el parametro (productId) y nuestro approuter lo detecta
     <Link to={`/product/${product.id}`} className="group block">
       <Card className="border-none shadow-none rounded-lg overflow-hidden bg-transparent">
         <CardContent className="p-0 relative">
-          {/* Imagen */}
+          {/* imagen del producto */}
           <div className="aspect-square w-full overflow-hidden bg-gray-100">
             <img
               src={product.imageUrl}
@@ -41,33 +29,32 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             />
           </div>
 
-          {/* Botón Favoritos */}
+          {/* favoritos boton */}
           <button
-            onClick={handleFavoriteClick}
+            onClick={handleFavoriteClick} // <-- Handler limpio
             className="cursor-pointer absolute top-3 right-3 p-2 bg-background rounded-full shadow-md text-muted-foreground hover:text-red-500 hover:bg-secondary transition-colors"
-            aria-label={isFavorite ? "Eliminar de favoritos" : "Añadir a favoritos"}
+            aria-label="Añadir a favoritos"
           >
-            <Heart
-              className="w-5 h-5"
-              fill={isFavorite ? 'currentColor' : 'none'}
-            />
+            <Heart className="w-5 h-5" />
           </button>
         </CardContent>
 
         <CardFooter className="flex flex-col items-start p-4 pt-3">
+          {/* marca */}
           <span className="text-sm uppercase font-semibold text-gray-500 tracking-wider">
             {product.brand}
           </span>
-          
+
+          {/* nombre del producto */}
           <h3 className="font-medium text-base text-gray-800 mt-1">
             {product.name}
           </h3>
-          
+
+          {/* Precio */}
           <p className="font-bold text-lg text-gray-900 mt-1">
             {formatCurrency(product.price)}
           </p>
 
-          {/* Botón Carrito */}
           <Button
             variant="outline"
             className="w-full mt-2"

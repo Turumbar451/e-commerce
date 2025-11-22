@@ -23,7 +23,6 @@ import { formatCurrency } from '@/lib/formatters';
 import type { IProductDetail } from '@/interfaces/product';
 import { useDelete } from '../hooks/useDelete';
 import { Spinner } from '@/components/ui/spinner';
-import { Link } from 'react-router';
 
 interface Props {
   products: IProductDetail[];
@@ -73,10 +72,8 @@ export const ProductCatalogTable = ({ products, isLoading }: Props) => {
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   {/* boton de editar */}
-                  <Button variant="ghost" size="icon" asChild>
-                    <Link to={`/admin/products/${product._id}/edit`}>
-                      <Edit className="h-4 w-4 text-muted-foreground" />
-                    </Link>
+                  <Button variant="ghost" size="icon">
+                    <Edit className="h-4 w-4 text-muted-foreground" />
                   </Button>
 
                   {/*boton de eliminar */}
