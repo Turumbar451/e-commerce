@@ -1,7 +1,4 @@
-// src/pages/AdminUsersPage.tsx
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getInternalUsers } from '@/services/adminUsersService';
 import {
   Table,
   TableBody,
@@ -21,9 +18,24 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { PlusCircle, Trash2, UserCog, Search } from 'lucide-react';
+import {
+  PlusCircle,
+  Trash2,
+  UserCog,
+  Search,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown, // Nuevos iconos
+} from 'lucide-react';
 import { CreateUserDialog } from '@/features/admin2/components/CreateUserDialog';
-
+import { useAdminUsers } from '@/features/admin2/hooks/useAdminUsers';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 const ROLES_LABELS: Record<string, string> = {
   admon_roles: 'Admin. Roles',
   admon_inventario: 'Admin. Inventario',
@@ -38,25 +50,32 @@ const ROLE_BADGE_VARIANTS: Record<string, 'default' | 'secondary' | 'outline'> =
   };
 
 const AdminUsersPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isCreateOpen, setIsCreateOpen] = useState(false); //estado del modal
   const {
-    data: employees,
+    employees,
     isLoading,
     isError,
+    searchTerm,
+    setSearchTerm,
+    sortConfig,
+    handleSort,
     refetch,
-  } = useQuery({
-    queryKey: ['internalUsers'],
-    queryFn: getInternalUsers,
-  });
+    roleFilter,
+    setRoleFilter,
+  } = useAdminUsers();
 
-  // filtro de clientes
-  const filteredEmployees = employees?.filter(
-    (emp) =>
-      emp.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  // helpers para renderizar iconos de ordenamiento
+  const renderSortIcon = (columnKey: 'nombre' | 'fecha_alta') => {
+    if (sortConfig.key !== columnKey) {
+      return <ArrowUpDown className="ml-2 h-4 w-4 opacity-30" />; // Icono neutro
+    }
+    return sortConfig.direction === 'asc' ? (
+      <ArrowUp className="ml-2 h-4 w-4 text-primary" />
+    ) : (
+      <ArrowDown className="ml-2 h-4 w-4 text-primary" />
+    );
+  };
 
   if (isLoading) {
     return (
@@ -69,21 +88,20 @@ const AdminUsersPage = () => {
   if (isError) {
     return (
       <div className="p-8 text-center text-destructive">
-        Error al cargar la lista de personal.
+        Error al cargar personal.
       </div>
     );
   }
 
   return (
     <div className="container mx-auto">
-      {/* encabezado */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
             Gestión de Personal
           </h1>
           <p className="text-muted-foreground">
-            Administra las cuentas de acceso y roles del sistema.
+            Administra las cuentas de acceso.
           </p>
         </div>
         <Button onClick={() => setIsCreateOpen(true)}>
@@ -91,15 +109,13 @@ const AdminUsersPage = () => {
           Nuevo Empleado
         </Button>
       </div>
-      {/* tarjeta */}
+
       <Card>
         <CardHeader>
           <CardTitle>Usuarios Activos</CardTitle>
           <CardDescription>
-            Lista de empleados con acceso al panel administrativo o punto de
-            venta.
+            Lista de empleados con acceso al sistema.
           </CardDescription>
-
           <div className="flex items-center gap-4 pt-4">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -110,6 +126,25 @@ const AdminUsersPage = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+            {/* filtro de roles */}
+            <div className="w-[200px]">
+              <Select
+                value={roleFilter}
+                onValueChange={(val: any) => setRoleFilter(val)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Filtrar por rol" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos los roles</SelectItem>
+                  <SelectItem value="admon_roles">Admin. Roles</SelectItem>
+                  <SelectItem value="admon_inventario">
+                    Admin. Inventario
+                  </SelectItem>
+                  <SelectItem value="cajero">Cajero</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardHeader>
 
@@ -118,25 +153,50 @@ const AdminUsersPage = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Empleado</TableHead>
+                  {/* empleado */}
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort('nombre')}
+                      className="-ml-4 h-8 font-bold hover:bg-transparent"
+                    >
+                      Empleado
+                      {renderSortIcon('nombre')}
+                    </Button>
+                  </TableHead>
+
                   <TableHead>Rol Asignado</TableHead>
                   <TableHead>Correo Electrónico</TableHead>
-                  <TableHead>Fecha Alta</TableHead>
+
+                  {/*  FECHA */}
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort('fecha_alta')}
+                      className="-ml-4 h-8 font-bold hover:bg-transparent"
+                    >
+                      Fecha Alta
+                      {renderSortIcon('fecha_alta')}
+                    </Button>
+                  </TableHead>
+
                   <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredEmployees?.length === 0 ? (
+                {employees.length === 0 ? (
                   <TableRow>
                     <TableCell
                       colSpan={5}
                       className="text-center h-24 text-muted-foreground"
                     >
-                      No se encontraron resultados.
+                      {searchTerm
+                        ? 'No se encontraron resultados.'
+                        : 'No hay empleados.'}
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredEmployees?.map((emp) => (
+                  employees.map((emp) => (
                     <TableRow key={emp.id}>
                       <TableCell className="font-medium">
                         <div className="flex flex-col">
@@ -144,8 +204,8 @@ const AdminUsersPage = () => {
                             {emp.nombre} {emp.apellido}
                           </span>
                           {!emp.activo && (
-                            <span className="text-xs text-yellow-600 font-normal">
-                              • Pendiente verificación
+                            <span className="text-xs text-yellow-600">
+                              • Pendiente
                             </span>
                           )}
                         </div>
@@ -185,11 +245,11 @@ const AdminUsersPage = () => {
           </div>
         </CardContent>
       </Card>
-      {/* modal para crear usuario*/}
+
       <CreateUserDialog
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
-        onSuccess={() => refetch()}
+        onSuccess={refetch}
       />
     </div>
   );
