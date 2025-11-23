@@ -6,60 +6,115 @@ export const UserProfile = () => {
 
   if (authStatus === 'checking') {
     return (
-      <div className="w-full">
-        <h2 className="text-2xl font-bold text-center mb-6">Mi Perfil</h2>
-        <p className="text-center text-gray-600">
-          Cargando información de tu cuenta...
-        </p>
+      <div className="w-full flex justify-center items-center py-16">
+        <p className="text-gray-600">Cargando información de tu cuenta...</p>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="w-full">
-        <h2 className="text-2xl font-bold text-center mb-6">Mi Perfil</h2>
-        <p className="text-center text-red-600">
+      <div className="w-full flex justify-center items-center py-16">
+        <p className="text-red-600">
           No se pudo cargar la información de tu cuenta.
         </p>
       </div>
     );
   }
 
-  const nombreCompleto = `${user.nombre} ${user.apellido}`;
+  const nombreCompleto = user.apellido
+    ? `${user.nombre} ${user.apellido}`
+    : user.nombre;
 
   return (
-    <div className="w-full">
-      <h2 className="text-2xl font-bold text-center mb-6">Mi Perfil</h2>
-
-      <div className="space-y-4">
-        <div>
-          <p className="text-sm font-medium text-gray-500">Nombre completo</p>
-          <p className="mt-1 text-base font-semibold">{nombreCompleto}</p>
+    <div className="w-full max-w-4xl mx-auto space-y-8">
+      {/* Header de perfil */}
+      <section className="flex items-center gap-4">
+        <div className="h-16 w-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">
+          {user.nombre.charAt(0).toUpperCase()}
         </div>
 
         <div>
-          <p className="text-sm font-medium text-gray-500">Correo electrónico</p>
-          <p className="mt-1 text-base font-semibold">{user.email}</p>
-        </div>
-
-        <div>
-          <p className="text-sm font-medium text-gray-500">Rol</p>
-          <p className="mt-1 inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-            {user.role}
+          <h1 className="text-2xl font-bold">Mi cuenta</h1>
+          <p className="text-sm text-gray-600">
+            Información de tu perfil.
           </p>
         </div>
+      </section>
 
-        <div>
-          <p className="text-sm font-medium text-gray-500">Historial de compras</p>
-          <p className="mt-1 text-base">
-            {Array.isArray(user.historial_compras) &&
-            user.historial_compras.length > 0
-              ? `Tienes ${user.historial_compras.length} compras registradas.`
-              : 'Aún no tienes compras registradas.'}
-          </p>
+      {/* Contenido principal */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Columna izquierda: resumen */}
+        <div className="md:col-span-1 space-y-4">
+          <div className="border rounded-lg p-4 bg-background">
+            <p className="text-xs font-semibold text-gray-500 uppercase">
+              Resumen
+            </p>
+            <p className="mt-2 text-base font-semibold">{nombreCompleto}</p>
+            <p className="text-sm text-gray-600 break-all">{user.email}</p>
+
+            <div className="mt-3">
+              <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
+                Rol
+              </p>
+              <span className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+                {user.role}
+              </span>
+            </div>
+          </div>
+
+          <div className="border rounded-lg p-4 bg-background">
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
+              Historial de compras
+            </p>
+            <p className="text-sm text-gray-600">
+              {Array.isArray(user.historial_compras) &&
+              user.historial_compras.length > 0
+                ? `Tienes ${user.historial_compras.length} compras registradas.`
+                : 'Aún no tienes compras registradas.'}
+            </p>
+          </div>
         </div>
-      </div>
+
+        {/* Columna derecha: secciones futuras */}
+        <div className="md:col-span-2 space-y-4">
+          {/* Datos de la cuenta */}
+          <div className="border rounded-lg p-4 bg-background">
+            <h2 className="text-lg font-semibold mb-2">Datos de la cuenta</h2>
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="text-gray-500 text-xs uppercase">Nombre</p>
+                <p className="mt-1 font-medium">{nombreCompleto}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 text-xs uppercase">
+                  Correo electrónico
+                </p>
+                <p className="mt-1 font-medium">{user.email}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bloques reservados para futuro */}
+          <div className="border rounded-lg p-4 bg-background">
+            <h2 className="text-lg font-semibold mb-1">
+              Seguridad y acceso (próximamente)
+            </h2>
+            <p className="text-sm text-gray-600">
+              Configurar métodos de recuperación y revisar dispositivos con sesión activa.
+            </p>
+          </div>
+
+          <div className="border rounded-lg p-4 bg-background">
+            <h2 className="text-lg font-semibold mb-1">
+              Historial de compras (próximamente)
+            </h2>
+            <p className="text-sm text-gray-600">
+              En esta sección se mostrará el detalle de tus pedidos anteriores.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
