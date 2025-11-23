@@ -36,7 +36,7 @@ const ROLES = {
   ROLE_ADMIN: 'admon_roles',
   INV_ADMIN: 'admon_inventario',
   CASHIER: 'cajero',
-  USER: 'cliente', //?era cliente o user?
+  USER: 'user', //?era cliente o user?
 };
 
 export const appRouter = createBrowserRouter([
