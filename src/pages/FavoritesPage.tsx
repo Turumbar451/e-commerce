@@ -1,39 +1,50 @@
 import { useFavorites } from '@/features/favorites/hooks/useFavorites';
+import { useProducts } from '@/features/products/hooks/useProducts';
 import { Navbar } from '@/components/common/Navbar';
 import { Spinner } from '@/components/ui/spinner';
-// (Necesitarás un hook para cargar los productos basados en los SKUs, 
-// o modificar el backend para que devuelva los productos completos)
+import { ProductCard } from '@/features/products/ProductCard';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router';
+import { HeartOff } from 'lucide-react';
 
 const FavoritesPage = () => {
   const { favoriteSKUs, isLoadingFavorites } = useFavorites();
+  const { products, isLoading: isLoadingProducts } = useProducts();
 
-  // NOTA: 'favoriteSKUs' es solo un array de strings (ej: ["AMAX-41-BLK"]).
-  // Necesitarás otro hook (ej. 'useProductsBySKUs') para obtener 
-  // los detalles completos de esos productos y poder renderizarlos.
-  // Por ahora, solo mostraremos los SKUs.
+  const isLoading = isLoadingFavorites || isLoadingProducts;
+
+  // Filtramos los productos completos basándonos en los SKUs favoritos
+  const favoriteProducts = products?.filter(product => 
+    favoriteSKUs.includes(product.sku)
+  ) || [];
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Navbar />
-      <main className="grow container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-6">Mis Favoritos</h1>
+      <main className="grow container mx-auto p-4 py-8">
+        <h1 className="text-3xl font-bold mb-8">Mis Favoritos</h1>
         
-        {isLoadingFavorites ? (
-          <div className="flex items-center justify-center">
-            <Spinner className="h-8 w-8" />
+        {isLoading ? (
+          <div className="flex h-64 items-center justify-center">
+            <Spinner className="h-10 w-10 text-primary" />
           </div>
-        ) : favoriteSKUs.length === 0 ? (
-          <p>No tienes favoritos guardados.</p>
+        ) : favoriteProducts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="bg-muted/30 p-6 rounded-full mb-4">
+              <HeartOff className="h-12 w-12 text-muted-foreground" />
+            </div>
+            <h2 className="text-xl font-semibold mb-2">No tienes favoritos aún</h2>
+            <p className="text-muted-foreground mb-6 max-w-md">
+              Guarda los productos que te gustan para comprarlos más tarde.
+            </p>
+            <Button asChild>
+              <Link to="/">Explorar productos</Link>
+            </Button>
+          </div>
         ) : (
-          <div className="grid grid-cols-4 gap-4">
-            {/* Aquí iría el mapeo de los productos completos.
-              Temporalmente, mostramos los SKUs:
-            */}
-            {favoriteSKUs.map(sku => (
-              <div key={sku} className="border p-4 rounded">
-                <p>Producto SKU: {sku}</p>
-                <p>(Aquí iría el ProductCard)</p>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {favoriteProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         )}
