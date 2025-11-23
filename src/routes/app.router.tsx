@@ -9,6 +9,7 @@ import { lazy } from 'react';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { ProtectedRoleRoute } from './ProtectedRoleRouter';
+import { ProtectedAuthRoute } from './ProtectedAuthRoute';
 import ProductDetailPage from '@/pages/ProductDetailPage';
 import { StoreRouteGuard } from './StoreRouteGuard';
 import SecuritySetup from '@/features/security/SecuritySetup';
@@ -174,17 +175,7 @@ export const appRouter = createBrowserRouter([
   {
     path: '/profile',
     //todos los usuarios loggeados ven su perfil
-    element: (
-      <ProtectedRoleRoute
-        element={<ProfilePage />}
-        allowedRoles={[
-          ROLES.USER,
-          ROLES.CASHIER,
-          ROLES.INV_ADMIN,
-          ROLES.ROLE_ADMIN,
-        ]}
-      />
-    ),
+    element: <ProtectedAuthRoute element={<ProfilePage />} />,
   },
 
   // rutas publicas
