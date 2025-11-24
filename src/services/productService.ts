@@ -1,5 +1,30 @@
-import type { IProductDetail, IProductForCard } from '@/interfaces/product';
+import type { IProductDetail, IProductForCard, IProductResponse } from '@/interfaces/product';
 import api from '@/lib/axios';
+
+// 1. Añadimos 'category' como opcional (?)
+interface FetchProductsParams {
+  page: number;
+  limit: number;
+  category?: string; 
+}
+
+export const fetchProducts = async ({
+  page,
+  limit,
+  category,
+}: FetchProductsParams): Promise<IProductResponse> => {
+  
+  // 2. Creamos el objeto de parámetros
+  const params: any = { page, limit };
+  
+  // 3. Si hay categoría, la agregamos al envío
+  if (category) {
+    params.category = category;
+  }
+
+  const { data } = await api.get('/products', { params });
+  return data as IProductResponse;
+};
 
 export const getProducts = async (): Promise<IProductForCard[]> => {
     const { data } = await api.get('/products');
