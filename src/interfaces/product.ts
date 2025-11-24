@@ -51,7 +51,7 @@ export interface IProductDetail {
 
 export interface IPaginationInfo {
     currentPage: number; //Pagina actual
-    totalPage: number; //Total de paginas
+    totalPages: number; //Total de paginas
     totalProducts: number; //Total de productos
     limit: number; //Limit de productos
 }

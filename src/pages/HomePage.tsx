@@ -3,7 +3,7 @@ import { HeroBanners } from '@/components/common/HeroBanner';
 import { ProductGrid } from '@/features/products/ProductGrid';
 import { Navbar } from '@/components/common/Navbar';
 import { useProducts } from '@/features/products/hooks/useProducts';
-import { Paginator } from 'src/components/common/Paginator';
+import { Paginator } from '@/components/common/Paginator';
 
 export const HomePage = () => {
   const { products, isLoading, isError, isFetching, pagination, currentPage, setCurrentPage } = useProducts();
@@ -27,9 +27,9 @@ export const HomePage = () => {
 
         {/* renderizar cuadricula si no hay error*/}
         {products && <ProductGrid title="Novedades" products={products} />}
-        {pagination && pagination.totalPage > 1 && (
+        {pagination && pagination.totalPages > 1 && (
           <div className="container flex justify-center py-8">
-             <Paginator currentPage={currentPage} totalPages={pagination.totalPage} onPageChange={setCurrentPage} isFetching={isFetching}
+             <Paginator currentPage={currentPage} totalPages={pagination.totalPages} onPageChange={setCurrentPage} isFetching={isFetching}
              />
              </div>
         )}
