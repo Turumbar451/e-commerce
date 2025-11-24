@@ -13,13 +13,13 @@ export const useProducts = (initialCategory: string | null = null) => {
   const { data, isLoading, isError, isFetching, error } = useQuery<IProductResponse, Error>({
     // La clave depende de la página Y de la categoría
     queryKey: ['products', currentPage, activeCategory],
-    
+
     queryFn: () => fetchProducts({
       page: currentPage,
       limit: PRODUCTS_PER_PAGE,
       category: activeCategory || undefined, // Enviamos la categoría si existe
     }),
-    
+
     // Mantiene los datos viejos mientras cargan los nuevos
     placeholderData: (previousData) => previousData,
   });
