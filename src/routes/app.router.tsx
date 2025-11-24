@@ -16,6 +16,7 @@ import SecuritySetup from '@/features/security/SecuritySetup';
 import { Navbar } from '@/components/common/Navbar';
 import VerifyPage from '@/pages/VerifyPage';
 import AdminProductEditPage from '@/pages/AdminInventory/AdminProductEditPage';
+import { MenPage } from '@/pages/MenPage';
 
 const PosPage = lazy(() => import('@/pages/Cajero/PosPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
@@ -43,6 +44,10 @@ export const appRouter = createBrowserRouter([
   {
     path: '/',
     element: <StoreRouteGuard element={<HomePage />} />,
+  },
+  {
+    path: '/hombres',
+    element: <StoreRouteGuard element={<MenPage />} />,
   },
   {
     // : indica que es parametro dinamico
