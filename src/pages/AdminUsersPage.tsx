@@ -25,7 +25,7 @@ import {
   Search,
   ArrowUpDown,
   ArrowUp,
-  ArrowDown, // Nuevos iconos
+  ArrowDown,
 } from 'lucide-react';
 import { CreateUserDialog } from '@/features/admin2/components/CreateUserDialog';
 import { useAdminUsers } from '@/features/admin2/hooks/useAdminUsers';
@@ -36,6 +36,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import type { IEmployee } from '@/interfaces/adminUser';
+import { EditUserDialog } from '@/features/admin2/components/EditUserDialog';
 const ROLES_LABELS: Record<string, string> = {
   admon_roles: 'Admin. Roles',
   admon_inventario: 'Admin. Inventario',
@@ -64,6 +66,13 @@ const AdminUsersPage = () => {
   } = useAdminUsers();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<IEmployee | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const handleEditClick = (user: IEmployee) => {
+    setEditingUser(user);
+    setIsEditOpen(true);
+  };
 
   // helpers para renderizar iconos de ordenamiento
   const renderSortIcon = (columnKey: 'nombre' | 'fecha_alta') => {
@@ -225,7 +234,11 @@ const AdminUsersPage = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
-                          <Button variant="ghost" size="icon">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEditClick(emp)}
+                          >
                             <UserCog className="h-4 w-4 text-muted-foreground" />
                           </Button>
                           <Button
@@ -245,7 +258,12 @@ const AdminUsersPage = () => {
           </div>
         </CardContent>
       </Card>
-
+      <EditUserDialog
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        userToEdit={editingUser}
+        onSuccess={() => refetch()} // refrescar la tabla al terminar
+      />
       <CreateUserDialog
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
