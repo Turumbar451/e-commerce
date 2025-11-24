@@ -48,3 +48,15 @@ export interface IProductDetail {
         reviewCount: number;
     };
 }
+
+export interface IPaginationInfo {
+    currentPage: number; //Pagina actual
+    totalPage: number; //Total de paginas
+    totalProducts: number; //Total de productos
+    limit: number; //Limit de productos
+}
+
+export interface IProductResponse {
+    products: IProductForCard[]; //Mostrar lista completa
+    paginationInfo: IPaginationInfo; //Metadata de paginación
+}

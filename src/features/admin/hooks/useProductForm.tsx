@@ -190,7 +190,7 @@ export const useProductForm = (productToEdit?: IProductDetail) => {
     }));
   };
 
-  //subida d eimagenes
+  //subida de imagenes
   const handleImageUpload = async (
     variantIndex: number,
     files: FileList | null
