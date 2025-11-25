@@ -10,7 +10,7 @@ export interface ICartItem {
 
 export interface AddToCartPayload {
   sku: string;
-  //size: string; // <-- AÑADIR ESTO
+  size: string; // <-- AÑADIR ESTO
   cantidad: number;
 }
 
@@ -31,8 +31,7 @@ export const getCart = async (): Promise<CartApiResponse> => {
 };
 
 // POST /api/cart
-export const addToCart = async (payload: { sku: string; cantidad: number }) => {
-  // NOTA: Borra 'size' si lo tenías definido en la interfaz del payload aquí.
+export const addToCart = async (payload: AddToCartPayload) => {
   const { data } = await api.post('/cart', payload);
   return data;
 };
