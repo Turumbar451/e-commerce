@@ -2,7 +2,7 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from './components/common/ThemeProvider';
-import { GlobalContextProvider } from './context/GlobalContext';
+import { GlobalContextProvider } from './context/GlobalContextProvider';
 import { queryClient } from './lib/queryCliente';
 import { appRouter } from './routes/app.router';
 import { RouterProvider } from 'react-router';

@@ -1,4 +1,5 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
@@ -6,10 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { setupSecurityQuestions, getSecurityCatalog } from '@/services/authServices';
+
 import { GlobalContext } from '@/context/GlobalContext';
 import type { ApiError } from '@/interfaces/auth';
-
 
 interface SelectedItem {
   id: string;
@@ -19,6 +19,7 @@ interface SelectedItem {
 export default function SecuritySetup() {
   const navigate = useNavigate();
   const { user, login } = useContext(GlobalContext);
+
   const [selected, setSelected] = useState<SelectedItem[]>([
     { id: '', answer: '' },
     { id: '', answer: '' },
@@ -50,16 +51,8 @@ export default function SecuritySetup() {
     }
   }, [user, navigate]);
 
-  const [catalog, setCatalog] = useState<Array<{ id: string; label: string }>>([]);
-  useEffect(() => {
-    let mounted = true;
-    getSecurityCatalog()
-      .then((list) => { if (mounted) setCatalog(list); })
-      .catch(() => { if (mounted) setCatalog([]); });
-    return () => { mounted = false; };
-  }, []);
-
-  const availableQuestions = useMemo(() => catalog, [catalog]);
+  // Catálogo fijo vacío: ya no cargamos preguntas desde el backend
+  const availableQuestions: Array<{ id: string; label: string }> = [];
 
   const updateQuestion = (idx: number, field: keyof SelectedItem, value: string) => {
     setSelected((prev) => {
@@ -83,37 +76,8 @@ export default function SecuritySetup() {
     setMsg('');
     setLoading(true);
     try {
-      const payload = selected
-        .map((q) => ({
-          questionId: q.id,
-          answer: q.answer.trim(),
-        }))
-        .filter((q) => q.questionId && q.answer);
-
-      if (payload.length < 2) {
-        setMsg('Selecciona al menos 2 preguntas con su respuesta.');
-        setLoading(false);
-        return;
-      }
-
-      await setupSecurityQuestions(payload);
-      toast.success('Preguntas configuradas.');
-
-      // Clean pending prefill if exists
-      try {
-        localStorage.removeItem(`pendingSecurity:${user.email}`);
-      } catch {
-        console.log("Ola")
-      }
-
-      login({
-        ...user,
-        security: {
-          enabled: true,
-          questions: payload.map((q) => ({ questionId: q.questionId })),
-        },
-      });
-
+      // Flujo de preguntas de seguridad deshabilitado
+      toast.info('El flujo de preguntas de seguridad ha sido deshabilitado.');
       navigate('/', { replace: true });
     } catch (error: unknown) {
       const apiError = error as ApiError;
