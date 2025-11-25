@@ -9,13 +9,13 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from '@radix-ui/react-dialog';
-import { RadioGroup, RadioGroupItem } from '@radix-ui/react-radio-group';
-import { ToggleGroup, ToggleGroupItem } from '@radix-ui/react-toggle-group';
+} from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Heart, Ruler, Star } from 'lucide-react';
 import { toast } from 'sonner';
+import { useProductFavorites } from '../hooks/useProductFavorites';
 
-// subcomponente: informacion y accion (buy box)
 interface ProductInfoProps {
   product: IProductDetail;
   selectedVariant: IProductVariant;
@@ -33,10 +33,12 @@ export const ProductInfoActions = ({
 }: ProductInfoProps) => {
   const { addItem, isAddingItem } = useCart();
   const { performAuthenticatedAction } = useAuthenticatedAction();
+  
+  // Hook de favoritos conectado al ID del producto
+  const { isFavorite, handleFavoriteClick } = useProductFavorites(product._id);
 
-  // logica para añadir al carrito
+  // Logica para añadir al carrito
   const handleAddToCart = () => {
-    //si no hemos seleccionado una talla (creo que ya se puede borrar)
     if (!selectedSize) {
       toast.error('Por favor, selecciona una talla.');
       return;
@@ -45,35 +47,20 @@ export const ProductInfoActions = ({
     const addToCartLogic = () => {
       addItem({
         sku: selectedVariant.sku,
-        size: selectedSize,
-        cantidad: 1, //cambiar
+        size: selectedSize, // Asegúrate de que tu backend soporte esto o adáptalo según tu API de carrito
+        cantidad: 1,
       });
     };
 
-    // hook de autenticacion (o sea de si esta loggeado)
     performAuthenticatedAction(
       addToCartLogic,
       'Inicia sesión para añadir al carrito'
     );
-
-    console.log('Añadiendo al carrito:', {
-      sku: selectedVariant.sku,
-      size: selectedSize,
-      cantidad: 1,
-    });
   };
-  // añadir a favoritos
-  const handleAddFavorite = () => {
-    // mutacion de favoritos, añadir
-    console.log('Añadiendo a favoritos:', product._id);
-    toast.info('Añadido a favoritos (simulado)');
-  };
-
-  console.log(selectedVariant.sizes);
 
   return (
     <div className="flex flex-col space-y-4">
-      {/* informacion basica */}
+      {/* Informacion basica */}
       <p className="text-sm uppercase text-muted-foreground">{product.brand}</p>
       <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
       <div className="flex items-center space-x-2">
@@ -100,7 +87,7 @@ export const ProductInfoActions = ({
         </span>
       </div>
 
-      {/* selector de color */}
+      {/* Selector de color */}
       <div>
         <h3 className="text-sm font-medium">
           Color:{' '}
@@ -129,7 +116,7 @@ export const ProductInfoActions = ({
         </RadioGroup>
       </div>
 
-      {/* selector de talla */}
+      {/* Selector de talla */}
       <div>
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium">Selecciona tu talla</h3>
@@ -144,7 +131,9 @@ export const ProductInfoActions = ({
               <DialogHeader>
                 <DialogTitle>Guía de Tallas</DialogTitle>
               </DialogHeader>
-              <p>no se si añadir esto.</p>
+              <div className="py-4 text-sm text-muted-foreground">
+                <p>Aquí puedes colocar una tabla de medidas o instrucciones.</p>
+              </div>
             </DialogContent>
           </Dialog>
         </div>
@@ -152,14 +141,14 @@ export const ProductInfoActions = ({
         <ToggleGroup
           type="single"
           value={selectedSize || ''}
-          onValueChange={(value) => onSizeChange(value || null)} // permite deseleccionar
+          onValueChange={(value) => onSizeChange(value || null)}
           className="mt-2 grid grid-cols-4 gap-2"
         >
           {selectedVariant.sizes.map((sizeInfo) => (
             <ToggleGroupItem
               key={sizeInfo.size}
               value={sizeInfo.size}
-              disabled={sizeInfo.stock === 0} //deshabilitar si no hay stock, mejorar
+              disabled={sizeInfo.stock === 0}
               className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
             >
               {sizeInfo.size}
@@ -168,23 +157,34 @@ export const ProductInfoActions = ({
         </ToggleGroup>
       </div>
 
-      {/* acciones */}
-      <Button
-        size="lg"
-        onClick={handleAddToCart}
-        disabled={!selectedSize || isAddingItem}
-      >
-        {isAddingItem
-          ? 'Añadiendo...'
-          : selectedSize
-          ? 'Añadir al carrito'
-          : 'Selecciona una talla'}
-        {/* esto es un ifelse anidado */}
-      </Button>
-      <Button size="lg" variant="outline" onClick={handleAddFavorite}>
-        <Heart className="mr-2 h-4 w-4" />
-        Añadir a favoritos
-      </Button>
+      {/* Acciones */}
+      <div className="flex gap-4">
+        <Button
+          size="lg"
+          className="flex-1"
+          onClick={handleAddToCart}
+          disabled={!selectedSize || isAddingItem}
+        >
+          {isAddingItem
+            ? 'Añadiendo...'
+            : selectedSize
+            ? 'Añadir al carrito'
+            : 'Selecciona una talla'}
+        </Button>
+        
+        <Button 
+          size="lg" 
+          variant="outline" 
+          onClick={handleFavoriteClick}
+          className={isFavorite ? "text-red-500 border-red-200 bg-red-50 hover:bg-red-100" : ""}
+        >
+          <Heart 
+            className="mr-2 h-4 w-4" 
+            fill={isFavorite ? "currentColor" : "none"} 
+          />
+          {isFavorite ? 'Guardado' : 'Añadir a favoritos'}
+        </Button>
+      </div>
     </div>
   );
 };

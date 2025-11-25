@@ -22,7 +22,7 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const { handleCartClick, isAddingItem } = useProductCart(product.sku);
-  const { isFavorite, handleFavoriteClick } = useProductFavorites(product.sku);
+  const { isFavorite, handleFavoriteClick } = useProductFavorites(product.id);
 
   return (
     <Link to={`/product/${product.id}`} className="group block">

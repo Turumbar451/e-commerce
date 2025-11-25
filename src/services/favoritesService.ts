@@ -1,23 +1,23 @@
 import api from '@/lib/axios';
 
+// Nueva interfaz de respuesta
 interface FavoritesApiResponse {
-  favorites: string[]; // Suponemos que la API devuelve un array de SKUs
+  favorites: any[]; // Aquí vendrán los productos completos
+  favoriteIds: string[]; // Aquí solo los IDs strings
 }
 
-// GET /api/favorites
 export const getFavorites = async (): Promise<FavoritesApiResponse> => {
   const { data } = await api.get<FavoritesApiResponse>('/favorites');
   return data;
 };
 
-// POST /api/favorites
-export const addFavorite = async (sku: string) => {
-  const { data } = await api.post('/favorites', { sku });
+// Cambiamos SKU por productId
+export const addFavorite = async (productId: string) => {
+  const { data } = await api.post('/favorites', { productId });
   return data;
 };
 
-// DELETE /api/favorites/:sku
-export const removeFavorite = async (sku: string) => {
-  const { data } = await api.delete(`/favorites/${sku}`);
+export const removeFavorite = async (productId: string) => {
+  const { data } = await api.delete(`/favorites/${productId}`);
   return data;
 };
