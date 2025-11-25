@@ -18,6 +18,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
+
   const { handleCartClick, isAddingItem } = useProductCart(
     product.id, 
     product.sku, 
@@ -25,6 +26,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   );
   
   const { isFavorite, handleFavoriteClick } = useProductFavorites(product.id);
+
   return (
     <Link to={`/product/${product.id}`} className="group block">
       <Card className="border-none shadow-none rounded-lg overflow-hidden bg-transparent">

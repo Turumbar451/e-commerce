@@ -13,8 +13,10 @@ import {
 } from '@/components/ui/dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+
 // 2. Agregamos Minus y Plus a los iconos
 import { Heart, Ruler, Star, Minus, Plus } from 'lucide-react';
+
 import { toast } from 'sonner';
 import { useProductFavorites } from '../hooks/useProductFavorites';
 
@@ -35,6 +37,7 @@ export const ProductInfoActions = ({
 }: ProductInfoProps) => {
   const { addItem, isAddingItem } = useCart();
   const { performAuthenticatedAction } = useAuthenticatedAction();
+
   const { isFavorite, handleFavoriteClick } = useProductFavorites(product._id);
 
   // 3. Estado local para la cantidad
@@ -44,6 +47,7 @@ export const ProductInfoActions = ({
   const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
 
   // Lógica para añadir al carrito
+
   const handleAddToCart = () => {
     if (!selectedSize) {
       toast.error('Por favor, selecciona una talla.');
@@ -53,8 +57,10 @@ export const ProductInfoActions = ({
     const addToCartLogic = () => {
       addItem({
         sku: selectedVariant.sku,
+
         size: selectedSize,
         cantidad: quantity, // 4. Usamos la cantidad seleccionada
+
       });
     };
 
@@ -155,13 +161,16 @@ export const ProductInfoActions = ({
               key={sizeInfo.size}
               value={sizeInfo.size}
               disabled={sizeInfo.stock === 0}
+
               className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground cursor-pointer"
+
             >
               {sizeInfo.size}
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
       </div>
+
 
       {/* 5. Selector de Cantidad (NUEVO SECCIÓN) */}
       <div>
@@ -199,6 +208,7 @@ export const ProductInfoActions = ({
         <Button
           size="lg"
           className="flex-1 cursor-pointer"
+
           onClick={handleAddToCart}
           disabled={!selectedSize || isAddingItem}
         >
@@ -213,7 +223,9 @@ export const ProductInfoActions = ({
           size="lg" 
           variant="outline" 
           onClick={handleFavoriteClick}
+
           className={`cursor-pointer ${isFavorite ? "text-red-500 border-red-200 bg-red-50 hover:bg-red-100" : ""}`}
+
         >
           <Heart 
             className="mr-2 h-4 w-4" 
