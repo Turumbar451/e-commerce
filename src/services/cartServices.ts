@@ -10,14 +10,19 @@ export interface ICartItem {
 
 export interface AddToCartPayload {
   sku: string;
-  size: string; // <-- AÑADIR ESTO
+  size: string;
   cantidad: number;
 }
 
 export interface UpdateCartPayload {
   sku: string;
-  size: string; // <-- AÑADIR ESTO
+  size: string;
   cantidad: number;
+}
+
+export interface RemoveItemPayload {
+  sku: string;
+  size: string;
 }
 
 interface CartApiResponse {
@@ -32,21 +37,28 @@ export const getCart = async (): Promise<CartApiResponse> => {
 
 // POST /api/cart
 export const addToCart = async (payload: AddToCartPayload) => {
-  const { data } = await api.post('/cart', payload);
+  // AQUI ESTA LA CORRECCION: Enviamos 'quantity' al backend
+  const body = {
+    sku: payload.sku,
+    size: payload.size,
+    quantity: payload.cantidad 
+  };
+  const { data } = await api.post('/cart', body);
   return data;
 };
 
 // PUT /api/cart/:sku/:size 
 export const updateCartItem = async (payload: UpdateCartPayload) => {
-  //creo que deberia incluir tamnien la talla...
   const { sku, size, cantidad } = payload;
-  const { data } = await api.put(`/cart/${sku}/${encodeURIComponent(size)}`, { cantidad });
+  // AQUI TAMBIEN: Enviamos 'quantity' al backend
+  const body = { quantity: cantidad };
+  
+  const { data } = await api.put(`/cart/${sku}/${encodeURIComponent(size)}`, body);
   return data;
 };
 
 // DELETE /api/cart/:sku/:size
-export const removeFromCart = async (payload: { sku: string, size: string }) => {
-  const { sku, size } = payload;
+export const removeFromCart = async ({ sku, size }: RemoveItemPayload) => {
   const { data } = await api.delete(`/cart/${sku}/${encodeURIComponent(size)}`);
   return data;
 };

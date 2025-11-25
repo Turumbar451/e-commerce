@@ -1,11 +1,8 @@
 import { Link } from 'react-router';
 import { Heart, ShoppingCart } from 'lucide-react';
-
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-
 import { type IProductForCard } from '@/interfaces/product';
-
 import { useProductCart } from './hooks/useProductCart';
 import { useProductFavorites } from './hooks/useProductFavorites';
 
@@ -21,9 +18,13 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const { handleCartClick, isAddingItem } = useProductCart(product.sku);
+  const { handleCartClick, isAddingItem } = useProductCart(
+    product.id, 
+    product.sku, 
+    null
+  );
+  
   const { isFavorite, handleFavoriteClick } = useProductFavorites(product.id);
-
   return (
     <Link to={`/product/${product.id}`} className="group block">
       <Card className="border-none shadow-none rounded-lg overflow-hidden bg-transparent">
@@ -69,11 +70,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <Button
             variant="outline"
             className="w-full mt-2 hover:bg-primary hover:text-primary-foreground transition-colors"
-            onClick={handleCartClick}
+            onClick={handleCartClick} // Esto ahora redirigirá al detalle
             disabled={isAddingItem}
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
-            {isAddingItem ? 'Añadiendo...' : 'Añadir al carrito'}
+            {/* Cambiamos el texto para que tenga más sentido UX */}
+            {isAddingItem ? 'Añadiendo...' : 'Ver opciones'} 
           </Button>
         </CardFooter>
       </Card>
