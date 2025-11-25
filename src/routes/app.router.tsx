@@ -17,6 +17,12 @@ import VerifyPage from '@/pages/VerifyPage';
 import AdminProductEditPage from '@/pages/AdminInventory/AdminProductEditPage';
 
 const PosPage = lazy(() => import('@/pages/Cajero/PosPage'));
+const PosSalesHistoryPage = lazy(
+  () => import('@/pages/Cajero/PosSalesHistoryPage')
+);
+const PosRefundsPage = lazy(
+  () => import('@/pages/Cajero/PosRefundsPage')
+);
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
 const AdminInventoryPage = lazy(
   () => import('@/pages/AdminInventory/AdminInventoryPage')
@@ -162,6 +168,24 @@ export const appRouter = createBrowserRouter([
     element: (
       <ProtectedRoleRoute
         element={<PosPage />}
+        allowedRoles={[ROLES.CASHIER]}
+      />
+    ),
+  },
+  {
+    path: '/pos/history',
+    element: (
+      <ProtectedRoleRoute
+        element={<PosSalesHistoryPage />}
+        allowedRoles={[ROLES.CASHIER]}
+      />
+    ),
+  },
+  {
+    path: '/pos/refunds',
+    element: (
+      <ProtectedRoleRoute
+        element={<PosRefundsPage />}
         allowedRoles={[ROLES.CASHIER]}
       />
     ),
