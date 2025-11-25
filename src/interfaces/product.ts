@@ -34,6 +34,9 @@ export interface IProductDetail {
     salePrice?: number; // precio de oferta
     category: string;
 
+    // Público objetivo: H = hombres, M = mujeres, N = niños
+    targetGender?: 'H' | 'M' | 'N';
+
     variants: IProductVariant[];
 
     description: string;

@@ -6,6 +6,14 @@ import { useProductFormContext } from '../../context/ProductFormContext';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { Separator } from '@radix-ui/react-dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useBrands, useCategories } from '@/features/admin/hooks/useCatalogs';
 
 export const ProductDetailsCard = () => {
   const {
@@ -14,7 +22,11 @@ export const ProductDetailsCard = () => {
     addDetail,
     removeDetail,
     handleDetailChange,
+    setTargetGender,
   } = useProductFormContext();
+
+  const { data: brands } = useBrands();
+  const { data: categories } = useCategories();
   return (
     <Card>
       <CardHeader>
@@ -45,25 +57,77 @@ export const ProductDetailsCard = () => {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="brand">Marca</Label>
-            <Input
-              id="brand"
-              name="brand"
+            <Select
               value={product.brand}
-              onChange={handleBaseChange}
-              placeholder="Ej: AventuraPro"
-              required
-            />
+              onValueChange={(value) =>
+                handleBaseChange({
+                  target: { name: 'brand', value },
+                } as React.ChangeEvent<HTMLInputElement>)
+              }
+            >
+              <SelectTrigger id="brand" className="w-full">
+                <SelectValue placeholder="Selecciona una marca" />
+              </SelectTrigger>
+              <SelectContent>
+                {brands?.map((brand) => (
+                  <SelectItem key={brand._id} value={brand.slug}>
+                    {brand.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="category">Categoría</Label>
-            <Input
-              id="category"
-              name="category"
+            <Select
               value={product.category}
-              onChange={handleBaseChange}
-              placeholder="Ej: Calzado"
-              required
-            />
+              onValueChange={(value) =>
+                handleBaseChange({
+                  target: { name: 'category', value },
+                } as React.ChangeEvent<HTMLInputElement>)
+              }
+            >
+              <SelectTrigger id="category" className="w-full">
+                <SelectValue placeholder="Selecciona una categoría" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories?.map((category) => (
+                  <SelectItem key={category._id} value={category.slug}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        {/* Género objetivo */}
+        <div className="space-y-2">
+          <Label>Público objetivo</Label>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant={product.targetGender === 'H' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setTargetGender('H')}
+            >
+              Hombres
+            </Button>
+            <Button
+              type="button"
+              variant={product.targetGender === 'M' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setTargetGender('M')}
+            >
+              Mujeres
+            </Button>
+            <Button
+              type="button"
+              variant={product.targetGender === 'N' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setTargetGender('N')}
+            >
+              Niños
+            </Button>
           </div>
         </div>
         <Separator className="my-6" />

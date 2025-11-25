@@ -101,6 +101,14 @@ export const useProductForm = (productToEdit?: IProductDetail) => {
       }));
     }
   };
+
+  // género objetivo (H/M/N)
+  const setTargetGender = (value: 'H' | 'M' | 'N') => {
+    setProduct((prev) => ({
+      ...prev,
+      targetGender: value,
+    }));
+  };
   //variantes
   const addVariant = () => {
     setProduct((prev) => ({
@@ -275,6 +283,7 @@ export const useProductForm = (productToEdit?: IProductDetail) => {
 
     handleSubmit,
     handleBaseChange,
+    setTargetGender,
     addVariant,
     removeVariant,
     handleVariantChange,
