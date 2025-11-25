@@ -1,8 +1,16 @@
 import { Link } from 'react-router';
+<<<<<<< HEAD
 import { Heart, Truck } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { type IProductForCard } from '@/interfaces/product';
+=======
+import { Heart, ShoppingCart } from 'lucide-react';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { type IProductForCard } from '@/interfaces/product';
+import { useProductCart } from './hooks/useProductCart';
+>>>>>>> 11e6552 (logica incompleta de añadir a carrito)
 import { useProductFavorites } from './hooks/useProductFavorites';
 import { cn } from '@/lib/utils';
 
@@ -18,8 +26,16 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
+<<<<<<< HEAD
+=======
+  const { handleCartClick, isAddingItem } = useProductCart(
+    product.id, 
+    product.sku, 
+    null
+  );
+  
+>>>>>>> 11e6552 (logica incompleta de añadir a carrito)
   const { isFavorite, handleFavoriteClick } = useProductFavorites(product.id);
-
   return (
     <Link to={`/product/${product.id}`} className="group block h-full">
       <Card className="h-full p-0 gap-0 border border-transparent hover:border-border/50 shadow-none hover:shadow-md transition-all duration-300 bg-card rounded-xl overflow-hidden flex flex-col">
@@ -32,6 +48,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           />
 
           <Button
+<<<<<<< HEAD
             onClick={handleFavoriteClick}
             className={cn(
               'absolute top-3 right-3 p-2.5 rounded-full transition-all duration-200 z-10',
@@ -47,6 +64,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 isFavorite ? 'fill-current' : 'fill-transparent'
               )}
             />
+=======
+            variant="outline"
+            className="w-full mt-2 hover:bg-primary hover:text-primary-foreground transition-colors"
+            onClick={handleCartClick} // Esto ahora redirigirá al detalle
+            disabled={isAddingItem}
+          >
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            {/* Cambiamos el texto para que tenga más sentido UX */}
+            {isAddingItem ? 'Añadiendo...' : 'Ver opciones'} 
+>>>>>>> 11e6552 (logica incompleta de añadir a carrito)
           </Button>
 
           <div className="absolute bottom-3 left-3">

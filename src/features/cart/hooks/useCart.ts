@@ -59,6 +59,7 @@ export const useCart = () => {
     cart: data?.items || [], // Los items del carrito (o un array vacío)
     isLoadingCart: isLoading,
     cartError: error,
+<<<<<<< HEAD
 
     addItem: addMutation.mutate,
     isAddingItem: addMutation.isPending,
@@ -68,6 +69,17 @@ export const useCart = () => {
 
     // OJO: removeItem ahora espera un objeto { sku, size }
     removeItem: removeMutation.mutate,
+=======
+    
+    addItem: addMutation.mutate,
+    isAddingItem: addMutation.isPending,
+    
+    updateItem: updateMutation.mutate,
+    isUpdatingItem: updateMutation.isPending,
+    
+    // OJO: removeItem ahora espera un objeto { sku, size }
+    removeItem: removeMutation.mutate, 
+>>>>>>> 11e6552 (logica incompleta de añadir a carrito)
     isRemovingItem: removeMutation.isPending,
   };
 };
