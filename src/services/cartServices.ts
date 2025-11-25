@@ -1,11 +1,15 @@
 import api from '@/lib/axios';
 
+// 1. Actualizamos la interfaz para coincidir con el Backend (cartController.js)
 export interface ICartItem {
   sku: string;
-  cantidad: number;
-  nombre_producto: string;
-  talla: number;
-  precio: number;
+  quantity: number; // Antes: cantidad
+  name: string;     // Antes: nombre_producto
+  size: string;     // Antes: talla
+  price: number;    // Antes: precio
+  image: string;    // El backend envía 'image', no 'imageUrl'
+  brand: string;    // El backend envía esto extra
+  productId: string; // El backend envía esto extra
 }
 
 export interface AddToCartPayload {
@@ -32,7 +36,13 @@ export const getCart = async (): Promise<CartApiResponse> => {
 
 // POST /api/cart
 export const addToCart = async (payload: AddToCartPayload) => {
-  const { data } = await api.post('/cart', payload);
+  // Mapeamos 'cantidad' del form a 'quantity' del backend
+  const body = {
+    sku: payload.sku,
+    size: payload.size,
+    quantity: payload.cantidad 
+  };
+  const { data } = await api.post('/cart', body);
   return data;
 };
 
@@ -40,7 +50,8 @@ export const addToCart = async (payload: AddToCartPayload) => {
 export const updateCartItem = async (payload: UpdateCartPayload) => {
   //creo que deberia incluir tamnien la talla...
   const { sku, size, cantidad } = payload;
-  const { data } = await api.put(`/cart/${sku}/${encodeURIComponent(size)}`, { cantidad });
+  const body = { quantity: cantidad };
+  const { data } = await api.put(`/cart/${sku}/${encodeURIComponent(size)}`, body);
   return data;
 };
 
