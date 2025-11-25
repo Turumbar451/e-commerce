@@ -7,6 +7,9 @@ interface FetchProductsParams {
   limit: number;
   category?: string; 
   targetGender?: 'H' | 'M' | 'N';
+  brand?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 export const fetchProducts = async ({
@@ -14,6 +17,9 @@ export const fetchProducts = async ({
   limit,
   category,
   targetGender,
+  brand,
+  minPrice,
+  maxPrice,
 }: FetchProductsParams): Promise<IProductResponse> => {
   
   // 2. Creamos el objeto de parámetros
@@ -27,6 +33,18 @@ export const fetchProducts = async ({
   // 4. Si hay targetGender, también lo agregamos
   if (targetGender) {
     params.targetGender = targetGender;
+  }
+
+  if (brand) {
+    params.brand = brand;
+  }
+
+  if (typeof minPrice === 'number') {
+    params.minPrice = minPrice;
+  }
+
+  if (typeof maxPrice === 'number') {
+    params.maxPrice = maxPrice;
   }
 
   const { data } = await api.get('/products', { params });

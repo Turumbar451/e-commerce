@@ -7,7 +7,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@/components/ui/sheet';
-import { ShoppingCart, User, LogOut, Menu, Heart } from 'lucide-react'; // <--- 1. Agregamos Heart
+import { ShoppingCart, User, LogOut, Menu, Heart, SlidersHorizontal } from 'lucide-react'; // <--- 1. Agregamos Heart
 import { Link, useNavigate } from 'react-router';
 import { MyLogoSvg } from '@/components/MyLogoSvg';
 import { ModeToggle } from '@/components/common/ModeToggle';
@@ -45,6 +45,10 @@ export const Navbar = () => {
   const handleLogout = async () => {
     await logout();
     navigate('/');
+  };
+
+  const handleOpenFilters = () => {
+    window.dispatchEvent(new CustomEvent('open-product-filters'));
   };
 
   return (
@@ -92,6 +96,17 @@ export const Navbar = () => {
               <Heart className="h-5 w-5 text-foreground/70" />
             </Button>
             {/* --------------------------- */}
+
+            {/* Botón de filtros de productos */}
+            <Button
+              className="cursor-pointer"
+              variant="ghost"
+              size="icon"
+              onClick={handleOpenFilters}
+              aria-label="Abrir filtros de productos"
+            >
+              <SlidersHorizontal className="h-5 w-5 text-foreground/70" />
+            </Button>
 
             <Button
               className="cursor-pointer"
