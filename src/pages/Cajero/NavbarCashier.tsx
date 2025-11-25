@@ -6,6 +6,8 @@ import { Link, useLocation, useNavigate } from 'react-router';
 const tabs = [
   { to: '/pos/search', label: 'Búsqueda de productos' },
   { to: '/pos/sale', label: 'Venta de productos' },
+  { to: '/pos/history', label: 'Historial de ventas' },
+  { to: '/pos/refunds', label: 'Reembolsos' },
   { to: '/pos/close', label: 'Cierre de caja' },
 ];
 
