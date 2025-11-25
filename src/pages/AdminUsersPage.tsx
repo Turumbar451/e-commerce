@@ -38,6 +38,18 @@ import {
 } from '@/components/ui/select';
 import type { IEmployee } from '@/interfaces/adminUser';
 import { EditUserDialog } from '@/features/admin2/components/EditUserDialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from '@/components/ui/alert-dialog';
 const ROLES_LABELS: Record<string, string> = {
   admon_roles: 'Admin. Roles',
   admon_inventario: 'Admin. Inventario',
@@ -63,15 +75,33 @@ const AdminUsersPage = () => {
     refetch,
     roleFilter,
     setRoleFilter,
+    handleDeleteUser,
   } = useAdminUsers();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<IEmployee | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
+  // estado para eliminar usuario
+  const [userToDelete, setUserToDelete] = useState<IEmployee | null>(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
   const handleEditClick = (user: IEmployee) => {
     setEditingUser(user);
     setIsEditOpen(true);
+  };
+
+  const confirmDelete = (user: IEmployee) => {
+    setUserToDelete(user);
+    setIsDeleteOpen(true);
+  };
+
+  const executeDelete = () => {
+    if (userToDelete) {
+      handleDeleteUser(userToDelete.id);
+      setIsDeleteOpen(false);
+      setUserToDelete(null);
+    }
   };
 
   // helpers para renderizar iconos de ordenamiento
@@ -245,6 +275,7 @@ const AdminUsersPage = () => {
                             variant="ghost"
                             size="icon"
                             className="text-destructive hover:bg-destructive/10"
+                            onClick={() => confirmDelete(emp)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -269,6 +300,30 @@ const AdminUsersPage = () => {
         onOpenChange={setIsCreateOpen}
         onSuccess={refetch}
       />
+
+      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción eliminará permanentemente la cuenta de{' '}
+              <span className="font-bold text-foreground">
+                {userToDelete?.nombre} {userToDelete?.apellido}
+              </span>
+              . El empleado perderá acceso al sistema inmediatamente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={executeDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Sí, eliminar cuenta
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

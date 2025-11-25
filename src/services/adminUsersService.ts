@@ -18,3 +18,8 @@ export const updateInternalUser = async (id: string, data: UpdateUserPayload) =>
     const response = await api.put(`/admin/users/${id}`, data);
     return response.data;
 };
+
+export const deleteInternalUser = async (id: string) => {
+    const { data } = await api.delete<{ message: string }>(`/admin/users/${id}`);
+    return data;
+};

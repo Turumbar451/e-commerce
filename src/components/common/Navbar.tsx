@@ -79,10 +79,8 @@ export const Navbar = () => {
 
         {/* derecha */}
         <div className="flex items-center gap-2 md:gap-4">
-          
           {/* --- VISTA ESCRITORIO --- */}
           <div className="hidden md:flex items-center gap-2">
-            
             {/* 3. Botón de Favoritos (Nuevo) */}
             <Button
               className="cursor-pointer"
@@ -190,25 +188,25 @@ export const Navbar = () => {
                     <ShoppingCart className="h-4 w-4 mr-2" />
                     Ver Carrito
                   </Button>
-                  
+
                   {authStatus === 'authenticated' ? (
-                     <Button 
-                        className="text-base justify-start" 
-                        variant="destructive"
-                        onClick={handleLogout}
-                      >
-                        <LogOut className="h-4 w-4 mr-2" />
-                        Cerrar sesión ({user?.nombre})
-                      </Button>
+                    <Button
+                      className="text-base justify-start"
+                      variant="destructive"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Cerrar sesión ({user?.nombre})
+                    </Button>
                   ) : (
-                     <Link to="/login">
-                        <SheetClose asChild>
-                          <Button className="w-full text-base justify-start">
-                            <User className="h-4 w-4 mr-2" />
-                            Iniciar sesión
-                          </Button>
-                        </SheetClose>
-                      </Link>
+                    <Link to="/login">
+                      <SheetClose asChild>
+                        <Button className="w-full text-base justify-start">
+                          <User className="h-4 w-4 mr-2" />
+                          Iniciar sesión
+                        </Button>
+                      </SheetClose>
+                    </Link>
                   )}
                 </div>
               </SheetContent>

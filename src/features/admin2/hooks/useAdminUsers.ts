@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getInternalUsers } from '@/services/adminUsersService';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { deleteInternalUser, getInternalUsers } from '@/services/adminUsersService';
+import { toast } from 'sonner';
+import { queryClient } from '@/lib/queryCliente';
 
 export type SortConfig = {
     key: 'nombre' | 'fecha_alta';
@@ -74,6 +76,22 @@ export const useAdminUsers = () => {
         }));
     };
 
+    const deleteMutation = useMutation({
+        mutationFn: deleteInternalUser,
+        onSuccess: () => {
+            toast.success('Empleado eliminado correctamente');
+            // Refrescar la lista automáticamente
+            queryClient.invalidateQueries({ queryKey: ['internalUsers'] });
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.message || 'Error al eliminar empleado');
+        },
+    });
+
+    const handleDeleteUser = (id: string) => {
+        deleteMutation.mutate(id);
+    };
+
     return {
         employees: processedEmployees,
         isLoading,
@@ -86,5 +104,8 @@ export const useAdminUsers = () => {
         handleSort,
         roleFilter,
         setRoleFilter,
+
+        handleDeleteUser,
+        isDeleting: deleteMutation.isPending,
     };
 };
