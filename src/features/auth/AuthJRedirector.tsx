@@ -3,7 +3,6 @@ import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 import { GlobalContext } from '@/context/GlobalContext';
-import { shouldSetupSecurity } from '@/utils/security';
 
 export const AuthRedirector = () => {
   const { authStatus, user } = useContext(GlobalContext);
@@ -11,11 +10,6 @@ export const AuthRedirector = () => {
 
   useEffect(() => {
     if (authStatus !== 'authenticated' || !user) {
-      return;
-    }
-
-    if (shouldSetupSecurity(user)) {
-      navigate('/security-setup');
       return;
     }
 

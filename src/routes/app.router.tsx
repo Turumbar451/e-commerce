@@ -8,11 +8,11 @@ import { AdminLayout } from '@/layout/AdminLayout';
 import { lazy } from 'react';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
+import { ResetPasswordPage } from '@/pages/ResetPasswordPage';
 import { ProtectedRoleRoute } from './ProtectedRoleRouter';
 import { ProtectedAuthRoute } from './ProtectedAuthRoute';
 import ProductDetailPage from '@/pages/ProductDetailPage';
 import { StoreRouteGuard } from './StoreRouteGuard';
-import SecuritySetup from '@/features/security/SecuritySetup';
 import { Navbar } from '@/components/common/Navbar';
 import VerifyPage from '@/pages/VerifyPage';
 import AdminProductEditPage from '@/pages/AdminInventory/AdminProductEditPage';
@@ -192,15 +192,8 @@ export const appRouter = createBrowserRouter([
     element: <ForgotPasswordPage />,
   },
   {
-    path: '/security-setup',
-    element: (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="grow flex items-center justify-center p-4">
-          <SecuritySetup />
-        </main>
-      </div>
-    ),
+    path: '/reset-password',
+    element: <ResetPasswordPage />,
   },
   {
     path: '/verify',
