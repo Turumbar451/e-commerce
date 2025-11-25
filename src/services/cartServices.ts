@@ -41,7 +41,7 @@ export const getCart = async (): Promise<CartApiResponse> => {
 
 // POST /api/cart
 export const addToCart = async (payload: AddToCartPayload) => {
-  // AQUI ESTA LA CORRECCION: Enviamos 'quantity' al backend
+  // Mapeamos 'cantidad' del form a 'quantity' del backend
   const body = {
     sku: payload.sku,
     size: payload.size,
