@@ -13,7 +13,6 @@ import { ProtectedRoleRoute } from './ProtectedRoleRouter';
 import { ProtectedAuthRoute } from './ProtectedAuthRoute';
 import ProductDetailPage from '@/pages/ProductDetailPage';
 import { StoreRouteGuard } from './StoreRouteGuard';
-import { Navbar } from '@/components/common/Navbar';
 import VerifyPage from '@/pages/VerifyPage';
 import AdminProductEditPage from '@/pages/AdminInventory/AdminProductEditPage';
 

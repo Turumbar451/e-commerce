@@ -1,7 +1,13 @@
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { useState } from 'react';
 import { resetPasswordWithToken } from '@/services/authServices';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { PasswordInput } from '@/components/common/PasswordInput';
@@ -15,7 +21,9 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
-  const [messageVariant, setMessageVariant] = useState<'neutral' | 'success' | 'error'>('neutral');
+  const [messageVariant, setMessageVariant] = useState<
+    'neutral' | 'success' | 'error'
+  >('neutral');
 
   const messageColor =
     messageVariant === 'success'
@@ -48,11 +56,15 @@ export default function ResetPassword() {
     try {
       await resetPasswordWithToken({ email, token, newPassword });
       setMessageVariant('success');
-      setMsg('Contraseña actualizada correctamente. Ahora puedes iniciar sesión.');
+      setMsg(
+        'Contraseña actualizada correctamente. Ahora puedes iniciar sesión.'
+      );
     } catch (error) {
       console.error(error);
       setMessageVariant('error');
-      setMsg('No fue posible actualizar la contraseña. Es posible que el enlace haya expirado.');
+      setMsg(
+        'No fue posible actualizar la contraseña. Es posible que el enlace haya expirado.'
+      );
     } finally {
       setLoading(false);
     }
@@ -71,7 +83,9 @@ export default function ResetPassword() {
           <form className="space-y-4 w-full" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <Label>Correo</Label>
-              <p className="text-sm text-muted-foreground break-all">{email || 'Correo no disponible en el enlace.'}</p>
+              <p className="text-sm text-muted-foreground break-all">
+                {email || 'Correo no disponible en el enlace.'}
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="new-password">Nueva contraseña</Label>
