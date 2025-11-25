@@ -13,6 +13,9 @@ export const useProducts = (
   const [currentPage, setCurrentPage] = useState(1);
   const [activeCategory, setActiveCategory] = useState<string | null>(initialCategory);
   const [activeTargetGender, setActiveTargetGender] = useState<'H' | 'M' | 'N' | null>(initialTargetGender);
+  const [activeBrand, setActiveBrand] = useState<string | null>(null);
+  const [minPrice, setMinPrice] = useState<number | null>(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
 
   // Cuando cambie la categoría inicial o el género inicial (por cambio de ruta),
   // sincronizamos el estado interno y regresamos a la página 1.
@@ -23,14 +26,17 @@ export const useProducts = (
   }, [initialCategory, initialTargetGender]);
 
   const { data, isLoading, isError, isFetching, error } = useQuery<IProductResponse, Error>({
-    // La clave depende de la página, categoría y género
-    queryKey: ['products', currentPage, activeCategory, activeTargetGender],
+    // La clave depende de la página, categoría, género, marca y precio
+    queryKey: ['products', currentPage, activeCategory, activeTargetGender, activeBrand, minPrice, maxPrice],
 
     queryFn: () => fetchProducts({
       page: currentPage,
       limit: PRODUCTS_PER_PAGE,
       category: activeCategory || undefined, // Enviamos la categoría si existe
       targetGender: activeTargetGender || undefined, // Enviamos el género si existe
+      brand: activeBrand || undefined,
+      minPrice: minPrice ?? undefined,
+      maxPrice: maxPrice ?? undefined,
     }),
 
     // Mantiene los datos viejos mientras cargan los nuevos
@@ -50,6 +56,13 @@ export const useProducts = (
     setActiveCategory,
     activeTargetGender,
     setActiveTargetGender,
+    activeBrand,
+    setActiveBrand,
+    minPrice,
+    setMinPrice,
+    maxPrice,
+    setMaxPrice,
+
     error,
   };
 };
