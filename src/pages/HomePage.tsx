@@ -5,7 +5,11 @@ import { Paginator } from '@/components/common/Paginator'; // 1. Importar
 import { Navbar } from '@/components/common/Navbar';
 import { useProducts } from '@/features/products/hooks/useProducts';
 
-export const HomePage = () => {
+type HomePageProps = {
+  targetGender?: 'H' | 'M' | 'N';
+};
+
+export const HomePage = ({ targetGender }: HomePageProps) => {
   const {
     products,
     isLoading,
@@ -14,7 +18,7 @@ export const HomePage = () => {
     currentPage, // <--- Necesario
     setCurrentPage, // <--- Necesario
     isFetching,
-  } = useProducts();
+  } = useProducts(null, targetGender ?? null);
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Navbar />

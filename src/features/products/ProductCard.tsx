@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 
 import { type IProductForCard } from '@/interfaces/product';
 
-// nuevos hooks separados
 import { useProductCart } from './hooks/useProductCart';
 import { useProductFavorites } from './hooks/useProductFavorites';
 
@@ -22,18 +21,14 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  // lógica del carrito
   const { handleCartClick, isAddingItem } = useProductCart(product.sku);
-
-  // lógica de favoritos
   const { isFavorite, handleFavoriteClick } = useProductFavorites(product.sku);
 
   return (
     <Link to={`/product/${product.id}`} className="group block">
       <Card className="border-none shadow-none rounded-lg overflow-hidden bg-transparent">
         <CardContent className="p-0 relative">
-          {/* Imagen */}
-          <div className="aspect-square w-full overflow-hidden bg-gray-100">
+          <div className="aspect-square w-full overflow-hidden rounded-lg bg-secondary/50">
             <img
               src={product.imageUrl}
               alt={product.name}
@@ -44,33 +39,36 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           {/* Botón Favoritos */}
           <button
             onClick={handleFavoriteClick}
-            className="cursor-pointer absolute top-3 right-3 p-2 bg-background rounded-full shadow-md text-muted-foreground hover:text-red-500 hover:bg-secondary transition-colors"
-            aria-label={isFavorite ? "Eliminar de favoritos" : "Añadir a favoritos"}
+            className="cursor-pointer absolute top-3 right-3 p-2 bg-background/90 backdrop-blur-sm rounded-full shadow-sm text-muted-foreground hover:text-red-500 hover:bg-muted transition-colors"
+            aria-label={
+              isFavorite ? 'Eliminar de favoritos' : 'Añadir a favoritos'
+            }
           >
             <Heart
               className="w-5 h-5"
               fill={isFavorite ? 'currentColor' : 'none'}
+              // Si es favorito, forzamos el color rojo, si no, hereda el muted-foreground
+              color={isFavorite ? '#ef4444' : 'currentColor'}
             />
           </button>
         </CardContent>
 
         <CardFooter className="flex flex-col items-start p-4 pt-3">
-          <span className="text-sm uppercase font-semibold text-gray-500 tracking-wider">
+          <span className="text-sm uppercase font-semibold text-muted-foreground tracking-wider">
             {product.brand}
           </span>
-          
-          <h3 className="font-medium text-base text-gray-800 mt-1">
+
+          <h3 className="font-medium text-base text-foreground mt-1 line-clamp-1">
             {product.name}
           </h3>
-          
-          <p className="font-bold text-lg text-gray-900 mt-1">
+
+          <p className="font-bold text-lg text-foreground mt-1">
             {formatCurrency(product.price)}
           </p>
 
-          {/* Botón Carrito */}
           <Button
             variant="outline"
-            className="w-full mt-2"
+            className="w-full mt-2 hover:bg-primary hover:text-primary-foreground transition-colors"
             onClick={handleCartClick}
             disabled={isAddingItem}
           >

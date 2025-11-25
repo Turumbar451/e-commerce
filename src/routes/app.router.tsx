@@ -13,7 +13,6 @@ import { ProtectedRoleRoute } from './ProtectedRoleRouter';
 import { ProtectedAuthRoute } from './ProtectedAuthRoute';
 import ProductDetailPage from '@/pages/ProductDetailPage';
 import { StoreRouteGuard } from './StoreRouteGuard';
-import { Navbar } from '@/components/common/Navbar';
 import VerifyPage from '@/pages/VerifyPage';
 import AdminProductEditPage from '@/pages/AdminInventory/AdminProductEditPage';
 
@@ -43,6 +42,18 @@ export const appRouter = createBrowserRouter([
   {
     path: '/',
     element: <StoreRouteGuard element={<HomePage />} />,
+  },
+  {
+    path: '/hombres',
+    element: <StoreRouteGuard element={<HomePage targetGender="H" />} />,
+  },
+  {
+    path: '/mujeres',
+    element: <StoreRouteGuard element={<HomePage targetGender="M" />} />,
+  },
+  {
+    path: '/niños',
+    element: <StoreRouteGuard element={<HomePage targetGender="N" />} />,
   },
   {
     // : indica que es parametro dinamico
