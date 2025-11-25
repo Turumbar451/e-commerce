@@ -14,6 +14,7 @@ export const ProductDetailsCard = () => {
     addDetail,
     removeDetail,
     handleDetailChange,
+    setTargetGender,
   } = useProductFormContext();
   return (
     <Card>
@@ -64,6 +65,36 @@ export const ProductDetailsCard = () => {
               placeholder="Ej: Calzado"
               required
             />
+          </div>
+        </div>
+        {/* Género objetivo */}
+        <div className="space-y-2">
+          <Label>Público objetivo</Label>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant={product.targetGender === 'H' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setTargetGender('H')}
+            >
+              Hombres
+            </Button>
+            <Button
+              type="button"
+              variant={product.targetGender === 'M' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setTargetGender('M')}
+            >
+              Mujeres
+            </Button>
+            <Button
+              type="button"
+              variant={product.targetGender === 'N' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setTargetGender('N')}
+            >
+              Niños
+            </Button>
           </div>
         </div>
         <Separator className="my-6" />

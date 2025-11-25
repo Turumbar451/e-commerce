@@ -45,6 +45,18 @@ export const appRouter = createBrowserRouter([
     element: <StoreRouteGuard element={<HomePage />} />,
   },
   {
+    path: '/hombres',
+    element: <StoreRouteGuard element={<HomePage targetGender="H" />} />,
+  },
+  {
+    path: '/mujeres',
+    element: <StoreRouteGuard element={<HomePage targetGender="M" />} />,
+  },
+  {
+    path: '/niños',
+    element: <StoreRouteGuard element={<HomePage targetGender="N" />} />,
+  },
+  {
     // : indica que es parametro dinamico
     path: '/product/:productId',
     element: <StoreRouteGuard element={<ProductDetailPage />} />,

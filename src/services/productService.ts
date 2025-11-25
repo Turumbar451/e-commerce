@@ -6,20 +6,27 @@ interface FetchProductsParams {
   page: number;
   limit: number;
   category?: string; 
+  targetGender?: 'H' | 'M' | 'N';
 }
 
 export const fetchProducts = async ({
   page,
   limit,
   category,
+  targetGender,
 }: FetchProductsParams): Promise<IProductResponse> => {
   
   // 2. Creamos el objeto de parámetros
-  const params: any = { page, limit };
+  const params: Record<string, unknown> = { page, limit };
   
   // 3. Si hay categoría, la agregamos al envío
   if (category) {
     params.category = category;
+  }
+
+  // 4. Si hay targetGender, también lo agregamos
+  if (targetGender) {
+    params.targetGender = targetGender;
   }
 
   const { data } = await api.get('/products', { params });
