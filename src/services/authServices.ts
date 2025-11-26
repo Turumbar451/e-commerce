@@ -56,3 +56,15 @@ export const verifyEmailApi = async (email: string, token: string) => {
     const { data } = await api.post('/auth/verify', { email, token });
     return data;
 };
+
+// Update user profile data
+export const updateUserApi = async (userData: { nombre: string; apellido: string }) => {
+    const { data } = await api.put<User>('/auth/profile', userData);
+    return data;
+};
+
+// Change user password
+export const changePasswordApi = async (passwordData: { currentPassword: string; newPassword: string }) => {
+    const { data } = await api.put('/auth/password', passwordData);
+    return data;
+};
