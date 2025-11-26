@@ -18,7 +18,6 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-
   const { handleCartClick, isAddingItem } = useProductCart(
     product.id, 
     product.sku, 
