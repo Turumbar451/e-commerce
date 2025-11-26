@@ -17,6 +17,7 @@ import VerifyPage from '@/pages/VerifyPage';
 import AdminProductEditPage from '@/pages/AdminInventory/AdminProductEditPage';
 import { ROLES } from '@/lib/constants';
 
+const CheckoutPage = lazy(() => import('@/pages/CheckoutPage'));
 const PosPage = lazy(() => import('@/pages/Cajero/PosPage'));
 const PosSalesHistoryPage = lazy(
   () => import('@/pages/Cajero/PosSalesHistoryPage')
@@ -202,6 +203,15 @@ export const appRouter = createBrowserRouter([
       />
     ),
   },
+  {
+      path: '/checkout',
+      element: (
+        <ProtectedRoleRoute
+          element={<CheckoutPage />}
+          allowedRoles={[ROLES.CUSTOMER]}
+        />
+      ),
+    },
   {
     path: '/profile',
     //todos los usuarios loggeados ven su perfil
