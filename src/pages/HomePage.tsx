@@ -44,14 +44,17 @@ export const HomePage = ({ targetGender }: HomePageProps) => {
     return () => window.removeEventListener('open-product-filters', handler);
   }, []);
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-background text-foreground">
       <Navbar />
 
       <main className="flex-col flex grow">
         <HeroBanners />
         <div className="container flex justify-end py-4">
           <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
-            <SheetContent side="left" className="w-full sm:w-[360px] px-5 py-6 space-y-4">
+            <SheetContent
+              side="left"
+              className="w-full sm:w-[360px] px-5 py-6 space-y-4"
+            >
               <SheetHeader>
                 <SheetTitle>Filtrar productos</SheetTitle>
               </SheetHeader>
@@ -110,7 +113,7 @@ export const HomePage = ({ targetGender }: HomePageProps) => {
               totalPages={pagination.totalPages}
               onPageChange={(page) => {
                 setCurrentPage(page);
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll al inicio
+                //window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll al inicio
               }}
               isFetching={isFetching}
             />
