@@ -164,7 +164,7 @@ export const ProductDataTable = ({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="rounded-md border overflow-hidden">
+        <div className="rounded-md border overflow-hidden min-h-[65vh]">
           <Table>
             <TableHeader>
               <TableRow>
@@ -205,6 +205,12 @@ export const ProductDataTable = ({
                     onRequestDelete={setItemToDelete}
                   />
                 ))}
+
+              {!isLoading && items.length > 0 && items.length < 5 && (
+                <TableRow style={{ height: `${(10 - items.length) * 60}px` }}>
+                  <TableCell colSpan={7} />
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>
