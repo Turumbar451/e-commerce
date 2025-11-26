@@ -1,3 +1,4 @@
+import { useState } from 'react'; // 1. Importamos useState
 import { Button } from '@/components/ui/button';
 import { DialogHeader } from '@/components/ui/dialog';
 import { useCart } from '@/features/cart/hooks/useCart';
@@ -12,7 +13,9 @@ import {
 } from '@/components/ui/dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Heart, Ruler, Star } from 'lucide-react';
+
+// 2. Agregamos Minus y Plus a los iconos
+import { Heart, Ruler, Star, Minus, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useProductFavorites } from '../hooks/useProductFavorites';
 
@@ -37,7 +40,13 @@ export const ProductInfoActions = ({
   // Hook de favoritos conectado al ID del producto
   const { isFavorite, handleFavoriteClick } = useProductFavorites(product._id);
 
-  // Logica para añadir al carrito
+  // 3. Estado local para la cantidad
+  const [quantity, setQuantity] = useState(1);
+
+  const handleIncrement = () => setQuantity((prev) => prev + 1);
+  const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
+
+  // Lógica para añadir al carrito
   const handleAddToCart = () => {
     if (!selectedSize) {
       toast.error('Por favor, selecciona una talla.');
@@ -47,8 +56,8 @@ export const ProductInfoActions = ({
     const addToCartLogic = () => {
       addItem({
         sku: selectedVariant.sku,
-        size: selectedSize, // Asegúrate de que tu backend soporte esto o adáptalo según tu API de carrito
-        cantidad: 1,
+        size: selectedSize,
+        cantidad: quantity, // 4. Usamos la cantidad seleccionada
       });
     };
 
@@ -108,7 +117,7 @@ export const ProductInfoActions = ({
               key={variant.sku}
               value={variant.sku}
               id={variant.sku}
-              className="h-8 w-8 rounded-full border-2 p-0"
+              className="h-8 w-8 rounded-full border-2 p-0 cursor-pointer"
               style={{ backgroundColor: variant.colorHex || 'gray' }}
               aria-label={variant.colorName}
             />
@@ -122,7 +131,7 @@ export const ProductInfoActions = ({
           <h3 className="text-sm font-medium">Selecciona tu talla</h3>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="link" size="sm" className="p-0">
+              <Button variant="link" size="sm" className="p-0 text-muted-foreground">
                 <Ruler className="mr-1 h-4 w-4" />
                 Guía de tallas
               </Button>
@@ -149,7 +158,7 @@ export const ProductInfoActions = ({
               key={sizeInfo.size}
               value={sizeInfo.size}
               disabled={sizeInfo.stock === 0}
-              className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+              className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground cursor-pointer"
             >
               {sizeInfo.size}
             </ToggleGroupItem>
@@ -157,11 +166,42 @@ export const ProductInfoActions = ({
         </ToggleGroup>
       </div>
 
+      {/* 5. Selector de Cantidad (NUEVO SECCIÓN) */}
+      <div>
+        <h3 className="text-sm font-medium mb-2">Cantidad</h3>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 rounded-md cursor-pointer"
+            onClick={handleDecrement}
+            disabled={quantity <= 1}
+          >
+            <Minus className="h-4 w-4" />
+          </Button>
+          
+          <span className="font-semibold min-w-[2rem] text-center text-lg">
+            {quantity}
+          </span>
+
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 rounded-md cursor-pointer"
+            onClick={handleIncrement}
+            // Opcional: Podrías deshabilitar si supera el stock disponible de la talla seleccionada
+            // disabled={selectedSize && quantity >= stockDisponible}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
       {/* Acciones */}
-      <div className="flex gap-4">
+      <div className="flex gap-4 pt-2">
         <Button
           size="lg"
-          className="flex-1"
+          className="flex-1 cursor-pointer"
           onClick={handleAddToCart}
           disabled={!selectedSize || isAddingItem}
         >
@@ -176,7 +216,7 @@ export const ProductInfoActions = ({
           size="lg" 
           variant="outline" 
           onClick={handleFavoriteClick}
-          className={isFavorite ? "text-red-500 border-red-200 bg-red-50 hover:bg-red-100" : ""}
+          className={`cursor-pointer ${isFavorite ? "text-red-500 border-red-200 bg-red-50 hover:bg-red-100" : ""}`}
         >
           <Heart 
             className="mr-2 h-4 w-4" 
