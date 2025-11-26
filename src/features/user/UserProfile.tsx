@@ -34,7 +34,6 @@ export const UserProfile = () => {
         setLoadingProfile(false);
         return;
     }
-
     try {
       // 1. Guardamos en Base de Datos
       await updateUserApi({ nombre, apellido });
