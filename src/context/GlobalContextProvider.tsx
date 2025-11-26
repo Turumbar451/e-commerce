@@ -49,7 +49,7 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
   };
 
   return (
-    <GlobalContext.Provider
+    <GlobalContext
       value={{
         authStatus: auth.authStatus,
         user: auth.user,
@@ -58,6 +58,6 @@ export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
       }}
     >
       {children}
-    </GlobalContext.Provider>
+    </GlobalContext>
   );
 };

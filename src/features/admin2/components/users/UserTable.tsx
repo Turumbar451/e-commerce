@@ -10,19 +10,21 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { UserCog, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import type { IEmployee } from '@/interfaces/adminUser';
-import type { SortConfig } from '../../hooks/useAdminUsers';
+import type { SortConfig } from '../../hooks/useAdminUsers'; // Ajusta la ruta si es necesario
+import { ROLES } from '@/lib/constants';
 
 const ROLES_LABELS: Record<string, string> = {
-  admon_roles: 'Admin. Roles',
-  admon_inventario: 'Admin. Inventario',
-  cajero: 'Cajero',
+  [ROLES.ROLE_MANAGER]: 'Admin. Roles',
+  [ROLES.INVENTORY_MANAGER]: 'Admin. Inventario',
+  [ROLES.CASHIER]: 'Cajero',
+  [ROLES.CUSTOMER]: 'Cliente',
 };
 
 const ROLE_BADGE_VARIANTS: Record<string, 'default' | 'secondary' | 'outline'> =
   {
-    admon_roles: 'default',
-    admon_inventario: 'secondary',
-    cajero: 'outline',
+    [ROLES.ROLE_MANAGER]: 'default',
+    [ROLES.INVENTORY_MANAGER]: 'secondary',
+    [ROLES.CASHIER]: 'outline',
   };
 
 interface Props {

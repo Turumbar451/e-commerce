@@ -1,5 +1,7 @@
 //payload para el endpoint POST /api/auth/register
 
+import type { FrontendRole } from "@/lib/constants";
+
 export interface RegisterPayload {
     email: string;
     password: string;
@@ -40,7 +42,7 @@ export interface User {
     email: string;
     nombre: string;
     apellido: string;
-    role: 'cliente' | 'cajero' | 'admon_inventario' | 'admon_roles';
+    role: FrontendRole;
     historial_compras: []; // esto en el futuro sera un tipo, hay que ver
     emailVerified?: boolean;
     security?: UserSecurity;
