@@ -5,7 +5,7 @@ import {
 } from '@/services/inventoryService';
 import { useState } from 'react';
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 10;
 //hook para la paginaccion del admin
 export const useAdminProducts = () => {
     const [page, setPage] = useState(1);
@@ -17,6 +17,7 @@ export const useAdminProducts = () => {
         queryKey: ['adminProducts', page, ITEMS_PER_PAGE],
         queryFn: () => getAdminProducts(page, ITEMS_PER_PAGE),
 
+        staleTime: 1000 * 60 * 5, //esto es para que la data sea fresca por 5 minutos
 
         placeholderData: keepPreviousData, // mantiene la data anterior mientras carga la nueva
     });

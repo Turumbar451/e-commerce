@@ -1,3 +1,4 @@
+import { useState, memo } from 'react';
 import {
   Card,
   CardContent,
@@ -29,10 +30,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
-//!mover esto a un archivo de interfaces
 export interface InventoryItem {
   id: string;
   name: string;
@@ -45,12 +44,99 @@ export interface InventoryItem {
   status: 'Agotado' | 'Bajo' | 'Óptimo';
 }
 
+interface RowProps {
+  item: InventoryItem;
+  onAdjustStock: (sku: string, size: string, adjustment: number) => void;
+  // Cambiamos esto: ahora solo pide confirmar
+  onRequestDelete: (item: InventoryItem) => void;
+}
+
+const InventoryRow = memo(
+  ({ item, onAdjustStock, onRequestDelete }: RowProps) => {
+    return (
+      <TableRow>
+        <TableCell className="font-medium flex items-center gap-3">
+          <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md border bg-muted">
+            <img
+              src={item.imageUrl}
+              alt={item.name}
+              className="width={48} height={48} object-cover"
+              loading="lazy"
+              decoding="async" // Ayuda a que la imagen no bloquee el render
+            />
+          </div>
+          <div className="flex flex-col">
+            <span className="line-clamp-1">{item.name}</span>
+            <span className="text-xs text-muted-foreground">
+              {item.variantName}
+            </span>
+          </div>
+        </TableCell>
+        <TableCell className="font-mono text-xs">{item.sku}</TableCell>
+        <TableCell>{item.size}</TableCell>
+        <TableCell className="font-bold text-base">{item.stock}</TableCell>
+        <TableCell>
+          <Badge
+            variant={
+              item.status === 'Bajo' || item.status === 'Agotado'
+                ? 'destructive'
+                : 'secondary'
+            }
+            className="whitespace-nowrap"
+          >
+            {item.status}
+          </Badge>
+        </TableCell>
+        <TableCell>{formatCurrency(item.price)}</TableCell>
+
+        <TableCell>
+          <div className="flex items-center gap-1">
+            <div className="flex items-center border rounded-md mr-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-r-none hover:bg-muted"
+                onClick={() => onAdjustStock(item.sku, item.size, -1)}
+                disabled={item.stock <= 0}
+              >
+                <Minus className="h-3 w-3" />
+              </Button>
+              <div className="w-px h-4 bg-border"></div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-l-none hover:bg-muted"
+                onClick={() => onAdjustStock(item.sku, item.size, 1)}
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+              onClick={() => onRequestDelete(item)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </TableCell>
+      </TableRow>
+    );
+  },
+  (prev, next) =>
+    prev.item.id === next.item.id &&
+    prev.item.stock === next.item.stock &&
+    prev.item.status === next.item.status
+);
+
 interface ProductDataTableProps {
   items: InventoryItem[];
   isLoading: boolean;
   isError: boolean;
   onAdjustStock: (sku: string, size: string, adjustment: number) => void;
-  onDeleteSize: (sku: string, size: string) => void; // <-- Nueva prop
+  onDeleteSize: (sku: string, size: string) => void;
   isDeletingSize?: boolean;
 }
 
@@ -61,6 +147,8 @@ export const ProductDataTable = ({
   onAdjustStock,
   onDeleteSize,
 }: ProductDataTableProps) => {
+  const [itemToDelete, setItemToDelete] = useState<InventoryItem | null>(null);
+
   return (
     <Card>
       <CardHeader>
@@ -76,130 +164,80 @@ export const ProductDataTable = ({
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Producto</TableHead>
-              <TableHead>SKU</TableHead>
-              <TableHead>Talla</TableHead>
-              <TableHead>Stock</TableHead>
-              <TableHead>Estado</TableHead>
-              <TableHead>Precio</TableHead>
-              {/*ACCIONES*/}
-
-              <TableHead className="w-[140px]">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading && (
+        <div className="rounded-md border overflow-hidden">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={7} className="text-center h-24">
-                  <Spinner className="h-6 w-6" />
-                </TableCell>
+                <TableHead>Producto</TableHead>
+                <TableHead>SKU</TableHead>
+                <TableHead>Talla</TableHead>
+                <TableHead>Stock</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead>Precio</TableHead>
+                <TableHead className="w-[140px]">Acciones</TableHead>
               </TableRow>
-            )}
-            {isError && (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center text-destructive">
-                  Error al cargar los productos.
-                </TableCell>
-              </TableRow>
-            )}
-
-            {!isLoading &&
-              items.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium flex items-center gap-3">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.name}
-                      className="h-12 w-12 object-cover rounded-md border"
-                    />
-                    <div>
-                      {item.name}
-                      <div className="text-xs text-muted-foreground">
-                        {item.variantName}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{item.sku}</TableCell>
-                  <TableCell>{item.size}</TableCell>
-                  <TableCell className="font-bold">{item.stock}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        item.status === 'Bajo' ? 'destructive' : 'secondary'
-                      }
-                    >
-                      {item.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{formatCurrency(item.price)}</TableCell>
-
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {/* + y - */}
-                      <div className="flex gap-1 mr-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => onAdjustStock(item.sku, item.size, 1)}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => onAdjustStock(item.sku, item.size, -1)}
-                          disabled={item.stock <= 0}
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                      </div>
-
-                      {/* boton de eliminar con confirmacion */}
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              ¿Eliminar Talla?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Estás a punto de eliminar la talla{' '}
-                              <strong>{item.size}</strong> del SKU{' '}
-                              <strong>{item.sku}</strong>. Esta acción no se
-                              puede deshacer.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction
-                              className="bg-destructive text-white hover:bg-destructive/90"
-                              onClick={() => onDeleteSize(item.sku, item.size)}
-                            >
-                              Eliminar
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+            </TableHeader>
+            <TableBody>
+              {isLoading && (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center h-24">
+                    <Spinner className="h-6 w-6 mx-auto" />
                   </TableCell>
                 </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+              )}
+              {isError && (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="text-center text-destructive"
+                  >
+                    Error al cargar los productos.
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {!isLoading &&
+                items.map((item) => (
+                  <InventoryRow
+                    key={item.id}
+                    item={item}
+                    onAdjustStock={onAdjustStock}
+                    onRequestDelete={setItemToDelete}
+                  />
+                ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
+
+      <AlertDialog
+        open={!!itemToDelete}
+        onOpenChange={(open) => !open && setItemToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar Talla?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Estás a punto de eliminar la talla{' '}
+              <strong>{itemToDelete?.size}</strong> del producto{' '}
+              <strong>{itemToDelete?.name}</strong>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-white hover:bg-destructive/90"
+              onClick={() => {
+                if (itemToDelete)
+                  onDeleteSize(itemToDelete.sku, itemToDelete.size);
+                setItemToDelete(null); // Cerrar modal manualmente
+              }}
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 };

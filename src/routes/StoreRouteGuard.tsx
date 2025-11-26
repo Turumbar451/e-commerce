@@ -1,7 +1,7 @@
 import { GlobalContext } from '@/context/GlobalContext';
-import { ROLES } from '@/lib/constants';
 import { useContext, type JSX } from 'react';
 import { Navigate } from 'react-router';
+import { ROLES } from '@/lib/constants';
 
 interface Props {
   element: JSX.Element;
@@ -15,16 +15,18 @@ export const StoreRouteGuard = ({ element }: Props) => {
     return <div>Cargando...</div>; // cambiar a algun spinner componente
   }
 
-  switch (user!.role) {
-    case ROLES.ROLE_MANAGER:
-      return <Navigate to="/admin/users" replace />;
-    case ROLES.INVENTORY_MANAGER:
-      return <Navigate to="/admin/inventory" replace />;
-    case ROLES.CASHIER:
-      return <Navigate to="/pos" replace />;
-    case ROLES.CUSTOMER:
-    default:
-      return element;
+  if (authStatus === 'authenticated' && user) {
+    switch (user.role) {
+      case ROLES.ROLE_MANAGER:
+        return <Navigate to="/admin/users" replace />;
+      case ROLES.INVENTORY_MANAGER:
+        return <Navigate to="/admin/inventory" replace />;
+      case ROLES.CASHIER:
+        return <Navigate to="/pos" replace />;
+      case ROLES.CUSTOMER:
+      default:
+        return element;
+    }
   }
 
   //sin autenticacion es un visitante

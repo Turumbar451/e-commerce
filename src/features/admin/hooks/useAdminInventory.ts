@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAdminProducts } from './useAdminProducts';
 import type {
     IProductDetail,
@@ -85,9 +85,11 @@ export const useAdminInventory = () => {
         },
     });
 
-    const handleAdjustStock = (sku: string, size: string, adjustment: number) => {
+    //se usa useCallback para que la funcion no cambie de referencia en cada render
+    //o sea que esta funcion y la otra(la que se crea en el nuevo rerender) son la misma porque comparten el espacio en memoria
+    const handleAdjustStock = useCallback((sku: string, size: string, adjustment: number) => {
         stockMutation.mutate({ sku, size, adjustment });
-    };
+    }, [stockMutation.mutate]);
 
     const inventoryItems: InventoryItem[] = useMemo(() => {
         return products.flatMap((product: IProductDetail) =>
