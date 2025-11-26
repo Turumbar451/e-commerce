@@ -14,10 +14,14 @@ import { ModeToggle } from '@/components/common/ModeToggle';
 import { useAuthenticatedAction } from '@/hooks/useAuthenticatedAction';
 import { useContext } from 'react';
 import { GlobalContext } from '@/context/GlobalContext';
+import { SearchBar } from '@/components/common/SearchBar';
+
 
 const navLinks = [
   { href: '/hombres', label: 'Hombres' },
   { href: '/mujeres', label: 'Mujeres' },
+];
+const navLinkRight = [
   { href: '/niños', label: 'Niños' },
 ];
 
@@ -54,14 +58,22 @@ export const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="container h-20 mx-auto flex items-center justify-between relative">
-        {/* Logo-texto y Nav Desktop*/}
-        <div className="flex items-center gap-8">
+        {/* Izquierda: Logo, búsqueda y navegación */}
+        <div className="flex items-center gap-6">
+          {/* Logo-texto */}
           <Link to="/" className="flex items-center space-x-2">
             <span className="font-bold text-3xl hidden sm:inline-block">
               E-COMMERCE
             </span>
           </Link>
-          <nav className="hidden md:flex items-center gap-8 text-base font-medium">
+          
+          {/* Búsqueda en Escritorio: Visible desde pantallas Large (Laptops) */}
+          <div className="hidden lg:block">
+            <SearchBar />
+          </div>
+          
+          {/* Nav Desktop */}
+          <nav className="hidden md:flex items-center gap-6 text-base font-medium">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -74,18 +86,32 @@ export const Navbar = () => {
           </nav>
         </div>
 
-        {/* logo svg en pc */}
+        {/* Centro: logo svg en pc */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block">
           <Link to="/" aria-label="Ir al inicio">
             <MyLogoSvg className="h-20 w-auto text-primary" />
           </Link>
         </div>
 
-        {/* derecha */}
+        {/* Derecha: botones de acción y enlace Niños */}
         <div className="flex items-center gap-2 md:gap-4">
-          {/* --- VISTA ESCRITORIO --- */}
+          {/* Enlace Niños en escritorio */}
+          <nav className="hidden md:flex items-center gap-6 text-base font-medium">
+            {navLinkRight.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="text-foreground/60 transition-colors hover:text-foreground/80"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          
+          {/* --- VISTA ESCRITORIO: BOTONES --- */}
           <div className="hidden md:flex items-center gap-2">
-            {/* 3. Botón de Favoritos (Nuevo) */}
+            
+            {/* 3. Botón de Favoritos */}
             <Button
               className="cursor-pointer"
               variant="ghost"
@@ -170,8 +196,22 @@ export const Navbar = () => {
                   <MyLogoSvg className="h-20 w-auto text-primary" />
                 </Link>
 
+                <div className="mb-4">
+                   <SearchBar />
+                </div>
+
                 <nav className="flex flex-col gap-4">
                   {navLinks.map((link) => (
+                    <SheetClose key={link.href} asChild>
+                      <Link
+                        to={link.href}
+                        className="text-xl font-medium text-foreground/70 hover:text-foreground text-center"
+                      >
+                        {link.label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                  {navLinkRight.map((link) => (
                     <SheetClose key={link.href} asChild>
                       <Link
                         to={link.href}

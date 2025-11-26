@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { BrandsFooter } from '@/components/common/BrandsFooter';
 import { HeroBanners } from '@/components/common/HeroBanner';
 import { ProductGrid } from '@/features/products/ProductGrid';
@@ -19,6 +20,10 @@ type HomePageProps = {
 
 export const HomePage = ({ targetGender }: HomePageProps) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('q') || '';
+  
+  console.log('HomePage - searchQuery:', searchQuery); // Debug
 
   const {
     products,
@@ -36,7 +41,11 @@ export const HomePage = ({ targetGender }: HomePageProps) => {
     setMinPrice,
     maxPrice,
     setMaxPrice,
-  } = useProducts(null, targetGender ?? null);
+  } = useProducts(null, targetGender ?? null, searchQuery);
+
+  console.log('HomePage - products:', products); // Debug
+  console.log('HomePage - isLoading:', isLoading); // Debug
+  console.log('HomePage - isError:', isError); // Debug
 
   useEffect(() => {
     const handler = () => setIsFiltersOpen(true);
