@@ -15,14 +15,13 @@ import ProductDetailPage from '@/pages/ProductDetailPage';
 import { StoreRouteGuard } from './StoreRouteGuard';
 import VerifyPage from '@/pages/VerifyPage';
 import AdminProductEditPage from '@/pages/AdminInventory/AdminProductEditPage';
+import { ROLES } from '@/lib/constants';
 
 const PosPage = lazy(() => import('@/pages/Cajero/PosPage'));
 const PosSalesHistoryPage = lazy(
   () => import('@/pages/Cajero/PosSalesHistoryPage')
 );
-const PosRefundsPage = lazy(
-  () => import('@/pages/Cajero/PosRefundsPage')
-);
+const PosRefundsPage = lazy(() => import('@/pages/Cajero/PosRefundsPage'));
 const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
 const AdminInventoryPage = lazy(
   () => import('@/pages/AdminInventory/AdminInventoryPage')
@@ -36,13 +35,6 @@ const AdminProductsPage = lazy(
 const AdminProductFormPage = lazy(
   () => import('@/pages/AdminInventory/AdminProductFormPage')
 );
-
-const ROLES = {
-  ROLE_ADMIN: 'admon_roles',
-  INV_ADMIN: 'admon_inventario',
-  CASHIER: 'cajero',
-  USER: 'user', //?era cliente o user?
-};
 
 export const appRouter = createBrowserRouter([
   {
@@ -72,7 +64,7 @@ export const appRouter = createBrowserRouter([
     element: (
       <ProtectedRoleRoute
         element={<AdminLayout />}
-        allowedRoles={[ROLES.ROLE_ADMIN, ROLES.INV_ADMIN]}
+        allowedRoles={[ROLES.ROLE_MANAGER, ROLES.INVENTORY_MANAGER]}
       />
     ),
     children: [
@@ -81,16 +73,16 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoleRoute
             element={<AdminProductsPage />}
-            allowedRoles={[ROLES.INV_ADMIN]} // O ambos admins
+            allowedRoles={[ROLES.INVENTORY_MANAGER]} // O ambos admins
           />
         ),
       },
       {
-        path: 'dashboard', // Nueva ruta
+        path: 'dashboard',
         element: (
           <ProtectedRoleRoute
             element={<AdminDashboardPage />}
-            allowedRoles={[ROLES.INV_ADMIN]}
+            allowedRoles={[ROLES.INVENTORY_MANAGER]}
           />
         ),
       },
@@ -99,7 +91,7 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoleRoute
             element={<AdminProductFormPage />}
-            allowedRoles={[ROLES.INV_ADMIN]}
+            allowedRoles={[ROLES.INVENTORY_MANAGER]}
           />
         ),
       },
@@ -109,7 +101,7 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoleRoute
             element={<AdminUsersPage />}
-            allowedRoles={[ROLES.ROLE_ADMIN]}
+            allowedRoles={[ROLES.ROLE_MANAGER]}
           />
         ),
       },
@@ -119,7 +111,7 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoleRoute
             element={<AdminInventoryPage />}
-            allowedRoles={[ROLES.INV_ADMIN]}
+            allowedRoles={[ROLES.INVENTORY_MANAGER]}
           />
         ),
       },
@@ -128,7 +120,7 @@ export const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoleRoute
             element={<AdminProductEditPage />}
-            allowedRoles={[ROLES.INV_ADMIN]}
+            allowedRoles={[ROLES.INVENTORY_MANAGER]}
           />
         ),
       },
@@ -195,7 +187,10 @@ export const appRouter = createBrowserRouter([
   {
     path: '/cart',
     element: (
-      <ProtectedRoleRoute element={<CartPage />} allowedRoles={[ROLES.USER]} />
+      <ProtectedRoleRoute
+        element={<CartPage />}
+        allowedRoles={[ROLES.CUSTOMER]}
+      />
     ),
   },
   {
@@ -203,7 +198,7 @@ export const appRouter = createBrowserRouter([
     element: (
       <ProtectedRoleRoute
         element={<FavoritesPage />}
-        allowedRoles={[ROLES.USER]}
+        allowedRoles={[ROLES.CUSTOMER]}
       />
     ),
   },

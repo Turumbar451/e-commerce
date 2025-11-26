@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { MyLogoSvg } from '@/components/MyLogoSvg';
 import { GlobalContext } from '@/context/GlobalContext';
 
+import { ROLES } from '@/lib/constants';
+
 const SidebarLink = ({ to, icon, label }: any) => {
   const { pathname } = useLocation();
   const isActive = pathname.startsWith(to);
@@ -42,7 +44,7 @@ export const AdminSidebar = () => {
 
       <nav className="flex flex-col gap-2 flex-1">
         {/* ADMIN INVENTARIO */}
-        {user?.role === 'admon_inventario' && (
+        {user?.role === ROLES.INVENTORY_MANAGER && (
           <>
             <SidebarLink
               to="/admin/dashboard"
@@ -68,7 +70,7 @@ export const AdminSidebar = () => {
         )}
 
         {/* ADMIN ROLES */}
-        {user?.role === 'admon_roles' && (
+        {user?.role === ROLES.ROLE_MANAGER && (
           <>
             <div className="px-2 py-2 text-xs font-semibold text-muted-foreground uppercase">
               Gestión

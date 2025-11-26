@@ -1,5 +1,6 @@
 import type { LoginPayload, RegisterPayload, User } from '@/interfaces/auth';
 import api from '@/lib/axios';
+import { mapRoleToFrontend } from '@/utils/roleMapper';
 //_id y role en vez de id y role.nombre
 
 interface ResetPasswordPayload {
@@ -16,16 +17,22 @@ export const registerUser = async (userData: RegisterPayload) => {
 
 // el backend pone la cookie
 export const loginUser = async (credentials: LoginPayload): Promise<User> => {
-    const { data } = await api.post<User>('/auth/login', credentials);
-    return data;
+    const { data } = await api.post('/auth/login', credentials);
+
+    return {
+        ...data,
+        role: mapRoleToFrontend(data.role)
+    };
 };
 
 
 //llamar a /me con la cookie que el navegador envia
-//esto verificara la sesion
 export const checkAuthStatus = async (): Promise<User> => {
-    const { data } = await api.get<User>('/auth/me');
-    return data;
+    const { data } = await api.get('/auth/me');
+    return {
+        ...data,
+        role: mapRoleToFrontend(data.role)
+    };
 };
 
 
@@ -54,5 +61,17 @@ export const resetPasswordWithToken = async (payload: ResetPasswordPayload) => {
 
 export const verifyEmailApi = async (email: string, token: string) => {
     const { data } = await api.post('/auth/verify', { email, token });
+    return data;
+};
+
+// Update user profile data
+export const updateUserApi = async (userData: { nombre: string; apellido: string }) => {
+    const { data } = await api.put<User>('/auth/profile', userData);
+    return data;
+};
+
+// Change user password
+export const changePasswordApi = async (passwordData: { currentPassword: string; newPassword: string }) => {
+    const { data } = await api.put('/auth/password', passwordData);
     return data;
 };

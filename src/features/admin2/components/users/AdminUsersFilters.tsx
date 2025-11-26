@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { RoleFilter } from '../../hooks/useAdminUsers';
+import { ROLES } from '@/lib/constants';
 
 interface Props {
   searchTerm: string;
@@ -43,9 +44,11 @@ export const AdminUsersFilters = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="todos">Todos los roles</SelectItem>
-            <SelectItem value="admon_roles">Admin. Roles</SelectItem>
-            <SelectItem value="admon_inventario">Admin. Inventario</SelectItem>
-            <SelectItem value="cajero">Cajero</SelectItem>
+            <SelectItem value={ROLES.ROLE_MANAGER}>Admin. Roles</SelectItem>
+            <SelectItem value={ROLES.INVENTORY_MANAGER}>
+              Admin. Inventario
+            </SelectItem>
+            <SelectItem value={ROLES.CASHIER}>Cajero</SelectItem>
           </SelectContent>
         </Select>
       </div>

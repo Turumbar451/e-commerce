@@ -20,7 +20,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { PasswordInput } from '@/components/common/PasswordInput';
-import api from '@/lib/axios';
+import {
+  createInternalUser,
+  type CreateUserPayload,
+} from '@/services/adminUsersService';
+import { ROLES, type FrontendRole } from '@/lib/constants';
 
 interface Props {
   open: boolean;
@@ -29,34 +33,29 @@ interface Props {
 }
 
 export const CreateUserDialog = ({ open, onOpenChange, onSuccess }: Props) => {
-  // formulario inicial
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CreateUserPayload>({
     nombre: '',
     apellido: '',
     email: '',
     password: '',
-    role: 'cajero', // valor por defecto
+    role: ROLES.CASHIER,
   });
 
-  // enviar datos al backend
   const mutation = useMutation({
-    mutationFn: async (newUser: any) => {
-      await api.post('/admin/users', newUser); //el segundo pareametro del post son los datos
-    },
+    mutationFn: createInternalUser,
     onSuccess: () => {
       toast.success('Empleado creado correctamente');
-      onOpenChange(false); //cerrar modal
+      onOpenChange(false);
       // limpiar formulario
       setFormData({
         nombre: '',
         apellido: '',
         email: '',
         password: '',
-        role: 'cajero',
+        role: ROLES.CASHIER,
       });
-      onSuccess(); // eefrescar la tabla padre
+      onSuccess();
     },
-
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Error al crear usuario');
     },
@@ -77,12 +76,11 @@ export const CreateUserDialog = ({ open, onOpenChange, onSuccess }: Props) => {
         <DialogHeader>
           <DialogTitle>Crear Nuevo Empleado</DialogTitle>
           <DialogDescription>
-            Crea una cuenta de acceso para Cajero o Administrador de Inventario.
+            Crea una cuenta de acceso para Cajero o Administrador.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-          {/* nombre y apellido */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="nombre">Nombre</Label>
@@ -107,7 +105,6 @@ export const CreateUserDialog = ({ open, onOpenChange, onSuccess }: Props) => {
             </div>
           </div>
 
-          {/* email */}
           <div className="space-y-2">
             <Label htmlFor="email">Correo Electrónico</Label>
             <Input
@@ -122,29 +119,27 @@ export const CreateUserDialog = ({ open, onOpenChange, onSuccess }: Props) => {
             />
           </div>
 
-          {/* selector de rol */}
           <div className="space-y-2">
             <Label htmlFor="role">Rol Asignado</Label>
-
             <Select
               value={formData.role}
               onValueChange={(value) =>
-                setFormData({ ...formData, role: value })
+                setFormData({ ...formData, role: value as FrontendRole })
               }
             >
               <SelectTrigger id="role" className="w-full">
                 <SelectValue placeholder="Selecciona un rol" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="cajero">Cajero</SelectItem>
-                <SelectItem value="admon_inventario">
+                <SelectItem value={ROLES.CASHIER}>Cajero</SelectItem>
+                <SelectItem value={ROLES.INVENTORY_MANAGER}>
                   Admin. Inventario
                 </SelectItem>
+                <SelectItem value={ROLES.ROLE_MANAGER}>Admin. Roles</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* contra */}
           <div className="space-y-2">
             <Label htmlFor="password">Contraseña Inicial</Label>
             <PasswordInput

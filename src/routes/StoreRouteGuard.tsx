@@ -1,6 +1,7 @@
 import { GlobalContext } from '@/context/GlobalContext';
 import { useContext, type JSX } from 'react';
 import { Navigate } from 'react-router';
+import { ROLES } from '@/lib/constants';
 
 interface Props {
   element: JSX.Element;
@@ -16,15 +17,14 @@ export const StoreRouteGuard = ({ element }: Props) => {
 
   if (authStatus === 'authenticated' && user) {
     switch (user.role) {
-      case 'admon_roles':
+      case ROLES.ROLE_MANAGER:
         return <Navigate to="/admin/users" replace />;
-      case 'admon_inventario':
+      case ROLES.INVENTORY_MANAGER:
         return <Navigate to="/admin/inventory" replace />;
-      case 'cajero':
+      case ROLES.CASHIER:
         return <Navigate to="/pos" replace />;
-      case 'cliente':
+      case ROLES.CUSTOMER:
       default:
-        // si todo falla, es un cliente y pasa
         return element;
     }
   }
