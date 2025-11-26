@@ -1,3 +1,4 @@
+import { useState } from 'react'; // 1. Importamos useState
 import { Button } from '@/components/ui/button';
 import { DialogHeader } from '@/components/ui/dialog';
 import { useCart } from '@/features/cart/hooks/useCart';
@@ -9,13 +10,16 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from '@radix-ui/react-dialog';
-import { RadioGroup, RadioGroupItem } from '@radix-ui/react-radio-group';
-import { ToggleGroup, ToggleGroupItem } from '@radix-ui/react-toggle-group';
-import { Heart, Ruler, Star } from 'lucide-react';
-import { toast } from 'sonner';
+} from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
-// subcomponente: informacion y accion (buy box)
+// 2. Agregamos Minus y Plus a los iconos
+import { Heart, Ruler, Star, Minus, Plus } from 'lucide-react';
+
+import { toast } from 'sonner';
+import { useProductFavorites } from '../hooks/useProductFavorites';
+
 interface ProductInfoProps {
   product: IProductDetail;
   selectedVariant: IProductVariant;
@@ -34,9 +38,17 @@ export const ProductInfoActions = ({
   const { addItem, isAddingItem } = useCart();
   const { performAuthenticatedAction } = useAuthenticatedAction();
 
-  // logica para añadir al carrito
+  const { isFavorite, handleFavoriteClick } = useProductFavorites(product._id);
+
+  // 3. Estado local para la cantidad
+  const [quantity, setQuantity] = useState(1);
+
+  const handleIncrement = () => setQuantity((prev) => prev + 1);
+  const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
+
+  // Lógica para añadir al carrito
+
   const handleAddToCart = () => {
-    //si no hemos seleccionado una talla (creo que ya se puede borrar)
     if (!selectedSize) {
       toast.error('Por favor, selecciona una talla.');
       return;
@@ -45,35 +57,22 @@ export const ProductInfoActions = ({
     const addToCartLogic = () => {
       addItem({
         sku: selectedVariant.sku,
+
         size: selectedSize,
-        cantidad: 1, //cambiar
+        cantidad: quantity, // 4. Usamos la cantidad seleccionada
+
       });
     };
 
-    // hook de autenticacion (o sea de si esta loggeado)
     performAuthenticatedAction(
       addToCartLogic,
       'Inicia sesión para añadir al carrito'
     );
-
-    console.log('Añadiendo al carrito:', {
-      sku: selectedVariant.sku,
-      size: selectedSize,
-      cantidad: 1,
-    });
   };
-  // añadir a favoritos
-  const handleAddFavorite = () => {
-    // mutacion de favoritos, añadir
-    console.log('Añadiendo a favoritos:', product._id);
-    toast.info('Añadido a favoritos (simulado)');
-  };
-
-  console.log(selectedVariant.sizes);
 
   return (
     <div className="flex flex-col space-y-4">
-      {/* informacion basica */}
+      {/* Informacion basica */}
       <p className="text-sm uppercase text-muted-foreground">{product.brand}</p>
       <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
       <div className="flex items-center space-x-2">
@@ -100,7 +99,7 @@ export const ProductInfoActions = ({
         </span>
       </div>
 
-      {/* selector de color */}
+      {/* Selector de color */}
       <div>
         <h3 className="text-sm font-medium">
           Color:{' '}
@@ -121,7 +120,7 @@ export const ProductInfoActions = ({
               key={variant.sku}
               value={variant.sku}
               id={variant.sku}
-              className="h-8 w-8 rounded-full border-2 p-0"
+              className="h-8 w-8 rounded-full border-2 p-0 cursor-pointer"
               style={{ backgroundColor: variant.colorHex || 'gray' }}
               aria-label={variant.colorName}
             />
@@ -129,13 +128,13 @@ export const ProductInfoActions = ({
         </RadioGroup>
       </div>
 
-      {/* selector de talla */}
+      {/* Selector de talla */}
       <div>
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium">Selecciona tu talla</h3>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="link" size="sm" className="p-0">
+              <Button variant="link" size="sm" className="p-0 text-muted-foreground">
                 <Ruler className="mr-1 h-4 w-4" />
                 Guía de tallas
               </Button>
@@ -144,7 +143,9 @@ export const ProductInfoActions = ({
               <DialogHeader>
                 <DialogTitle>Guía de Tallas</DialogTitle>
               </DialogHeader>
-              <p>no se si añadir esto.</p>
+              <div className="py-4 text-sm text-muted-foreground">
+                <p>Aquí puedes colocar una tabla de medidas o instrucciones.</p>
+              </div>
             </DialogContent>
           </Dialog>
         </div>
@@ -152,15 +153,17 @@ export const ProductInfoActions = ({
         <ToggleGroup
           type="single"
           value={selectedSize || ''}
-          onValueChange={(value) => onSizeChange(value || null)} // permite deseleccionar
+          onValueChange={(value) => onSizeChange(value || null)}
           className="mt-2 grid grid-cols-4 gap-2"
         >
           {selectedVariant.sizes.map((sizeInfo) => (
             <ToggleGroupItem
               key={sizeInfo.size}
               value={sizeInfo.size}
-              disabled={sizeInfo.stock === 0} //deshabilitar si no hay stock, mejorar
-              className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+              disabled={sizeInfo.stock === 0}
+
+              className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground cursor-pointer"
+
             >
               {sizeInfo.size}
             </ToggleGroupItem>
@@ -168,23 +171,69 @@ export const ProductInfoActions = ({
         </ToggleGroup>
       </div>
 
-      {/* acciones */}
-      <Button
-        size="lg"
-        onClick={handleAddToCart}
-        disabled={!selectedSize || isAddingItem}
-      >
-        {isAddingItem
-          ? 'Añadiendo...'
-          : selectedSize
-          ? 'Añadir al carrito'
-          : 'Selecciona una talla'}
-        {/* esto es un ifelse anidado */}
-      </Button>
-      <Button size="lg" variant="outline" onClick={handleAddFavorite}>
-        <Heart className="mr-2 h-4 w-4" />
-        Añadir a favoritos
-      </Button>
+
+      {/* 5. Selector de Cantidad (NUEVO SECCIÓN) */}
+      <div>
+        <h3 className="text-sm font-medium mb-2">Cantidad</h3>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 rounded-md cursor-pointer"
+            onClick={handleDecrement}
+            disabled={quantity <= 1}
+          >
+            <Minus className="h-4 w-4" />
+          </Button>
+          
+          <span className="font-semibold min-w-[2rem] text-center text-lg">
+            {quantity}
+          </span>
+
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 rounded-md cursor-pointer"
+            onClick={handleIncrement}
+            // Opcional: Podrías deshabilitar si supera el stock disponible de la talla seleccionada
+            // disabled={selectedSize && quantity >= stockDisponible}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Acciones */}
+      <div className="flex gap-4 pt-2">
+        <Button
+          size="lg"
+          className="flex-1 cursor-pointer"
+
+          onClick={handleAddToCart}
+          disabled={!selectedSize || isAddingItem}
+        >
+          {isAddingItem
+            ? 'Añadiendo...'
+            : selectedSize
+            ? 'Añadir al carrito'
+            : 'Selecciona una talla'}
+        </Button>
+        
+        <Button 
+          size="lg" 
+          variant="outline" 
+          onClick={handleFavoriteClick}
+
+          className={`cursor-pointer ${isFavorite ? "text-red-500 border-red-200 bg-red-50 hover:bg-red-100" : ""}`}
+
+        >
+          <Heart 
+            className="mr-2 h-4 w-4" 
+            fill={isFavorite ? "currentColor" : "none"} 
+          />
+          {isFavorite ? 'Guardado' : 'Añadir a favoritos'}
+        </Button>
+      </div>
     </div>
   );
 };
