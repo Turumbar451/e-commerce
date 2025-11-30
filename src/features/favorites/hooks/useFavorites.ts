@@ -3,40 +3,92 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getFavorites, addFavorite, removeFavorite } from '@/services/favoritesService';
 import { GlobalContext } from '@/context/GlobalContext';
 import { toast } from 'sonner';
+import { ROLES } from '@/lib/constants';
+
+interface FavoritesData {
+  favorites: any[];
+  favoriteIds: string[];
+}
 
 export const useFavorites = () => {
   const queryClient = useQueryClient();
-  const { authStatus } = use(GlobalContext);
+  const { authStatus, user } = use(GlobalContext);
+
+  // Clave única para la caché
+  const queryKey = ['favorites'];
 
   const { data, isLoading } = useQuery({
-    queryKey: ['favorites'],
+    queryKey,
     queryFn: getFavorites,
-    enabled: authStatus === 'authenticated',
+    enabled: authStatus === 'authenticated' && user?.role === ROLES.CUSTOMER,
   });
 
+  // --- MUTACIÓN AÑADIR (OPTIMISTA) ---
   const addMutation = useMutation({
     mutationFn: addFavorite,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favorites'] });
-      toast.success('¡Añadido a favoritos!');
+    // Se ejecuta ANTES de que la petición salga
+    onMutate: async (productId) => {
+      // 1. Cancelar cualquier refetch en curso para no sobreescribir nuestra actualización optimista
+      await queryClient.cancelQueries({ queryKey });
+
+      // 2. Guardar el estado anterior (snapshot) por si hay error
+      const previousData = queryClient.getQueryData<FavoritesData>(queryKey);
+
+      // 3. Actualizar la caché con el nuevo valor INSTANTÁNEAMENTE
+      if (previousData) {
+        queryClient.setQueryData<FavoritesData>(queryKey, {
+          ...previousData,
+          favoriteIds: [...previousData.favoriteIds, productId], // Añadimos el ID visualmente
+        });
+      }
+
+      return { previousData };
     },
-    onError: () => toast.error('Error al añadir'),
+    // Si falla el servidor, volvemos atrás
+    onError: (_err, _newVar, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(queryKey, context.previousData);
+      }
+      toast.error('No se pudo añadir a favoritos');
+    },
+    // Siempre refrescar al final para asegurar sincronía real
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
   });
 
+  // --- MUTACIÓN ELIMINAR (OPTIMISTA) ---
   const removeMutation = useMutation({
     mutationFn: removeFavorite,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favorites'] });
-      toast.info('Eliminado de favoritos');
+    onMutate: async (productId) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previousData = queryClient.getQueryData<FavoritesData>(queryKey);
+
+      if (previousData) {
+        queryClient.setQueryData<FavoritesData>(queryKey, {
+          ...previousData,
+          favoriteIds: previousData.favoriteIds.filter((id) => id !== productId), // Quitamos el ID visualmente
+        });
+      }
+
+      return { previousData };
     },
-    onError: () => toast.error('Error al eliminar'),
+    onError: (_err, _newVar, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(queryKey, context.previousData);
+      }
+      toast.error('No se pudo eliminar de favoritos');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
   });
 
   return {
-    favoriteIds: data?.favoriteIds || [], // Array de strings ["id1", "id2"]
-    favoriteProducts: data?.favorites || [], // Array de objetos completos
+    favoriteIds: data?.favoriteIds || [],
+    favoriteProducts: data?.favorites || [],
     isLoadingFavorites: isLoading,
-    
+
     addFavorite: addMutation.mutate,
     removeFavorite: removeMutation.mutate,
   };

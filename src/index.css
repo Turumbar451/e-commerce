@@ -121,3 +121,14 @@
     scrollbar-gutter: stable;
   }
 }
+
+@layer utilities {
+  /* optimizacion para evitar Reflows en modales y dropdowns */
+  .animate-in,
+  .animate-out,
+  .data-\[state\=open\]\:animate-in,
+  .data-\[state\=closed\]\:animate-out {
+    will-change: transform, opacity;
+    transform: translateZ(0); /* fuerza aceleración de hardware xd */
+  }
+}

@@ -9,11 +9,17 @@ import { ProductVariantsCard } from './form/ProductVariantsCard';
 import { ProductDetailsCard } from './form/ProductDetailCard';
 import { ProductPricingCard } from './form/ProductPricingCart';
 import type { IProductDetail } from '@/interfaces/product';
+import { useEffect, useState } from 'react';
 
 const ProductFormContent = () => {
   const { handleSubmit, isUploading, isSaving, isEditMode } =
     useProductFormContext();
+  const [isReady, setIsReady] = useState(false);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setIsReady(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <form
       onSubmit={handleSubmit}
@@ -21,8 +27,16 @@ const ProductFormContent = () => {
     >
       {/* COLUMNA iaquierda */}
       <div className="lg:col-span-2 space-y-6">
-        <ProductDetailsCard />
-        <ProductVariantsCard />
+        {isReady ? (
+          <>
+            <ProductDetailsCard />
+            <ProductVariantsCard />
+          </>
+        ) : (
+          <div className="h-96 flex items-center justify-center border rounded-md bg-muted/10">
+            <Spinner className="h-8 w-8 text-muted-foreground" />
+          </div>
+        )}
       </div>
 
       {/*columna derecha */}
@@ -35,7 +49,7 @@ const ProductFormContent = () => {
           type="submit"
           size="lg"
           className="w-full"
-          disabled={isUploading || isSaving}
+          disabled={isUploading || isSaving || !isReady}
         >
           {isSaving && <Spinner className="mr-2" />}
           {isSaving

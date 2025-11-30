@@ -14,7 +14,9 @@ export const getFavorites = async (): Promise<FavoritesApiResponse> => {
 // Cambiamos SKU por productId
 export const addFavorite = async (productId: string) => {
   const { data } = await api.post('/favorites', { productId });
+  console.log("hola");
   return data;
+
 };
 
 export const removeFavorite = async (productId: string) => {

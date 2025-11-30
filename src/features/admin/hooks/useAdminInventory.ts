@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useTransition } from 'react';
 import { useAdminProducts } from './useAdminProducts';
 import type {
     IProductDetail,
@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 
 export const useAdminInventory = () => {
     const queryClient = useQueryClient();
+    const [isPendingTransition, startTransition] = useTransition();
 
     const {
         products,
@@ -22,6 +23,16 @@ export const useAdminInventory = () => {
         page,
         setPage,
     } = useAdminProducts();
+
+    //funcion para obtener la miniatura de la imagen
+    const getThumbnailUrl = (url: string) => {
+        if (!url) return '/placeholder-shoe.jpg';
+        if (url.includes('cloudinary.com') && url.includes('/upload/')) {
+            return url.replace('/upload/', '/upload/w_100,c_fill,q_auto,f_auto/');
+        }
+        return url;
+    };
+
 
     const stockMutation = useMutation({
         mutationFn: ({ sku, size, adjustment }: { sku: string; size: string; adjustment: number }) =>
@@ -102,7 +113,7 @@ export const useAdminInventory = () => {
                     size: size.size,
                     stock: size.stock,
                     price: product.salePrice || product.price,
-                    imageUrl: variant.images[0] || '/placeholder-shoe.jpg',
+                    imageUrl: getThumbnailUrl(variant.images[0]),
                     status:
                         size.stock === 0
                             ? 'Agotado'
@@ -116,15 +127,18 @@ export const useAdminInventory = () => {
 
 
 
-
     const handlePrevPage = () => {
         //math.max devuelve el numero mas grande (4,1) devuelve 4
-        setPage((prev: number) => Math.max(prev - 1, 1));
+        startTransition(() => {
+            setPage((prev: number) => Math.max(prev - 1, 1));
+        });
     };
 
     const handleNextPage = () => {
         if (pagination && page < pagination.totalPages) {
-            setPage((prev: number) => prev + 1);
+            startTransition(() => {
+                setPage((prev: number) => prev + 1);
+            });
         }
     };
 
@@ -141,6 +155,7 @@ export const useAdminInventory = () => {
         inventoryItems,
         isLoadingTable,
         isErrorTable,
+        isChangingPage: isPendingTransition
 
     };
 };
