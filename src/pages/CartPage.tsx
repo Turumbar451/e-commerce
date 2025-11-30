@@ -4,14 +4,20 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/formatters'; // Asegúrate de importar esto o definirlo
+import { useNavigate } from 'react-router';
 
 const CartPage = () => {
+  const navigate = useNavigate();
   const { cart, isLoadingCart, removeItem, isRemovingItem, updateItem } = useCart();
 
-  // Si no tienes formatCurrency importado, úsalo aquí localmente:
-  // const formatCurrency = (value: number) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+    }).format(value);
+  };
 
-  // Calcular el total
+  // calcular el total
   const totalCart = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   if (isLoadingCart) {
@@ -106,7 +112,16 @@ const CartPage = () => {
                   <span>Total</span>
                   <span>{formatCurrency(totalCart)}</span>
                 </div>
-                <Button className="w-full mt-6" size="lg">Proceder al Pago</Button>
+                <Button 
+                    className="w-full h-12 text-base font-semibold shadow-lg shadow-primary/20" 
+                    onClick={() => navigate('/checkout')}
+                >
+                    Proceder al Pago
+                </Button>
+                
+                <p className="text-xs text-center text-muted-foreground mt-4">
+                    Pago seguro garantizado
+                </p>
               </div>
             </div>
           </div>

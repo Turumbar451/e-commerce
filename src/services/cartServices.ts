@@ -14,7 +14,7 @@ export interface ICartItem {
 
 export interface AddToCartPayload {
   sku: string;
-  size: string; 
+  size: string;
   cantidad: number;
 }
 
@@ -41,6 +41,7 @@ export const getCart = async (): Promise<CartApiResponse> => {
 
 // POST /api/cart
 export const addToCart = async (payload: AddToCartPayload) => {
+  // Mapeamos 'cantidad' del form a 'quantity' del backend
   const body = {
     sku: payload.sku,
     size: payload.size,
