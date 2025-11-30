@@ -3,7 +3,6 @@ import { Navbar } from '@/components/common/Navbar';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Trash2 } from 'lucide-react';
-import { formatCurrency } from '@/lib/formatters'; // Asegúrate de importar esto o definirlo
 import { useNavigate } from 'react-router';
 
 const CartPage = () => {

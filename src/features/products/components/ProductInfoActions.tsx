@@ -13,10 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-<<<<<<< HEAD
 
-=======
->>>>>>> 11e6552 (logica incompleta de añadir a carrito)
 // 2. Agregamos Minus y Plus a los iconos
 import { Heart, Ruler, Star, Minus, Plus } from 'lucide-react';
 import { toast } from 'sonner';
