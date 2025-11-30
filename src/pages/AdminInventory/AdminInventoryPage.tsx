@@ -42,7 +42,7 @@ const AdminInventoryPage = () => {
         isDeletingSize={isDeletingSize}
       />
 
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="sticky bottom-0 bg-background/95 backdrop-blur py-4 border-t mt-auto flex items-center justify-end space-x-2 z-10">
         <span className="text-sm text-muted-foreground">
           Página {pagination?.currentPage || 1} de {pagination?.totalPages || 1}
         </span>

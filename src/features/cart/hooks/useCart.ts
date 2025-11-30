@@ -3,17 +3,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCart, addToCart, updateCartItem, removeFromCart } from '@/services/cartServices';
 import { GlobalContext } from '@/context/GlobalContext';
 import { toast } from 'sonner';
+import { ROLES } from '@/lib/constants';
 
 export const useCart = () => {
   const queryClient = useQueryClient();
-  const { authStatus } = use(GlobalContext);
+  const { authStatus, user } = use(GlobalContext);
 
   // Obtener los datos del carrito
   const { data, isLoading, error } = useQuery({
     queryKey: ['cart'], // La "llave" única para el caché de este query
     queryFn: getCart,  // La función que se llamará para obtener los datos
-    enabled: authStatus === 'authenticated', 
-    retry: 1, 
+    enabled: authStatus === 'authenticated' && user?.role === ROLES.CUSTOMER,
+    retry: 1,
   });
 
   // Funciones para modificar el carrito
@@ -58,15 +59,15 @@ export const useCart = () => {
     cart: data?.items || [], // Los items del carrito (o un array vacío)
     isLoadingCart: isLoading,
     cartError: error,
-    
+
     addItem: addMutation.mutate,
     isAddingItem: addMutation.isPending,
-    
+
     updateItem: updateMutation.mutate,
     isUpdatingItem: updateMutation.isPending,
-    
+
     // OJO: removeItem ahora espera un objeto { sku, size }
-    removeItem: removeMutation.mutate, 
+    removeItem: removeMutation.mutate,
     isRemovingItem: removeMutation.isPending,
   };
 };

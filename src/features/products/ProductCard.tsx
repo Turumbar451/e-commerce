@@ -1,10 +1,10 @@
 import { Link } from 'react-router';
-import { Heart, ShoppingCart } from 'lucide-react';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Heart, Truck } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { type IProductForCard } from '@/interfaces/product';
-import { useProductCart } from './hooks/useProductCart';
 import { useProductFavorites } from './hooks/useProductFavorites';
+import { cn } from '@/lib/utils';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('es-MX', {
@@ -18,67 +18,69 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const { handleCartClick, isAddingItem } = useProductCart(
-    product.id, 
-    product.sku, 
-    null
-  );
-  
   const { isFavorite, handleFavoriteClick } = useProductFavorites(product.id);
 
   return (
-    <Link to={`/product/${product.id}`} className="group block">
-      <Card className="border-none shadow-none rounded-lg overflow-hidden bg-transparent">
-        <CardContent className="p-0 relative">
-          <div className="aspect-square w-full overflow-hidden rounded-lg bg-secondary/50">
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-          </div>
-
-          {/* Botón Favoritos */}
-          <button
-            onClick={handleFavoriteClick}
-            className="cursor-pointer absolute top-3 right-3 p-2 bg-background/90 backdrop-blur-sm rounded-full shadow-sm text-muted-foreground hover:text-red-500 hover:bg-muted transition-colors"
-            aria-label={
-              isFavorite ? 'Eliminar de favoritos' : 'Añadir a favoritos'
-            }
-          >
-            <Heart
-              className="w-5 h-5"
-              fill={isFavorite ? 'currentColor' : 'none'}
-              // Si es favorito, forzamos el color rojo, si no, hereda el muted-foreground
-              color={isFavorite ? '#ef4444' : 'currentColor'}
-            />
-          </button>
-        </CardContent>
-
-        <CardFooter className="flex flex-col items-start p-4 pt-3">
-          <span className="text-sm uppercase font-semibold text-muted-foreground tracking-wider">
-            {product.brand}
-          </span>
-
-          <h3 className="font-medium text-base text-foreground mt-1 line-clamp-1">
-            {product.name}
-          </h3>
-
-          <p className="font-bold text-lg text-foreground mt-1">
-            {formatCurrency(product.price)}
-          </p>
+    <Link to={`/product/${product.id}`} className="group block h-full">
+      <Card className="h-full p-0 gap-0 border border-transparent hover:border-border/50 shadow-none hover:shadow-md transition-all duration-300 bg-card rounded-xl overflow-hidden flex flex-col">
+        <div className="relative aspect-4/5 w-full bg-secondary/10 overflow-hidden">
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+          />
 
           <Button
-            variant="outline"
-            className="w-full mt-2 hover:bg-primary hover:text-primary-foreground transition-colors"
-            onClick={handleCartClick} // Esto ahora redirigirá al detalle
-            disabled={isAddingItem}
+            onClick={handleFavoriteClick}
+            className={cn(
+              'absolute top-3 right-3 p-2.5 rounded-full transition-all duration-200 z-10',
+              'bg-background/80 backdrop-blur-sm shadow-sm hover:scale-110',
+              isFavorite
+                ? 'text-red-500'
+                : 'text-muted-foreground hover:text-red-500'
+            )}
           >
-            <ShoppingCart className="w-4 h-4 mr-2" />
-            {/* Cambiamos el texto para que tenga más sentido UX */}
-            {isAddingItem ? 'Añadiendo...' : 'Ver opciones'} 
+            <Heart
+              className={cn(
+                'w-5 h-5 transition-colors',
+                isFavorite ? 'fill-current' : 'fill-transparent'
+              )}
+            />
           </Button>
-        </CardFooter>
+
+          <div className="absolute bottom-3 left-3">
+            <span className="bg-background/90 backdrop-blur-sm text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider text-foreground shadow-sm flex items-center gap-1">
+              <Truck className="w-3 h-3" /> Envío rápido
+            </span>
+          </div>
+        </div>
+
+        <CardContent className="flex flex-col items-start p-4 gap-2 grow w-full">
+          <div className="w-full space-y-1">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">
+              {product.brand}
+            </p>
+            <h3 className="font-medium text-sm text-foreground leading-snug line-clamp-2 group-hover:underline underline-offset-4 decoration-primary/50 min-h-10">
+              {product.name}
+            </h3>
+          </div>
+
+          <div className="w-full pt-3 border-t border-border/50 mt-auto flex items-end justify-between">
+            <div className="flex flex-col">
+              <span className="text-[10px] text-muted-foreground uppercase">
+                Precio
+              </span>
+              <p className="font-bold text-lg text-primary">
+                {formatCurrency(product.price)}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-1 text-xs text-muted-foreground font-medium group-hover:text-primary transition-colors">
+              Ver detalles &rarr;
+            </div>
+          </div>
+        </CardContent>
       </Card>
     </Link>
   );
