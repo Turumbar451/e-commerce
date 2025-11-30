@@ -31,15 +31,16 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-        <Navbar />
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <Navbar />
       <div className="container mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Columna Izquierda: Pasos */}
         <div className="lg:col-span-2 space-y-6">
           
           {/* PASO 1: DIRECCIÓN */}
-          <div className="bg-black p-6 rounded-xl border shadow-sm">
+          {/* CAMBIO: bg-black -> bg-card, añadimos text-card-foreground y border-primary si es activo */}
+          <div className={`bg-card text-card-foreground p-6 rounded-xl border shadow-sm transition-colors ${step === 'address' ? 'border-primary ring-1 ring-primary/20' : ''}`}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
@@ -76,7 +77,8 @@ const CheckoutPage = () => {
           </div>
 
           {/* PASO 2: ENVÍO */}
-          <div className={`bg-white p-6 rounded-xl border shadow-sm ${!canAdvanceToShipping ? 'opacity-50 pointer-events-none' : ''}`}>
+          {/* CAMBIO: bg-white -> bg-card */}
+          <div className={`bg-card text-card-foreground p-6 rounded-xl border shadow-sm transition-all ${step === 'shipping' ? 'border-primary ring-1 ring-primary/20' : ''} ${!canAdvanceToShipping ? 'opacity-50 pointer-events-none' : ''}`}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
@@ -112,7 +114,8 @@ const CheckoutPage = () => {
           </div>
 
           {/* PASO 3: PAGO */}
-          <div className={`bg-white p-6 rounded-xl border shadow-sm ${step !== 'payment' ? 'opacity-50 pointer-events-none' : ''}`}>
+          {/* CAMBIO: bg-white -> bg-card */}
+          <div className={`bg-card text-card-foreground p-6 rounded-xl border shadow-sm transition-all ${step === 'payment' ? 'border-primary ring-1 ring-primary/20' : ''} ${step !== 'payment' ? 'opacity-50 pointer-events-none' : ''}`}>
             <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
               <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
               Método de Pago
