@@ -1,6 +1,7 @@
 import { GlobalContext } from '@/context/GlobalContext';
 import { useContext, type JSX } from 'react';
 import { Navigate } from 'react-router';
+import { FullPageLoader } from '@/components/common/FullPageLoader';
 
 interface Props {
   element: JSX.Element;
@@ -15,7 +16,7 @@ export const ProtectedRoleRoute = ({ element, allowedRoles }: Props) => {
 
   // estado inicial
   if (authStatus === 'checking') {
-    return <div>Cargando...</div>; // hay que mejorar esto
+    return <FullPageLoader />;
   }
 
   if (authStatus !== 'authenticated') {

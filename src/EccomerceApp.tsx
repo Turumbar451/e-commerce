@@ -10,8 +10,15 @@ import { Suspense } from 'react';
 
 //mejorar esto a un componente que cargue bonito
 const FullPageLoader = () => (
-  <div className="flex h-screen w-full items-center justify-center">
-    <div>Cargando...</div>
+  <div className="flex h-screen w-full items-center justify-center bg-black">
+    <div className="flex flex-col items-center space-y-4 text-white">
+      <img
+        src="/loading.gif"
+        alt="Animación de carga"
+        className="h-32 w-32 object-contain"
+      />
+      <p className="text-lg font-semibold">Cargando...</p>
+    </div>
   </div>
 );
 
