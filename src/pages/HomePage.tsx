@@ -113,8 +113,24 @@ export const HomePage = ({ targetGender }: HomePageProps) => {
           </div>
         )}
 
-        {/* renderizar cuadricula si no hay error*/}
-        {products && <ProductGrid title="Novedades" products={products} />}
+        {/* Mensaje de no hay resultados */}
+        {!isLoading && !isError && products && products.length === 0 && (
+          <div className="container py-12 text-center">
+            <div className="max-w-md mx-auto">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-xl font-semibold mb-2">No se encontraron productos</h3>
+              <p className="text-muted-foreground">
+                No hay productos que coincidan con tu búsqueda. 
+                Intenta con otros términos o revisa los filtros aplicados.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* renderizar cuadricula si no hay error y hay productos*/}
+        {!isLoading && !isError && products && products.length > 0 && (
+          <ProductGrid title="Novedades" products={products} />
+        )}
         {pagination && pagination.totalPages > 1 && (
           <div className="py-8 flex justify-center">
             <Paginator
