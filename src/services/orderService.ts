@@ -30,3 +30,34 @@ export const checkoutPosSale = async (
   );
   return data;
 };
+
+export interface OrderDetail {
+  order_id: string;
+  items: Array<{
+    sku: string;
+    size: string;
+    cantidad: number;
+    precio_unitario: number;
+    nombre: string;
+    imagen: string;
+  }>;
+  total: number;
+  subtotal: number;
+  iva: number;
+  costo_envio: number;
+  estatus: string;
+  fecha: string;
+  direccion_envio: {
+    calle: string;
+    numero: string;
+    colonia: string;
+    ciudad: string;
+    estado: string;
+    cp: string;
+  };
+}
+
+export const getOrderById = async (orderId: string): Promise<OrderDetail> => {
+  const { data } = await api.get<OrderDetail>(`/orders/${orderId}`);
+  return data;
+};

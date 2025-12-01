@@ -36,6 +36,9 @@ const AdminProductsPage = lazy(
 const AdminProductFormPage = lazy(
   () => import('@/pages/AdminInventory/AdminProductFormPage')
 );
+const OrderConfirmationPage = lazy(
+  () => import('@/pages/OrderConfirmationPage')
+);
 
 export const appRouter = createBrowserRouter([
   {
@@ -212,6 +215,16 @@ export const appRouter = createBrowserRouter([
         />
       ),
     },
+  {
+    path: '/order-confirmation/:orderId',
+    element: (
+      <ProtectedRoleRoute
+        element={<OrderConfirmationPage />}
+        allowedRoles={[ROLES.CUSTOMER]}
+      />
+    ),
+  },
+  
   {
     path: '/profile',
     //todos los usuarios loggeados ven su perfil
