@@ -2,6 +2,7 @@ import { GlobalContext } from '@/context/GlobalContext';
 import { useContext, type JSX } from 'react';
 import { Navigate } from 'react-router';
 import { ROLES } from '@/lib/constants';
+import { FullPageLoader } from '@/components/common/FullPageLoader';
 
 interface Props {
   element: JSX.Element;
@@ -12,7 +13,7 @@ export const StoreRouteGuard = ({ element }: Props) => {
   const { authStatus, user } = useContext(GlobalContext);
 
   if (authStatus === 'checking') {
-    return <div>Cargando...</div>; // cambiar a algun spinner componente
+    return <FullPageLoader />; // cambiar a algun spinner componente
   }
 
   if (authStatus === 'authenticated' && user) {
