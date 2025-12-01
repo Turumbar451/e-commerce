@@ -9,6 +9,7 @@ import { formatCurrency } from '@/lib/formatters';
 import type { ICartItem } from '@/services/cartServices';
 import { useCart } from '@/features/cart/hooks/useCart'; // Para limpiar carrito al final
 import api from '@/lib/axios'; // Llamada directa o crear servicio orderServices.ts
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Props {
   items: ICartItem[];
@@ -21,6 +22,7 @@ export const OrderSummary = ({ items, totals, canConfirm, checkoutData }: Props)
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
   const { cart } = useCart(); // Podrías necesitar una función clearCart en el hook useCart
+  const queryClient = useQueryClient(); // Instancia del queryClient
 
   const handleConfirmOrder = async () => {
     if (!canConfirm) return;
@@ -39,9 +41,10 @@ export const OrderSummary = ({ items, totals, canConfirm, checkoutData }: Props)
       
       if (data.success) {
         toast.success('¡Pedido realizado con éxito!');
-        // Aquí deberías limpiar el carrito (queryClient.invalidateQueries o método clear)
-        // queryClient.setQueryData(['cart'], { items: [] });
-        navigate(`/profile`); // O a una página de "Thank you"
+        // limpiar carrito visualmente invalidando la query
+        await queryClient.invalidateQueries({ queryKey: ['cart'] });
+        // redirigir a la nueva página usando el ID que devuelve el backend
+        navigate(`/order-confirmation/${data.order_id}`);
       }
     } catch (error: any) {
       console.error(error);
