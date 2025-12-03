@@ -2,12 +2,12 @@
 export const BrandsFooter = () => {
   //  crear /public/logos/ y empezar a añadir
   const brands = [
-    { name: 'Adidas', logoUrl: '/logos/adidas.svg' },
-    { name: 'Puma', logoUrl: '/logos/puma.svg' },
-    { name: 'Nike', logoUrl: '/logos/nike.svg' },
-    { name: 'New Balance', logoUrl: '/logos/new-balance.svg' },
-    { name: 'Reebok', logoUrl: '/logos/reebok.svg' },
-    { name: 'Pirma', logoUrl: '/logos/pirma.svg' },
+    { name: 'Adidas', logoUrl: '/logos/adidas.png' },
+    { name: 'Puma', logoUrl: '/logos/puma.png' },
+    { name: 'Nike', logoUrl: '/logos/nike.png' },
+    { name: 'New Balance', logoUrl: '/logos/new-balance.png' },
+    { name: 'Reebok', logoUrl: '/logos/reebok.png' },
+    { name: 'Pirma', logoUrl: '/logos/pirma.png' },
   ];
 
   return (

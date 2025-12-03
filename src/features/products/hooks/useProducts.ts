@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { IProductResponse } from '@/interfaces/product';
 import { fetchProducts } from '@/services/productService';
 
-const PRODUCTS_PER_PAGE = 12; //poner solo numeros multiplos de 4
+const PRODUCTS_PER_PAGE = 15; //poner solo numeros multiplos de 4
 
 // Aceptamos una categoría opcional, un género opcional (por defecto null -> todos los productos) y un término de búsqueda
 export const useProducts = (
