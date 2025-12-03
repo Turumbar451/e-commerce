@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { BrandsFooter } from '@/components/common/BrandsFooter';
 import { HeroBanners } from '@/components/common/HeroBanner';
 import { ProductGrid } from '@/features/products/ProductGrid';
@@ -23,7 +23,7 @@ export const HomePage = ({ targetGender }: HomePageProps) => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
   const brandQuery = searchParams.get('brand');
-  
+
   console.log('HomePage - searchQuery:', searchQuery); // Debug
 
   const {
