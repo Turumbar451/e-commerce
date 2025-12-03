@@ -8,6 +8,7 @@ import { NavbarCashier } from './NavbarCashier';
 import { useLocation } from 'react-router';
 import { usePosSale } from '@/features/pos/hooks/usePosSale';
 import { checkoutPosSale, type CheckoutPosResponse } from '@/services/orderService';
+import { createCashClosure } from '@/services/posService';
 import { PosAddToSaleDialog } from './PosAddToSaleDialog';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -20,6 +21,13 @@ const PosPage = () => {
   const [checkoutResult, setCheckoutResult] = useState<CheckoutPosResponse | null>(null);
   const [isProcessingSale, setIsProcessingSale] = useState(false);
   const [saleError, setSaleError] = useState<string | null>(null);
+
+  const [initialCash, setInitialCash] = useState('');
+  const [finalCash, setFinalCash] = useState('');
+  const [notes, setNotes] = useState('');
+  const [isProcessingClosure, setIsProcessingClosure] = useState(false);
+  const [closureError, setClosureError] = useState<string | null>(null);
+  const [closureSuccess, setClosureSuccess] = useState<string | null>(null);
 
   const { products, isLoading, isError } = useProducts();
 
@@ -310,14 +318,73 @@ const PosPage = () => {
             {activeView === 'close' && (
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Registra el cierre de caja al final del turno. Por ahora es solo un formulario de ejemplo.
+                  Registra el cierre de caja al final del turno.
                 </p>
+
+                {closureSuccess && (
+                  <p className="text-sm text-emerald-500 font-medium">{closureSuccess}</p>
+                )}
+                {closureError && (
+                  <p className="text-sm text-destructive">{closureError}</p>
+                )}
+
                 <form
                   className="space-y-4 max-w-md"
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
-                    // Placeholder: aquí podrías enviar los datos al backend
-                    console.log('Cierre de caja enviado (pendiente de implementación)');
+
+                    const initial = Number(initialCash);
+                    const final = Number(finalCash);
+
+                    if (Number.isNaN(initial) || Number.isNaN(final)) {
+                      setClosureError('Captura montos válidos de efectivo inicial y final.');
+                      setClosureSuccess(null);
+                      return;
+                    }
+
+                    if (initial < 0 || final < 0) {
+                      setClosureError('Los montos no pueden ser negativos.');
+                      setClosureSuccess(null);
+                      return;
+                    }
+
+                    const totalVentas = final - initial;
+                    if (totalVentas < 0) {
+                      setClosureError('El efectivo final no puede ser menor al inicial.');
+                      setClosureSuccess(null);
+                      return;
+                    }
+
+                    try {
+                      setIsProcessingClosure(true);
+                      setClosureError(null);
+                      setClosureSuccess(null);
+
+                      const detalle: string[] = [];
+                      detalle.push(`Efectivo inicial: ${initial.toFixed(2)}`);
+                      detalle.push(`Efectivo final: ${final.toFixed(2)}`);
+                      if (notes.trim()) {
+                        detalle.push(`Notas: ${notes.trim()}`);
+                      }
+
+                      const payload = {
+                        total_ventas: totalVentas,
+                        fecha_cierre: new Date().toISOString(),
+                        detalle,
+                      } as const;
+
+                      const res = await createCashClosure(payload);
+                      setClosureSuccess(res.message || 'Cierre de caja registrado correctamente.');
+                      setInitialCash('');
+                      setFinalCash('');
+                      setNotes('');
+                    } catch (error) {
+                      console.error('Error registrando cierre de caja', error);
+                      setClosureError('No se pudo registrar el cierre de caja. Intenta de nuevo.');
+                      setClosureSuccess(null);
+                    } finally {
+                      setIsProcessingClosure(false);
+                    }
                   }}
                 >
                   <div className="space-y-1">
@@ -330,6 +397,8 @@ const PosPage = () => {
                       min={0}
                       step={0.01}
                       placeholder="Ej. 1000"
+                      value={initialCash}
+                      onChange={(e) => setInitialCash(e.target.value)}
                     />
                   </div>
 
@@ -343,6 +412,8 @@ const PosPage = () => {
                       min={0}
                       step={0.01}
                       placeholder="Ej. 3250"
+                      value={finalCash}
+                      onChange={(e) => setFinalCash(e.target.value)}
                     />
                   </div>
 
@@ -354,11 +425,13 @@ const PosPage = () => {
                       id="notes"
                       className="w-full min-h-[80px] rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       placeholder="Diferencias, incidencias, etc."
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
                     />
                   </div>
 
-                  <Button type="submit" className="w-full md:w-auto">
-                    Registrar cierre de caja (demo)
+                  <Button type="submit" className="w-full md:w-auto" disabled={isProcessingClosure}>
+                    {isProcessingClosure ? 'Registrando cierre...' : 'Registrar cierre de caja'}
                   </Button>
                 </form>
               </div>

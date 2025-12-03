@@ -23,6 +23,24 @@ export const getMyPosSales = async (page = 1, limit = 20): Promise<GetMySalesRes
   return data;
 };
 
+export interface CreateCashClosurePayload {
+  total_ventas: number;
+  fecha_cierre: string;
+  detalle?: string[];
+}
+
+export interface CreateCashClosureResponse {
+  resumen_id: string;
+  message: string;
+}
+
+export const createCashClosure = async (
+  payload: CreateCashClosurePayload
+): Promise<CreateCashClosureResponse> => {
+  const { data } = await api.post<CreateCashClosureResponse>('/pos/cierre-caja', payload);
+  return data;
+};
+
 export interface CreatePosRefundItem {
   sku: string;
   size: string;

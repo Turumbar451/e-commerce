@@ -18,7 +18,7 @@ export const HeroBanners = () => {
              h-[400px] altura fija
           */}
           <img
-            src="/public/negro.jpg" // reemplazae
+            src="/public/running.jpg" // reemplazae
             alt="Colección Running"
             className="w-full h-full object-cover aspect-3/2 transition-transform duration-300 group-hover:scale-105"
           />
@@ -36,7 +36,7 @@ export const HeroBanners = () => {
           className="block overflow-hidden rounded-lg group relative"
         >
           <img
-            src="/negro.jpg" // reemplazar
+            src="/Trail.png" // reemplazar
             alt="Colección Trail"
             className="w-full h-full object-cover aspect-3/2 transition-transform duration-300 group-hover:scale-105"
           />
