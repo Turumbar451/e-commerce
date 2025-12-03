@@ -8,7 +8,15 @@ import { RadioGroup, RadioGroupItem } from '@radix-ui/react-radio-group';
 
 interface PosAddToSaleDialogProps {
   product: IProductForCard;
-  onAdd: (item: { productId: string; sku: string; name: string; brand: string; price: number; size: string }) => void;
+  onAdd: (item: {
+    productId: string;
+    sku: string;
+    name: string;
+    brand: string;
+    price: number;
+    size: string;
+    imageUrl?: string;
+  }) => void;
 }
 
 export const PosAddToSaleDialog = ({ product, onAdd }: PosAddToSaleDialogProps) => {
@@ -23,6 +31,10 @@ export const PosAddToSaleDialog = ({ product, onAdd }: PosAddToSaleDialogProps) 
   const handleConfirm = () => {
     if (!detail || !activeVariant || !selectedSize) return;
 
+    const fallbackImage = product.imageUrl;
+    const variantImage = activeVariant.images?.[0] ?? detail.variants[0]?.images?.[0];
+    const imageUrl = variantImage || fallbackImage;
+
     // usamos el sku de la variante y el precio base del producto
     onAdd({
       productId: detail._id,
@@ -30,6 +42,7 @@ export const PosAddToSaleDialog = ({ product, onAdd }: PosAddToSaleDialogProps) 
       name: detail.name,
       brand: detail.brand,
       price: detail.salePrice ?? detail.price,
+      imageUrl,
       size: selectedSize,
     });
     setOpen(false);

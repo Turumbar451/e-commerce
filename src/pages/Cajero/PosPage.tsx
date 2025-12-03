@@ -71,11 +71,14 @@ const PosPage = () => {
           <tr>
             <td style="padding:4px 8px; font-size:12px;">
               <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:40px; height:40px; border-radius:4px; background:#e5e7eb; display:flex; align-items:center; justify-content:center; font-size:10px; color:#6b7280;">
-                  IMG
+                <div style="width:40px; height:40px; border-radius:4px; background:#e5e7eb; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                  ${it.imageUrl 
+                    ? `<img src="${it.imageUrl}" alt="${it.name || 'Producto'}" style="width:100%; height:100%; object-fit:cover;" />`
+                    : '<div style="font-size:10px; color:#6b7280;">IMG</div>'
+                  }
                 </div>
                 <div>
-                  <div style="font-weight:600;">${it.name}</div>
+                  <div style="font-weight:600;">${it.name || 'Producto sin nombre'}</div>
                   <div style="font-size:11px; color:#555;">SKU: ${it.sku} ${it.size ? `| Talla: ${it.size}` : ''}</div>
                 </div>
               </div>
@@ -291,7 +294,18 @@ const PosPage = () => {
                         key={item.productId}
                         className="flex items-center justify-between gap-3 border-b pb-3"
                       >
-                        <div className="flex-1">
+                        <div className="flex items-center gap-3 flex-1">
+                          <div className="h-14 w-14 rounded-md bg-muted overflow-hidden flex items-center justify-center">
+                            {item.imageUrl ? (
+                              <img
+                                src={item.imageUrl}
+                                alt={item.name}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-xs text-muted-foreground">Sin imagen</span>
+                            )}
+                          </div>
                           <p className="font-semibold leading-tight">{item.name}</p>
                           <p className="text-xs text-muted-foreground">{item.brand}</p>
                           <p className="text-sm font-medium">
