@@ -7,7 +7,14 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@/components/ui/sheet';
-import { ShoppingCart, User, LogOut, Menu, Heart, SlidersHorizontal } from 'lucide-react'; // <--- 1. Agregamos Heart
+import {
+  ShoppingCart,
+  User,
+  LogOut,
+  Menu,
+  Heart,
+  SlidersHorizontal,
+} from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import { MyLogoSvg } from '@/components/MyLogoSvg';
 import { ModeToggle } from '@/components/common/ModeToggle';
@@ -16,14 +23,11 @@ import { useContext } from 'react';
 import { GlobalContext } from '@/context/GlobalContext';
 import { SearchBar } from '@/components/common/SearchBar';
 
-
 const navLinks = [
   { href: '/hombres', label: 'Hombres' },
   { href: '/mujeres', label: 'Mujeres' },
 ];
-const navLinkRight = [
-  { href: '/niños', label: 'Niños' },
-];
+const navLinkRight = [{ href: '/niños', label: 'Niños' }];
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -37,14 +41,12 @@ export const Navbar = () => {
     );
   };
 
-  // --- 2. Nueva función para ir a favoritos ---
   const handleFavoritesClick = () => {
     performAuthenticatedAction(
       () => navigate('/favorites'),
       'Inicia sesión para ver tus favoritos'
     );
   };
-  // --------------------------------------------
 
   const handleLogout = async () => {
     await logout();
@@ -57,22 +59,21 @@ export const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div className="container h-20 mx-auto flex items-center justify-between relative">
-        {/* Izquierda: Logo, búsqueda y navegación */}
-        <div className="flex items-center gap-6">
-          {/* Logo-texto */}
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="font-bold text-3xl hidden sm:inline-block">
+      <div className="container h-20 mx-auto flex items-center justify-between relative px-4">
+        {/* izquierda */}
+        <div className="flex items-center gap-4 lg:gap-6 flex-1 lg:flex-none">
+          {/* logo */}
+          <Link to="/" className="flex items-center space-x-2 shrink-0">
+            <span className="font-bold text-2xl sm:text-3xl hidden sm:inline-block">
               E-COMMERCE
             </span>
           </Link>
-          
-          {/* Búsqueda en Escritorio: Visible desde pantallas Large (Laptops) */}
-          <div className="hidden lg:block">
+
+          <div className="block md:hidden lg:block w-full max-w-[180px] lg:max-w-xs">
             <SearchBar />
           </div>
-          
-          {/* Nav Desktop */}
+
+          {/* nav en pc */}
           <nav className="hidden md:flex items-center gap-6 text-base font-medium">
             {navLinks.map((link) => (
               <Link
@@ -86,16 +87,15 @@ export const Navbar = () => {
           </nav>
         </div>
 
-        {/* Centro: logo svg en pc */}
+        {/* centro */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block">
           <Link to="/" aria-label="Ir al inicio">
             <MyLogoSvg className="h-20 w-auto text-primary" />
           </Link>
         </div>
 
-        {/* Derecha: botones de acción y enlace Niños */}
-        <div className="flex items-center gap-2 md:gap-4">
-          {/* Enlace Niños en escritorio */}
+        {/* derecha */}
+        <div className="flex items-center gap-2 md:gap-4 shrink-0">
           <nav className="hidden md:flex items-center gap-6 text-base font-medium">
             {navLinkRight.map((link) => (
               <Link
@@ -107,11 +107,9 @@ export const Navbar = () => {
               </Link>
             ))}
           </nav>
-          
-          {/* --- VISTA ESCRITORIO: BOTONES --- */}
+
+          {/* --- pc --- */}
           <div className="hidden md:flex items-center gap-2">
-            
-            {/* 3. Botón de Favoritos */}
             <Button
               className="cursor-pointer"
               variant="ghost"
@@ -121,9 +119,7 @@ export const Navbar = () => {
             >
               <Heart className="h-5 w-5 text-foreground/70" />
             </Button>
-            {/* --------------------------- */}
 
-            {/* Botón de filtros de productos */}
             <Button
               className="cursor-pointer"
               variant="ghost"
@@ -149,7 +145,6 @@ export const Navbar = () => {
                 <span className="text-sm text-foreground/70 hidden lg:inline-block">
                   {user?.nombre ?? 'Usuario'}
                 </span>
-
                 <Button
                   className="text-base cursor-pointer"
                   variant="outline"
@@ -157,7 +152,6 @@ export const Navbar = () => {
                 >
                   Ver mi cuenta
                 </Button>
-
                 <Button
                   className="text-base cursor-pointer"
                   variant="outline"
@@ -177,8 +171,10 @@ export const Navbar = () => {
             )}
           </div>
 
-          {/* --- VISTA MOVIL (Menu Hamburguesa) --- */}
-          <div className="md:hidden">
+          {/* --- telefono --- */}
+          <div className="md:hidden flex items-center gap-2">
+            <ModeToggle />
+
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon">
@@ -186,26 +182,22 @@ export const Navbar = () => {
                   <span className="sr-only">Abrir menú</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left">
+              <SheetContent side="left" className="flex flex-col h-full">
                 <SheetTitle className="sr-only">Menú Principal</SheetTitle>
                 <SheetDescription className="sr-only">
                   Enlaces para navegar por el sitio y gestionar la cuenta.
                 </SheetDescription>
 
-                <Link to="/" className=" mt-4 mb-6 flex justify-center">
+                <Link to="/" className="mt-4 mb-6 flex justify-center">
                   <MyLogoSvg className="h-20 w-auto text-primary" />
                 </Link>
 
-                <div className="mb-4">
-                   <SearchBar />
-                </div>
-
-                <nav className="flex flex-col gap-4">
+                <nav className="flex flex-col gap-4 mt-2 px-4">
                   {navLinks.map((link) => (
                     <SheetClose key={link.href} asChild>
                       <Link
                         to={link.href}
-                        className="text-xl font-medium text-foreground/70 hover:text-foreground text-center"
+                        className="text-xl font-medium text-foreground/70 hover:text-foreground text-center py-2 border-b border-border/10"
                       >
                         {link.label}
                       </Link>
@@ -215,7 +207,7 @@ export const Navbar = () => {
                     <SheetClose key={link.href} asChild>
                       <Link
                         to={link.href}
-                        className="text-xl font-medium text-foreground/70 hover:text-foreground text-center"
+                        className="text-xl font-medium text-foreground/70 hover:text-foreground text-center py-2 border-b border-border/10"
                       >
                         {link.label}
                       </Link>
@@ -223,21 +215,28 @@ export const Navbar = () => {
                   ))}
                 </nav>
 
-                <div className="mt-8 flex flex-col gap-4">
-                  {/* 4. Botón Favoritos Móvil (Nuevo) */}
+                <div className="mt-auto mb-24 flex flex-col gap-3 px-4">
                   <Button
                     variant="outline"
-                    className="text-base justify-start"
+                    className="text-base justify-start w-full"
+                    onClick={handleOpenFilters}
+                  >
+                    <SlidersHorizontal className="h-4 w-4 mr-2" />
+                    Filtrar Productos
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="text-base justify-start w-full"
                     onClick={handleFavoritesClick}
                   >
                     <Heart className="h-4 w-4 mr-2" />
                     Mis Favoritos
                   </Button>
-                  {/* -------------------------------- */}
 
                   <Button
                     variant="outline"
-                    className="text-base justify-start"
+                    className="text-base justify-start w-full"
                     onClick={handleGuestClick}
                   >
                     <ShoppingCart className="h-4 w-4 mr-2" />
@@ -245,16 +244,26 @@ export const Navbar = () => {
                   </Button>
 
                   {authStatus === 'authenticated' ? (
-                    <Button
-                      className="text-base justify-start"
-                      variant="destructive"
-                      onClick={handleLogout}
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Cerrar sesión ({user?.nombre})
-                    </Button>
+                    <>
+                      <Button
+                        variant="outline"
+                        className="text-base justify-start w-full"
+                        onClick={() => navigate('/profile')}
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        Mi Perfil ({user?.nombre})
+                      </Button>
+                      <Button
+                        className="text-base justify-start w-full"
+                        variant="destructive"
+                        onClick={handleLogout}
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Cerrar sesión
+                      </Button>
+                    </>
                   ) : (
-                    <Link to="/login">
+                    <Link to="/login" className="w-full">
                       <SheetClose asChild>
                         <Button className="w-full text-base justify-start">
                           <User className="h-4 w-4 mr-2" />
@@ -267,7 +276,6 @@ export const Navbar = () => {
               </SheetContent>
             </Sheet>
           </div>
-          <ModeToggle />
         </div>
       </div>
     </header>
