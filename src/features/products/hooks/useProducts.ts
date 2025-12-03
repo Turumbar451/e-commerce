@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { IProductResponse } from '@/interfaces/product';
 import { fetchProducts } from '@/services/productService';
 
-const PRODUCTS_PER_PAGE = 14;
+const PRODUCTS_PER_PAGE = 15;
 
 export const useProducts = (
   initialCategory: string | null = null,

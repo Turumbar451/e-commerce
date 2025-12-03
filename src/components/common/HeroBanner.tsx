@@ -18,7 +18,7 @@ export const HeroBanners = () => {
              h-[400px] altura fija
           */}
           <img
-            src="/public/running.jpg" // reemplazae
+            src="/Running.jpg" // reemplazae
             alt="Colección Running"
             className="w-full h-full object-cover aspect-3/2 transition-transform duration-300 group-hover:scale-105"
           />
