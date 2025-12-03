@@ -3,12 +3,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, MapPin, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { getAddresses, addAddress, type Address } from '@/services/userService';
+import { getAddresses, addAddress } from '@/services/userService';
 //import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -53,16 +59,33 @@ export const AddressSelector = ({ selectedAddressId, onSelect }: Props) => {
     <div className="space-y-4">
       {/* Lista de Direcciones */}
       {addresses?.length === 0 ? (
-        <p className="text-muted-foreground">No tienes direcciones guardadas.</p>
+        <p className="text-muted-foreground">
+          No tienes direcciones guardadas.
+        </p>
       ) : (
         <RadioGroup value={selectedAddressId || ''} onValueChange={onSelect}>
           <div className="grid gap-4 md:grid-cols-2">
             {addresses?.map((addr) => (
-              <div key={addr._id} className={`relative flex items-start space-x-3 rounded-lg border p-4 ${selectedAddressId === addr._id ? 'border-primary bg-primary/5' : ''}`}>
-                <RadioGroupItem value={addr._id!} id={addr._id} className="mt-1" />
+              <div
+                key={addr._id}
+                className={`relative flex items-start space-x-3 rounded-lg border p-4 ${
+                  selectedAddressId === addr._id
+                    ? 'border-primary bg-primary/5'
+                    : ''
+                }`}
+              >
+                <RadioGroupItem
+                  value={addr._id!}
+                  id={addr._id}
+                  className="mt-1"
+                />
                 <div className="grid gap-1.5 leading-none w-full">
-                  <Label htmlFor={addr._id} className="font-semibold cursor-pointer flex items-center gap-2">
-                      <MapPin className="h-3 w-3" /> {addr.calle} #{addr.numero_exterior}
+                  <Label
+                    htmlFor={addr._id}
+                    className="font-semibold cursor-pointer flex items-center gap-2"
+                  >
+                    <MapPin className="h-3 w-3" /> {addr.calle} #
+                    {addr.numero_exterior}
                   </Label>
                   <p className="text-sm text-muted-foreground">
                     {addr.colonia}, {addr.codigo_postal}

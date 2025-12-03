@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 
 export const SearchBar = () => {
@@ -21,7 +20,10 @@ export const SearchBar = () => {
   };
 
   return (
-    <form onSubmit={handleSearch} className="relative flex items-center w-48 gap-2">
+    <form
+      onSubmit={handleSearch}
+      className="relative flex items-center w-48 gap-2"
+    >
       <div className="relative w-full">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input

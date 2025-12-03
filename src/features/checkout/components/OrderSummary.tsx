@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { formatCurrency } from '@/lib/formatters';
 import type { ICartItem } from '@/services/cartServices';
-import { useCart } from '@/features/cart/hooks/useCart'; // Para limpiar carrito al final
 import api from '@/lib/axios'; // Llamada directa o crear servicio orderServices.ts
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -18,10 +23,14 @@ interface Props {
   checkoutData: any; // Datos reunidos (addressId, shippingMethod, payment)
 }
 
-export const OrderSummary = ({ items, totals, canConfirm, checkoutData }: Props) => {
+export const OrderSummary = ({
+  items,
+  totals,
+  canConfirm,
+  checkoutData,
+}: Props) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
-  const { cart } = useCart(); // Podrías necesitar una función clearCart en el hook useCart
   const queryClient = useQueryClient(); // Instancia del queryClient
 
   const handleConfirmOrder = async () => {
@@ -31,14 +40,18 @@ export const OrderSummary = ({ items, totals, canConfirm, checkoutData }: Props)
     try {
       // Construir payload para el backend
       const payload = {
-        items: items.map(i => ({ sku: i.sku, size: i.size, cantidad: i.quantity })),
+        items: items.map((i) => ({
+          sku: i.sku,
+          size: i.size,
+          cantidad: i.quantity,
+        })),
         metodo_pago: 'Tarjeta', // Hardcodeado por ahora o dinámico
         address_id: checkoutData.addressId,
-        shipping_method: checkoutData.shippingMethod
+        shipping_method: checkoutData.shippingMethod,
       };
 
       const { data } = await api.post('/orders/checkout', payload);
-      
+
       if (data.success) {
         toast.success('¡Pedido realizado con éxito!');
         // limpiar carrito visualmente invalidando la query
@@ -63,9 +76,14 @@ export const OrderSummary = ({ items, totals, canConfirm, checkoutData }: Props)
         {/* Lista reducida de items */}
         <div className="max-h-60 overflow-y-auto space-y-3 pr-2">
           {items.map((item) => (
-            <div key={`${item.sku}-${item.size}`} className="flex justify-between text-sm">
+            <div
+              key={`${item.sku}-${item.size}`}
+              className="flex justify-between text-sm"
+            >
               <div className="flex gap-3">
-                <span className="font-medium text-muted-foreground">{item.quantity}x</span>
+                <span className="font-medium text-muted-foreground">
+                  {item.quantity}x
+                </span>
                 <div>
                   <p className="font-medium line-clamp-1">{item.name}</p>
                   <p className="text-xs text-muted-foreground">{item.size}</p>
@@ -85,8 +103,14 @@ export const OrderSummary = ({ items, totals, canConfirm, checkoutData }: Props)
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Envío</span>
-            <span className={totals.shippingCost === 0 ? 'text-emerald-600 font-medium' : ''}>
-              {totals.shippingCost === 0 ? 'Gratis' : formatCurrency(totals.shippingCost)}
+            <span
+              className={
+                totals.shippingCost === 0 ? 'text-emerald-600 font-medium' : ''
+              }
+            >
+              {totals.shippingCost === 0
+                ? 'Gratis'
+                : formatCurrency(totals.shippingCost)}
             </span>
           </div>
           <div className="flex justify-between pt-2 font-bold text-lg">
@@ -95,12 +119,12 @@ export const OrderSummary = ({ items, totals, canConfirm, checkoutData }: Props)
           </div>
         </div>
       </CardContent>
-      
+
       <CardFooter>
-        <Button 
-          className="w-full" 
-          size="lg" 
-          onClick={handleConfirmOrder} 
+        <Button
+          className="w-full"
+          size="lg"
+          onClick={handleConfirmOrder}
           disabled={!canConfirm || isProcessing}
         >
           {isProcessing ? <Spinner className="mr-2" /> : null}

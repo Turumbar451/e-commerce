@@ -1,8 +1,7 @@
-//este componente se encargara de redirigir cuando se inicie sesion.
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-
 import { GlobalContext } from '@/context/GlobalContext';
+import { ROLES } from '@/lib/constants'; // <--- 1. Importa esto
 
 export const AuthRedirector = () => {
   const { authStatus, user } = useContext(GlobalContext);
@@ -13,17 +12,18 @@ export const AuthRedirector = () => {
       return;
     }
 
+    // 2. Cambia los strings 'hardcodeados' por las constantes ROLES
     switch (user.role) {
-      case 'admon_roles':
+      case ROLES.ROLE_MANAGER: // Antes 'admon_roles'
         navigate('/admin/users');
         break;
-      case 'admon_inventario':
+      case ROLES.INVENTORY_MANAGER: // Antes 'admon_inventario'
         navigate('/admin/inventory');
         break;
-      case 'cajero':
+      case ROLES.CASHIER: // Antes 'cajero'
         navigate('/pos');
         break;
-      case 'cliente':
+      case ROLES.CUSTOMER: // Antes 'cliente'
       default:
         navigate('/');
     }

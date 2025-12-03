@@ -4,7 +4,13 @@ import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -18,7 +24,7 @@ interface SelectedItem {
 
 export default function SecuritySetup() {
   const navigate = useNavigate();
-  const { user, login } = useContext(GlobalContext);
+  const { user } = useContext(GlobalContext);
 
   const [selected, setSelected] = useState<SelectedItem[]>([
     { id: '', answer: '' },
@@ -40,21 +46,30 @@ export default function SecuritySetup() {
     try {
       const raw = localStorage.getItem(`pendingSecurity:${user.email}`);
       if (raw) {
-        const arr = JSON.parse(raw) as Array<{ questionId: string; answer: string }>;
+        const arr = JSON.parse(raw) as Array<{
+          questionId: string;
+          answer: string;
+        }>;
         if (Array.isArray(arr) && arr.length >= 2) {
-          const mapped = arr.slice(0, 3).map((q) => ({ id: q.questionId, answer: q.answer }));
+          const mapped = arr
+            .slice(0, 3)
+            .map((q) => ({ id: q.questionId, answer: q.answer }));
           setSelected(mapped as SelectedItem[]);
         }
       }
     } catch {
-      console.log("Local storage error")
+      console.log('Local storage error');
     }
   }, [user, navigate]);
 
   // Catálogo fijo vacío: ya no cargamos preguntas desde el backend
   const availableQuestions: Array<{ id: string; label: string }> = [];
 
-  const updateQuestion = (idx: number, field: keyof SelectedItem, value: string) => {
+  const updateQuestion = (
+    idx: number,
+    field: keyof SelectedItem,
+    value: string
+  ) => {
     setSelected((prev) => {
       const draft = [...prev];
       draft[idx] = { ...draft[idx], [field]: value };
@@ -63,7 +78,9 @@ export default function SecuritySetup() {
   };
 
   const addQuestion = () => {
-    setSelected((prev) => (prev.length < 3 ? [...prev, { id: '', answer: '' }] : prev));
+    setSelected((prev) =>
+      prev.length < 3 ? [...prev, { id: '', answer: '' }] : prev
+    );
   };
 
   const removeQuestion = (idx: number) => {
@@ -82,7 +99,10 @@ export default function SecuritySetup() {
     } catch (error: unknown) {
       const apiError = error as ApiError;
       console.error(apiError);
-      setMsg(apiError?.response?.data?.error || 'No se pudieron configurar las preguntas.');
+      setMsg(
+        apiError?.response?.data?.error ||
+          'No se pudieron configurar las preguntas.'
+      );
     } finally {
       setLoading(false);
     }
@@ -94,13 +114,17 @@ export default function SecuritySetup() {
         <CardHeader>
           <CardTitle>Configurar preguntas de seguridad</CardTitle>
           <CardDescription>
-            Necesitas registrar al menos dos preguntas para recuperar tu cuenta en caso de olvidar la contraseña.
+            Necesitas registrar al menos dos preguntas para recuperar tu cuenta
+            en caso de olvidar la contraseña.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-6" onSubmit={onSubmit}>
             {selected.map((q, idx) => (
-              <div key={`question-${idx}`} className="space-y-2 rounded-lg border p-4">
+              <div
+                key={`question-${idx}`}
+                className="space-y-2 rounded-lg border p-4"
+              >
                 <div className="space-y-2">
                   <Label htmlFor={`question-${idx}`}>Pregunta #{idx + 1}</Label>
                   <select
@@ -124,13 +148,20 @@ export default function SecuritySetup() {
                     id={`answer-${idx}`}
                     placeholder="Escribe tu respuesta"
                     value={q.answer}
-                    onChange={(e) => updateQuestion(idx, 'answer', e.target.value)}
+                    onChange={(e) =>
+                      updateQuestion(idx, 'answer', e.target.value)
+                    }
                     required
                   />
                 </div>
                 {selected.length > 2 && (
                   <div className="flex justify-end">
-                    <Button type="button" variant="ghost" size="sm" onClick={() => removeQuestion(idx)}>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeQuestion(idx)}
+                    >
                       Quitar
                     </Button>
                   </div>
