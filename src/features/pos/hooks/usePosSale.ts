@@ -7,6 +7,7 @@ export interface PosSaleItem {
   name: string;
   price: number;
   brand: string;
+  imageUrl?: string;
   size?: string;
   quantity: number;
 }
@@ -35,6 +36,7 @@ export const usePosSale = () => {
           name: product.name,
           brand: product.brand,
           price: product.price,
+          imageUrl: product.imageUrl,
           quantity: 1,
         },
       ];
@@ -47,6 +49,7 @@ export const usePosSale = () => {
     name: string;
     brand: string;
     price: number;
+    imageUrl?: string;
     size?: string;
   }) => {
     setItems((prev) => {
@@ -69,6 +72,7 @@ export const usePosSale = () => {
           name: item.name,
           brand: item.brand,
           price: item.price,
+          imageUrl: item.imageUrl,
           size: item.size,
           quantity: 1,
         },

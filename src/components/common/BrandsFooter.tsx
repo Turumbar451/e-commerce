@@ -22,7 +22,8 @@ const FALLBACK_BRANDS = [
     logoUrl: '/logos/new-balance.svg',
   },
   { name: 'Reebok', slug: 'reebok', logoUrl: '/logos/reebok.svg' },
-  { name: 'Pirma', slug: 'pirma', logoUrl: '/logos/pirma.svg' },
+  { name: 'Under-Armor', slug: 'under-armor', logoUrl: '/logos/Under.svg' },
+
 ];
 
 const logoMap = new Map(
