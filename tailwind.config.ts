@@ -1,3 +1,5 @@
+
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     // E LINEA IMPORTANTE
@@ -9,6 +11,7 @@ module.exports = {
         './components/**/*.{ts,tsx}',
         './app/**/*.{ts,tsx}',
         './src/**/*.{ts,tsx}',
+        "./index.html",
     ],
     prefix: "",
     theme: {

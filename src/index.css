@@ -131,4 +131,8 @@
     will-change: transform, opacity;
     transform: translateZ(0); /* fuerza aceleración de hardware xd */
   }
+  .container {
+    @apply mx-auto px-8; /* mx-auto centra, px-8 añade el padding de 2rem */
+    max-width: 1400px; /* Tu configuración personalizada de 2xl */
+  }
 }
