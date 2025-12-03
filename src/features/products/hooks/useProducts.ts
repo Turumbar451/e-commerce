@@ -9,7 +9,8 @@ const PRODUCTS_PER_PAGE = 15; //poner solo numeros multiplos de 4
 export const useProducts = (
   initialCategory: string | null = null,
   initialTargetGender: 'H' | 'M' | 'N' | null = null,
-  searchQuery: string = ''
+  searchQuery: string = '',
+  initialBrand: string | null = null
 ) => {
   console.log('🚀 useProducts hook llamado - searchQuery:', searchQuery); // Debug
   const queryClient = useQueryClient();
@@ -17,7 +18,7 @@ export const useProducts = (
   const [currentPage, setCurrentPage] = useState(1);
   const [activeCategory, setActiveCategory] = useState<string | null>(initialCategory);
   const [activeTargetGender, setActiveTargetGender] = useState<'H' | 'M' | 'N' | null>(initialTargetGender);
-  const [activeBrand, setActiveBrand] = useState<string | null>(null);
+  const [activeBrand, setActiveBrand] = useState<string | null>(initialBrand);
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState(searchQuery);
@@ -27,13 +28,14 @@ export const useProducts = (
   useEffect(() => {
     setActiveCategory(initialCategory);
     setActiveTargetGender(initialTargetGender);
+    setActiveBrand(initialBrand);
     setSearchTerm(searchQuery);
     setCurrentPage(1);
     
     // Invalidar cache cuando cambia la búsqueda
     console.log('🔄 Invalidando cache por cambio de búsqueda'); // Debug
     queryClient.invalidateQueries({ queryKey: ['products'] });
-  }, [initialCategory, initialTargetGender, searchQuery, queryClient]);
+  }, [initialCategory, initialTargetGender, searchQuery, initialBrand, queryClient]);
 
   const { data, isLoading, isError, isFetching, error } = useQuery<IProductResponse, Error>({
     // La clave depende de la página, categoría, género, marca, precio y término de búsqueda

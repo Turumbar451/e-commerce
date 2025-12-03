@@ -22,6 +22,7 @@ export const HomePage = ({ targetGender }: HomePageProps) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
+  const brandQuery = searchParams.get('brand');
   
   console.log('HomePage - searchQuery:', searchQuery); // Debug
 
@@ -41,7 +42,7 @@ export const HomePage = ({ targetGender }: HomePageProps) => {
     setMinPrice,
     maxPrice,
     setMaxPrice,
-  } = useProducts(null, targetGender ?? null, searchQuery);
+  } = useProducts(null, targetGender ?? null, searchQuery, brandQuery);
 
   console.log('HomePage - products:', products); // Debug
   console.log('HomePage - isLoading:', isLoading); // Debug

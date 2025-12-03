@@ -6,8 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { NavbarCashier } from './NavbarCashier';
 import { useLocation } from 'react-router';
-import { usePosSale } from '@/features/pos/hooks/usePosSale';
-import { checkoutPosSale, type CheckoutPosResponse } from '@/services/orderService';
+import { usePosSale, type PosSaleItem } from '@/features/pos/hooks/usePosSale';
+import {
+  checkoutPosSale,
+  type CheckoutPosResponse,
+} from '@/services/orderService';
 import { createCashClosure } from '@/services/posService';
 import { PosAddToSaleDialog } from './PosAddToSaleDialog';
 import { useQueryClient } from '@tanstack/react-query';
@@ -40,6 +43,113 @@ const PosPage = () => {
   else if (path.endsWith('/close')) activeView = 'close';
 
   const { items, total, addCustomItem, updateQuantity, removeItem, clearSale } = usePosSale();
+
+  const openTicketWindow = (
+    cartItems: PosSaleItem[],
+    checkout: CheckoutPosResponse,
+    win: Window | null
+  ) => {
+    if (typeof window === 'undefined') return;
+    if (!win) return;
+
+    const purchaseNumber = checkout.ticket_id || checkout.invoice_id || checkout.order_id;
+    const fecha = new Date().toLocaleString('es-MX');
+
+    const subtotalLocal = cartItems.reduce(
+      (sum, it) => sum + (Number(it.price) || 0) * (Number(it.quantity) || 0),
+      0
+    );
+    const ivaLocal = subtotalLocal * 0.16;
+    const totalLocal = subtotalLocal + ivaLocal;
+
+    const formatCurrency = (value: number | undefined | null, fallback: number) =>
+      Number(value ?? fallback).toLocaleString('es-MX');
+
+    const itemsRows = cartItems
+      .map(
+        (it) => `
+          <tr>
+            <td style="padding:4px 8px; font-size:12px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:40px; height:40px; border-radius:4px; background:#e5e7eb; display:flex; align-items:center; justify-content:center; font-size:10px; color:#6b7280;">
+                  IMG
+                </div>
+                <div>
+                  <div style="font-weight:600;">${it.name}</div>
+                  <div style="font-size:11px; color:#555;">SKU: ${it.sku} ${it.size ? `| Talla: ${it.size}` : ''}</div>
+                </div>
+              </div>
+            </td>
+            <td style="padding:4px 8px; font-size:12px; text-align:center;">${it.quantity}</td>
+            <td style="padding:4px 8px; font-size:12px; text-align:right;">$${it.price.toLocaleString('es-MX')}</td>
+          </tr>
+        `
+      )
+      .join('');
+
+    const html = `
+      <!DOCTYPE html>
+      <html lang="es">
+        <head>
+          <meta charSet="utf-8" />
+          <title>Ticket de compra ${purchaseNumber}</title>
+          <style>
+            body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 16px; color: #111827; }
+            h1 { font-size: 18px; margin-bottom: 4px; }
+            h2 { font-size: 14px; margin: 12px 0 4px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+            th { font-size: 12px; text-align: left; padding: 4px 8px; border-bottom: 1px solid #e5e7eb; }
+            td { border-bottom: 1px solid #f3f4f6; }
+            .totals-row { font-size: 13px; }
+          </style>
+        </head>
+        <body>
+          <h1>Ticket de compra</h1>
+          <div style="font-size:12px; color:#4b5563;">Folio: <strong>${purchaseNumber}</strong></div>
+          <div style="font-size:12px; color:#4b5563;">Fecha: ${fecha}</div>
+
+          <h2>Productos</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th style="text-align:center;">Cant.</th>
+                <th style="text-align:right;">Precio unidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsRows}
+            </tbody>
+          </table>
+
+          <div style="margin-top:12px; max-width:260px; margin-left:auto; font-size:13px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span>Subtotal:</span>
+              <span>$${formatCurrency(checkout.subtotal, subtotalLocal)}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span>IVA:</span>
+              <span>$${formatCurrency(checkout.iva, ivaLocal)}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-weight:700;">
+              <span>Total pagado:</span>
+              <span>$${formatCurrency(checkout.total_pagado, totalLocal)}</span>
+            </div>
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
+        </body>
+      </html>
+    `;
+
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+  };
 
   const filteredProducts: IProductForCard[] | undefined = products?.filter((p) => {
     const q = search.trim().toLowerCase();
@@ -278,28 +388,46 @@ const PosPage = () => {
                             return;
                           }
 
+                          const ticketWindow = window.open('', '_blank');
+                          if (ticketWindow) {
+                            ticketWindow.document.write(
+                              '<div style="font-family:system-ui;padding:16px;">Generando ticket...</div>'
+                            );
+                          }
+
+                          const itemsSnapshot = [...items];
+
+                          const payload = {
+                            items: items.map((it) => ({
+                              sku: it.sku,
+                              cantidad: it.quantity,
+                              size: it.size ?? '',
+                            })),
+                            metodo_pago: paymentMethod,
+                            origen_venta: 'VENTA_POS',
+                          } as const;
+
                           try {
                             setIsProcessingSale(true);
                             setSaleError(null);
 
-                            const payload = {
-                              items: items.map((it) => ({
-                                sku: it.sku,
-                                cantidad: it.quantity,
-                                size: it.size ?? '',
-                              })),
-                              metodo_pago: paymentMethod,
-                              origen_venta: 'VENTA_POS',
-                            } as const;
-
                             const result = await checkoutPosSale(payload);
                             setCheckoutResult(result);
 
+                            openTicketWindow(itemsSnapshot, result, ticketWindow);
                             // Invalidar cache de productos para refrescar stock en POS
                             queryClient.invalidateQueries({ queryKey: ['products'] });
                           } catch (error) {
                             setSaleError('No se pudo registrar la venta. Intenta de nuevo.');
                             console.error('Error registrando venta POS', error);
+
+                            if (ticketWindow) {
+                              ticketWindow.document.open();
+                              ticketWindow.document.write(
+                                '<div style="font-family:system-ui;padding:16px;color:#b91c1c;">No se pudo generar el ticket. Cierra esta ventana e inténtalo de nuevo.</div>'
+                              );
+                              ticketWindow.document.close();
+                            }
                           } finally {
                             setIsProcessingSale(false);
                           }
